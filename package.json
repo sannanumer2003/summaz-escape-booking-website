@@ -1,0 +1,10 @@
+{
+  "name": "summaz-escape",
+  "version": "1.0.0",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "devDependencies": {
+    "cloudinary": "^2.10.0"
+  }
+}

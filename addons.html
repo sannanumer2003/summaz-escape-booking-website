@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add-Ons — Summaz Escape</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #fff; color: #111827; line-height: 1.7; font-size: 16px; }
+    a { color: #01A9CE; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    .topbar {
+      border-bottom: 1px solid #E5E7EB;
+      padding: 14px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .topbar__back { font-size: 13px; color: #6B7280; }
+    .topbar__back:hover { color: #111827; text-decoration: none; }
+    .topbar__brand { font-size: 14px; font-weight: 700; color: #031D2F; }
+
+    .page { max-width: 640px; margin: 0 auto; padding: 56px 24px 96px; }
+
+    .page__label { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: #9CA3AF; margin-bottom: 12px; }
+    .page__title { font-size: 32px; font-weight: 800; color: #111827; letter-spacing: -.03em; line-height: 1.2; margin-bottom: 16px; }
+    .page__intro { font-size: 16px; color: #6B7280; margin-bottom: 56px; }
+
+    .addon { padding: 40px 0; border-top: 1px solid #E5E7EB; }
+    .addon__price { font-size: 14px; font-weight: 600; color: #6B7280; margin-bottom: 6px; }
+    .addon__title { font-size: 24px; font-weight: 800; color: #111827; letter-spacing: -.02em; margin-bottom: 14px; }
+    .addon p { font-size: 15px; color: #374151; margin-bottom: 10px; }
+    .addon p:last-of-type { margin-bottom: 0; }
+
+    .details { margin-top: 20px; }
+    .details__label { font-size: 11px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; color: #9CA3AF; margin-bottom: 10px; }
+    .details ul { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+    .details ul li { font-size: 14px; color: #6B7280; padding-left: 14px; position: relative; }
+    .details ul li::before { content: ''; position: absolute; left: 0; top: 10px; width: 5px; height: 5px; border-radius: 50%; background: #D1D5DB; }
+
+    .how { padding: 40px 0; border-top: 1px solid #E5E7EB; }
+    .how__title { font-size: 24px; font-weight: 800; color: #111827; letter-spacing: -.02em; margin-bottom: 14px; }
+    .how p { font-size: 15px; color: #374151; margin-bottom: 10px; }
+    .how p:last-child { margin-bottom: 0; }
+
+    .cta { padding-top: 48px; border-top: 1px solid #E5E7EB; }
+    .cta__sub { font-size: 13px; color: #9CA3AF; margin-bottom: 14px; }
+    .btn { display: inline-block; background: #01A9CE; color: #fff; font-size: 15px; font-weight: 700; padding: 13px 28px; border-radius: 8px; text-decoration: none; }
+    .btn:hover { background: #0190b0; text-decoration: none; }
+
+    .footer { border-top: 1px solid #E5E7EB; padding: 28px 24px; text-align: center; font-size: 13px; color: #9CA3AF; }
+    .footer a { color: #6B7280; }
+  </style>
+</head>
+<body>
+
+  <div class="topbar">
+    <a href="/" class="topbar__back">← Back to booking</a>
+    <span class="topbar__brand">Summaz Escape</span>
+  </div>
+
+  <div class="page">
+    <p class="page__label">On-site extras</p>
+    <h1 class="page__title">Make the Most of Your Day</h1>
+    <p class="page__intro">The Classic Package gets you on the water. These add-ons keep you there longer, get you the footage, and take the rest of the trip off your plate. Everything below is arranged and paid for on-site. Our team will sort you out when you arrive.</p>
+
+    <div class="addon">
+      <p class="addon__price">$45 per person</p>
+      <h2 class="addon__title">Big Mable Tube Ride</h2>
+      <p>Hold on tight. The Mable tube pulls you across the bay at whatever speed you can handle. Roughly 10 to 12 minutes of getting thrown around with your group. Families, couples, friend groups, it works for all of them.</p>
+      <p>Up to 6 riders per run so your whole crew goes together. Kids 7 and up can join.</p>
+      <div class="details">
+        <p class="details__label">The details</p>
+        <ul>
+          <li>$45 per person</li>
+          <li>2 to 6 riders per run</li>
+          <li>Ages 7 and up</li>
+          <li>600 lb combined weight limit across all riders</li>
+          <li>Arranged with our team on the day</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="addon">
+      <p class="addon__price">$45 flat</p>
+      <h2 class="addon__title">Drone Photos and Videos</h2>
+      <p>A dedicated drone operator captures your time on the water from above. You get the footage the same day, sent straight to your phone before you leave.</p>
+      <p>Jet ski rides, the tube run, beach shots, anything happening on the water. You tell us what you want captured. The drone is out every day, no pre-booking needed, just let our team know when you arrive.</p>
+      <div class="details">
+        <p class="details__label">The details</p>
+        <ul>
+          <li>$45 flat, covers photos and video</li>
+          <li>Same-day delivery to your phone</li>
+          <li>Available every day</li>
+          <li>Dedicated staff member, not a side job</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="addon">
+      <p class="addon__price">Ask on-site</p>
+      <h2 class="addon__title">Extra Jet Ski Time</h2>
+      <p>Your Classic Package includes a 25-minute jet ski session. If that is not enough, you can buy more time on the day.</p>
+      <p>Pricing is handled by our team at the beach. Kids can ride tandem with a parent on extra sessions the same way they do on the included one.</p>
+      <div class="details">
+        <p class="details__label">The details</p>
+        <ul>
+          <li>Priced and arranged on the day</li>
+          <li>Available subject to schedule</li>
+          <li>Kids ride tandem with a parent</li>
+          <li>Ask our team when you arrive</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="addon">
+      <p class="addon__price">Billed by the restaurant</p>
+      <h2 class="addon__title">Lunch at The Bay</h2>
+      <p>The Bay restaurant is right at our location. Full menu, food and drinks, a proper meal between sessions or after you are done on the water. Sold and billed by the restaurant directly.</p>
+      <p>Walk up and order when you are ready. No reservation needed.</p>
+      <div class="details">
+        <p class="details__label">The details</p>
+        <ul>
+          <li>Priced and billed by The Bay restaurant</li>
+          <li>Available on site, no pre-booking</li>
+          <li>Food and drinks both available</li>
+          <li>Same location as your booking, Arawak Cay</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="addon">
+      <p class="addon__price">Via WhatsApp</p>
+      <h2 class="addon__title">Airport Pickup, Hotel Transfers and Getting Around Nassau</h2>
+      <p>Skip the taxi rank. We run clean, comfortable transport to and from the airport, your hotel, your Airbnb, anywhere in Nassau. Black trucks, 7-seaters, 9-seaters, and buses available depending on your group size.</p>
+      <p>This is booked directly with our team via WhatsApp, separate from your beach booking. We will send you our WhatsApp number on your booking confirmation. Message us with your flight details or hotel and we will sort the rest.</p>
+      <p>We also know Nassau well. If you need recommendations for where to stay, we can point you toward options that work for your group.</p>
+      <div class="details">
+        <p class="details__label">The details</p>
+        <ul>
+          <li>Clean, private vehicles, no shared taxis, no waiting around</li>
+          <li>Black trucks, 7-seaters, 9-seaters and buses available</li>
+          <li>Airport pickup and drop-off</li>
+          <li>Hotel and Airbnb transfers</li>
+          <li>Nassau transport and recommendations on request</li>
+          <li>Arranged directly via WhatsApp after booking</li>
+          <li>Priced and confirmed with our team directly</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="how">
+      <h2 class="how__title">How Add-Ons Work</h2>
+      <p>None of these are booked or paid through this website. Your booking covers the Classic Package only.</p>
+      <p>When you arrive, our team will check you in and go through everything available that day. Want drone footage? Tell them. Want extra jet ski time? They will get it scheduled. Want lunch? They know the menu.</p>
+      <p>Bring a card or cash for anything extra. We have a card machine on site.</p>
+    </div>
+
+    <div class="cta">
+      <p class="cta__sub">Adults $180 &nbsp;&middot;&nbsp; Children $115 &nbsp;&middot;&nbsp; Pay on arrival or via Zelle / Venmo</p>
+      <a href="/" class="btn">Book the Classic Package</a>
+    </div>
+  </div>
+
+  <div class="footer">
+    &copy; 2026 Summaz Escape &nbsp;&middot;&nbsp;
+    <a href="terms-and-conditions.html">Terms</a> &nbsp;&middot;&nbsp;
+    <a href="privacy-policy.html">Privacy</a> &nbsp;&middot;&nbsp;
+    <a href="refunds-and-cancellation.html">Cancellation Policy</a>
+  </div>
+
+</body>
+</html>

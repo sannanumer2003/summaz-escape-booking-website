@@ -1,0 +1,20 @@
+# Vercel local config
+.vercel
+
+# Environment variables — never commit real keys
+.env.local
+
+# Reference / dev-only files not part of the deployed site
+touriva/
+setup-sheet.gs
+webapp.gs
+
+# Assets — served from Cloudinary, not GitHub
+assets/
+
+# Cloudinary upload script and output (dev tooling only)
+upload-to-cloudinary.js
+cloudinary-urls.json
+
+# Dependencies
+node_modules/

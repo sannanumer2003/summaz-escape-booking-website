@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Jet ski beach day at Arawak Cay, Nassau, Bahamas. 25-minute jet ski session, beach chairs, kayaks, paddleboards, and more. Classic Package from $180 per person.">
+  <title>Summaz Escape: Jet Ski Beach Day, Nassau Bahamas</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<script>if(!sessionStorage.getItem('summaz_access')){window.location.replace('coming-soon.html');}</script>
+<body>
+
+  <!-- ══════════════════════════════════════════════════════
+       NAV
+       ══════════════════════════════════════════════════════ -->
+  <nav class="nav nav--transparent" id="nav">
+    <div class="container nav__inner">
+      <a href="/" class="nav__logo">
+        <img src="https://res.cloudinary.com/dko76z0df/image/upload/v1782304824/summaz/logo.png" class="nav__logo-img" alt="Summaz Escape">
+        <span class="nav__wordmark">SummazEscape</span>
+      </a>
+      <div class="nav__right">
+        <a href="https://wa.me/12428175387" target="_blank" rel="noopener" class="nav__whatsapp" aria-label="WhatsApp">
+          <svg viewBox="-1 -1 34 34" width="46" height="46" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="16" cy="16" r="16" fill="#25D366"/>
+            <path d="M22.94 9.06A9.71 9.71 0 0 0 16 6.3a9.74 9.74 0 0 0-8.44 14.6L6.3 25.7l4.93-1.29a9.74 9.74 0 0 0 4.77 1.22h.01A9.74 9.74 0 0 0 25.7 16a9.71 9.71 0 0 0-2.76-6.94zm-6.94 14.98h-.01a8.09 8.09 0 0 1-4.12-1.13l-.3-.18-3.08.81.82-3-.19-.31a8.1 8.1 0 1 1 6.88 3.81zm4.44-6.07c-.24-.12-1.43-.7-1.65-.78-.22-.08-.38-.12-.54.12s-.62.78-.76.94c-.14.16-.28.18-.52.06a6.57 6.57 0 0 1-1.93-1.19 7.24 7.24 0 0 1-1.34-1.66c-.14-.24-.01-.37.1-.49.11-.11.24-.28.37-.42.12-.14.16-.24.24-.4.08-.16.04-.3-.02-.42s-.54-1.3-.74-1.78c-.19-.47-.39-.4-.54-.41l-.46-.01c-.16 0-.42.06-.64.3s-.84.82-.84 2 .86 2.32.98 2.48c.12.16 1.69 2.58 4.1 3.62.57.25 1.02.4 1.37.5.57.18 1.1.16 1.51.1.46-.07 1.43-.58 1.63-1.15.2-.56.2-1.04.14-1.15-.06-.1-.22-.16-.46-.28z" fill="#fff"/>
+          </svg>
+        </a>
+        <button class="btn btn--primary btn--nav-book" onclick="openBooking()">Book Now</button>
+      </div>
+    </div>
+  </nav>
+
+
+  <!-- ══════════════════════════════════════════════════════
+       HERO
+       ══════════════════════════════════════════════════════ -->
+  <section class="hero">
+    <div class="hero__slide hero__slide--1"></div>
+    <div class="hero__slide hero__slide--2"></div>
+    <div class="hero__slide hero__slide--3"></div>
+    <div class="hero__slide hero__slide--4"></div>
+    <div class="container">
+      <div class="hero__inner">
+        <h1 class="hero__title">Jet skis.<br><em>Open water.</em><br>All day.</h1>
+        <p class="hero__sub">A full beach day at Arawak Cay. 25-minute jet ski session included. Chairs, kayaks, paddleboards, and clear Caribbean water. From $180 per person.</p>
+        <div class="hero__meta">
+          <div class="hero__meta-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            <strong>10am – 6pm</strong>&nbsp;daily
+          </div>
+          <div class="hero__meta-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            No timed slots. Arrive any time.
+          </div>
+        </div>
+        <div class="hero__ctas">
+          <button class="btn btn--primary btn--lg" onclick="openBooking()">Book Now · From $180</button>
+          <a href="#overview" class="btn btn--ghost btn--lg">Learn More ↓</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════════════════════════════
+       ANCHOR NAV
+       ══════════════════════════════════════════════════════ -->
+  <nav class="anchor-nav" id="anchorNav">
+    <div class="container anchor-nav__inner">
+      <div class="anchor-nav__links">
+        <a href="#overview"    class="anchor-nav__link is-active" data-section="overview">Overview</a>
+        <a href="#included"    class="anchor-nav__link" data-section="included">What's Included</a>
+        <a href="#jetski"      class="anchor-nav__link" data-section="jetski">Jet Ski</a>
+        <a href="#extras"      class="anchor-nav__link" data-section="extras">Add-Ons</a>
+        <a href="#location"    class="anchor-nav__link" data-section="location">Location</a>
+        <a href="#faq"         class="anchor-nav__link" data-section="faq">FAQ</a>
+        <a href="#kids"        class="anchor-nav__link" data-section="kids">Meet the Kids</a>
+        <a href="#experience"  class="anchor-nav__link" data-section="experience">Experience</a>
+        <a href="#reels"       class="anchor-nav__link" data-section="reels">Reels</a>
+        <a href="#gallery"     class="anchor-nav__link" data-section="gallery">Gallery</a>
+        <a href="#reviews"     class="anchor-nav__link" data-section="reviews">Reviews</a>
+      </div>
+      <button class="btn btn--primary btn--sm" onclick="openBooking()" style="flex-shrink:0">Book Now</button>
+    </div>
+  </nav>
+
+
+  <!-- ══════════════════════════════════════════════════════
+       LISTING BODY — two-column
+       ══════════════════════════════════════════════════════ -->
+  <div class="listing-body">
+    <div class="container">
+      <div class="listing-grid">
+
+        <!-- ── Left: content ─────────────────────────────── -->
+        <div class="listing-content">
+
+          <!-- Overview -->
+          <section class="listing-section" id="overview">
+            <div class="vcard overview-hero-vcard" data-src="https://res.cloudinary.com/dko76z0df/video/upload/v1782304493/summaz/a-day-with-summaz-escape.mp4" role="button" tabindex="0" aria-label="Play: A day with Summaz Escape">
+              <div class="vcard__brand-cover">
+                <img src="https://res.cloudinary.com/dko76z0df/image/upload/v1782304824/summaz/logo.png" class="vcard__brand-logo" alt="Summaz Escape">
+              </div>
+              <div class="vcard__play"><svg viewBox="0 0 24 24" width="52" height="52"><circle cx="12" cy="12" r="12" fill="rgba(0,0,0,0.35)"/><polygon points="10,8 10,16 17,12" fill="white"/></svg></div>
+            </div>
+            <p class="section-label">Classic Package</p>
+            <h2 class="section-heading">A full beach day, jet ski included</h2>
+            <div class="section-body">
+              <p>Summaz Escape is set at Arawak Cay, the quieter stretch of Nassau coastline just past the fish fry, beyond the container port. It's not a resort beach. It's a local spot with clear water, space to actually spread out, and a serious setup for anyone who wants to get on the water.</p>
+              <p>The Classic Package gives you the whole day: beach chairs, kayaks, paddleboards, water scooters, snorkel masks, floaties, and a water hammock. Your 25-minute jet ski session is included in the price, not sold separately. Arrive any time between 10am and 6pm. No timed slots, no rush.</p>
+            </div>
+            <div class="vcards-grid">
+              <div class="vcard" data-src="https://res.cloudinary.com/dko76z0df/video/upload/v1782304506/summaz/clip1.mp4" role="button" tabindex="0" aria-label="Play clip 1">
+                <img class="vcard__poster" src="https://res.cloudinary.com/dko76z0df/image/upload/v1782304497/summaz/clip1-poster.jpg" alt="Beach experience" loading="lazy">
+                <div class="vcard__play"><svg viewBox="0 0 24 24" fill="white" width="44" height="44"><circle cx="12" cy="12" r="12" fill="rgba(0,0,0,0.45)"/><polygon points="10,8 10,16 17,12" fill="white"/></svg></div>
+              </div>
+              <div class="vcard" data-src="https://res.cloudinary.com/dko76z0df/video/upload/v1782304545/summaz/clip2.mp4" role="button" tabindex="0" aria-label="Play clip 2">
+                <img class="vcard__poster" src="https://res.cloudinary.com/dko76z0df/image/upload/v1782304540/summaz/clip2-poster.jpg" alt="Beach experience" loading="lazy">
+                <div class="vcard__play"><svg viewBox="0 0 24 24" width="44" height="44"><circle cx="12" cy="12" r="12" fill="rgba(0,0,0,0.45)"/><polygon points="10,8 10,16 17,12" fill="white"/></svg></div>
+              </div>
+              <div class="vcard" data-src="https://res.cloudinary.com/dko76z0df/video/upload/v1782304566/summaz/clip3.mp4" role="button" tabindex="0" aria-label="Play clip 3">
+                <img class="vcard__poster" src="https://res.cloudinary.com/dko76z0df/image/upload/v1782304547/summaz/clip3-poster.jpg" alt="Beach experience" loading="lazy">
+                <div class="vcard__play"><svg viewBox="0 0 24 24" width="44" height="44"><circle cx="12" cy="12" r="12" fill="rgba(0,0,0,0.45)"/><polygon points="10,8 10,16 17,12" fill="white"/></svg></div>
+              </div>
+              <div class="vcard" data-src="https://res.cloudinary.com/dko76z0df/video/upload/v1782304618/summaz/clip4.mp4" role="button" tabindex="0" aria-label="Play clip 4">
+                <img class="vcard__poster" src="https://res.cloudinary.com/dko76z0df/image/upload/v1782304570/summaz/clip4-poster.jpg" alt="Beach experience" loading="lazy">
+                <div class="vcard__play"><svg viewBox="0 0 24 24" width="44" height="44"><circle cx="12" cy="12" r="12" fill="rgba(0,0,0,0.45)"/><polygon points="10,8 10,16 17,12" fill="white"/></svg></div>
+              </div>
+              <div class="vcard" data-src="https://res.cloudinary.com/dko76z0df/video/upload/v1782304624/summaz/clip5.mp4" role="button" tabindex="0" aria-label="Play clip 5">
+                <img class="vcard__poster" src="https://res.cloudinary.com/dko76z0df/image/upload/v1782304622/summaz/clip5-poster.jpg" alt="Beach experience" loading="lazy">
+                <div class="vcard__play"><svg viewBox="0 0 24 24" width="44" height="44"><circle cx="12" cy="12" r="12" fill="rgba(0,0,0,0.45)"/><polygon points="10,8 10,16 17,12" fill="white"/></svg></div>
+              </div>
+              <div class="vcard" data-src="https://res.cloudinary.com/dko76z0df/video/upload/v1782304641/summaz/clip6.mp4" role="button" tabindex="0" aria-label="Play clip 6">
+                <img class="vcard__poster" src="https://res.cloudinary.com/dko76z0df/image/upload/v1782304626/summaz/clip6-poster.jpg" alt="Beach experience" loading="lazy">
+                <div class="vcard__play"><svg viewBox="0 0 24 24" width="44" height="44"><circle cx="12" cy="12" r="12" fill="rgba(0,0,0,0.45)"/><polygon points="10,8 10,16 17,12" fill="white"/></svg></div>
+              </div>
+            </div>
+          </section>
+
+          <!-- What's Included -->
+          <section class="listing-section" id="included">
+            <p class="section-label">Included in the price</p>
+            <h2 class="section-heading">What comes with your booking</h2>
+            <ul class="check-list">
+              <li>
+                <span class="check-icon"><svg viewBox="0 0 12 12" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="2 6 5 9 10 3"/></svg></span>
+                <div><strong>25-minute jet ski session</strong><p>Solo on the adult package. Tandem with an adult on the child package.</p></div>
+              </li>
+              <li>
+                <span class="check-icon"><svg viewBox="0 0 12 12" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="2 6 5 9 10 3"/></svg></span>
+                <div><strong>Beach chairs &amp; umbrella</strong><p>Set up for your group for the full day.</p></div>
+              </li>
+              <li>
+                <span class="check-icon"><svg viewBox="0 0 12 12" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="2 6 5 9 10 3"/></svg></span>
+                <div><strong>Clear-hull kayaks</strong><p>See straight through the bottom to the seafloor.</p></div>
+              </li>
+              <li>
+                <span class="check-icon"><svg viewBox="0 0 12 12" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="2 6 5 9 10 3"/></svg></span>
+                <div><strong>Paddleboards</strong><p>Good water conditions for all levels.</p></div>
+              </li>
+              <li>
+                <span class="check-icon"><svg viewBox="0 0 12 12" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="2 6 5 9 10 3"/></svg></span>
+                <div><strong>Water scooters</strong><p>Motorized and easy to control, great for exploring the bay.</p></div>
+              </li>
+              <li>
+                <span class="check-icon"><svg viewBox="0 0 12 12" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="2 6 5 9 10 3"/></svg></span>
+                <div><strong>Snorkel masks</strong><p>The bay has clear water. Worth using.</p></div>
+              </li>
+              <li>
+                <span class="check-icon"><svg viewBox="0 0 12 12" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="2 6 5 9 10 3"/></svg></span>
+                <div><strong>Floaties &amp; water hammock</strong><p>Float out and stay in the water as long as you like.</p></div>
+              </li>
+              <li>
+                <span class="check-icon"><svg viewBox="0 0 12 12" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="2 6 5 9 10 3"/></svg></span>
+                <div><strong>Bottled water</strong><p>One per guest in your booking.</p></div>
+              </li>
+              <li>
+                <span class="check-icon"><svg viewBox="0 0 12 12" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="2 6 5 9 10 3"/></svg></span>
+                <div><strong>Restrooms on site</strong><p>Clean facilities available throughout the day.</p></div>
+              </li>
+            </ul>
+          </section>
+
+          <!-- Jet Ski Details -->
+          <section class="listing-section" id="jetski">
+            <p class="section-label">Jet ski details</p>
+            <h2 class="section-heading">Solo or tandem</h2>
+            <p class="section-body" style="margin-bottom:20px">The adult and child packages reflect how you'll ride, not strictly your age. If you want your own jet ski, book adult. If you want to ride behind someone in your group, book child.</p>
+            <div class="ticket-options">
+              <div class="ticket ticket--featured">
+                <div class="ticket__badge">Most booked</div>
+                <div class="ticket__price">$180<span class="ticket__per">/ adult</span></div>
+                <div class="ticket__name">Adult Package</div>
+                <div class="ticket__tagline">Solo rider. You control the jet ski.</div>
+                <div class="ticket__features">
+                  <div class="ticket__feature">
+                    <span class="chk"><svg viewBox="0 0 15 15" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="2.5 7.5 6 11 12.5 4"/></svg></span>
+                    Solo riding, minimum age 16
+                  </div>
+                  <div class="ticket__feature">
+                    <span class="chk"><svg viewBox="0 0 15 15" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="2.5 7.5 6 11 12.5 4"/></svg></span>
+                    25-minute jet ski session
+                  </div>
+                  <div class="ticket__feature">
+                    <span class="chk"><svg viewBox="0 0 15 15" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="2.5 7.5 6 11 12.5 4"/></svg></span>
+                    Full day beach access
+                  </div>
+                  <div class="ticket__feature">
+                    <span class="chk"><svg viewBox="0 0 15 15" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="2.5 7.5 6 11 12.5 4"/></svg></span>
+                    Life vest provided
+                  </div>
+                  <div class="ticket__feature">
+                    <span class="chk"><svg viewBox="0 0 15 15" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="2.5 7.5 6 11 12.5 4"/></svg></span>
+                    No driver's license required
+                  </div>
+                </div>
+              </div>
+              <div class="ticket">
+                <div class="ticket__price">$115<span class="ticket__per">/ child</span></div>
+                <div class="ticket__name">Child Package</div>
+                <div class="ticket__tagline">Rides tandem with an adult in your group.</div>
+                <div class="ticket__features">
+                  <div class="ticket__feature">
+                    <span class="chk"><svg viewBox="0 0 15 15" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="2.5 7.5 6 11 12.5 4"/></svg></span>
+                    Rides tandem, no minimum age
+                  </div>
+                  <div class="ticket__feature">
+                    <span class="chk"><svg viewBox="0 0 15 15" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="2.5 7.5 6 11 12.5 4"/></svg></span>
+                    Combined weight limit: 350 lb
+                  </div>
+                  <div class="ticket__feature">
+                    <span class="chk"><svg viewBox="0 0 15 15" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="2.5 7.5 6 11 12.5 4"/></svg></span>
+                    Full day beach access
+                  </div>
+                  <div class="ticket__feature">
+                    <span class="chk"><svg viewBox="0 0 15 15" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="2.5 7.5 6 11 12.5 4"/></svg></span>
+                    Life vest provided
+                  </div>
+                </div>
+                <div class="ticket__note">Each child must be paired with an adult from your booking. Solo riding is available on the adult package only.</div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Add-ons -->
+          <section class="listing-section" id="extras">
+            <p class="section-label">Available on-site</p>
+            <h2 class="section-heading">Optional extras</h2>
+            <p class="section-body" style="margin-bottom:16px">These aren't included in the Classic Package price. You pay for them on arrival. No upfront charge here. Express your interest during booking and our team will follow up when you arrive.</p>
+            <div class="extras-list">
+              <div class="extra-row">
+                <div>
+                  <div class="extra-row__name">Big Mable Tube Ride</div>
+                  <div class="extra-row__desc">~10–12 minutes · 2–6 riders per ride · Ages 7+ · 600 lb combined limit</div>
+                </div>
+                <div class="extra-row__price">$45 / person</div>
+              </div>
+              <div class="extra-row">
+                <div>
+                  <div class="extra-row__name">Drone Photos &amp; Video</div>
+                  <div class="extra-row__desc">Available every day · delivered same day to your phone via dedicated drone staff</div>
+                </div>
+                <div class="extra-row__price">$45</div>
+              </div>
+              <div class="extra-row">
+                <div>
+                  <div class="extra-row__name">Extra Jet Ski Time</div>
+                  <div class="extra-row__desc">Can't get enough? Arrange additional time with staff after your included session.</div>
+                </div>
+                <div class="extra-row__price">Ask on-site</div>
+              </div>
+              <div class="extra-row">
+                <div>
+                  <div class="extra-row__name">Lunch</div>
+                  <div class="extra-row__desc">Served through The Bay restaurant at the location. Order whenever you're ready.</div>
+                </div>
+                <div class="extra-row__price">On-site</div>
+              </div>
+              <div class="extra-row">
+                <div>
+                  <div class="extra-row__name">Airport &amp; Hotel Transfers</div>
+                  <div class="extra-row__desc">Pickup from your airport, hotel, or Airbnb. Message us on WhatsApp after booking.</div>
+                </div>
+                <div class="extra-row__price">Via WhatsApp</div>
+              </div>
+            </div>
+            <a href="addons.html" target="_blank" rel="noopener" class="extras-learn-more">Understand how add-ons work →</a>
+          </section>
+
+          <!-- Location -->
+          <section class="listing-section" id="location">
+            <p class="section-label">Meeting point</p>
+            <h2 class="section-heading">How to find us</h2>
+            <a href="https://maps.app.goo.gl/FAUBZqZ5e4TNKpBZ7" target="_blank" rel="noopener" class="location-address">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              The Bay, Arawak Cay, Nassau, Bahamas. Open in Google Maps
+            </a>
+            <div class="location-map">
+              <iframe
+                src="https://maps.google.com/maps?q=Arawak+Cay+Nassau+Bahamas&z=15&output=embed"
+                title="Summaz Escape at Arawak Cay, Nassau"
+                loading="lazy"
+                referrerpolicy="no-referrer-when-downgrade">
+              </iframe>
+            </div>
+            <div class="location-steps">
+              <div class="location-step">
+                <div class="location-step__num">1</div>
+                <p class="location-step__text">Head to <strong>Arawak Cay</strong>. Drive past the fish fry area and continue over the small bridge.</p>
+              </div>
+              <div class="location-step">
+                <div class="location-step__num">2</div>
+                <p class="location-step__text">Pass the <strong>customs building and container port</strong>. Keep going. You'll know you're close when you see the water on both sides.</p>
+              </div>
+              <div class="location-step">
+                <div class="location-step__num">3</div>
+                <p class="location-step__text">Look for the <strong>gated beach entrance</strong> marked by an orange picket fence on your right.</p>
+              </div>
+              <div class="location-step">
+                <div class="location-step__num">4</div>
+                <p class="location-step__text">A staff member will be there to meet you and walk your group down to the beach. <strong>Check-in takes a few minutes.</strong></p>
+              </div>
+            </div>
+            <div class="location-hours">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              Open daily · 10:00 am – 6:00 pm
+            </div>
+          </section>
+
+          <!-- FAQ -->
+          <section class="listing-section" id="faq">
+            <p class="section-label">Good to know</p>
+            <h2 class="section-heading">Common questions</h2>
+            <div class="faq-list">
+
+              <details class="faq-item">
+                <summary>
+                  What should I bring?
+                  <svg class="faq-chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+                </summary>
+                <div class="faq-answer">
+                  <p>A towel, swimwear, and sunscreen. That's really all you need. Everything else is provided. No reef-safe requirement, but we'd appreciate it.</p>
+                </div>
+              </details>
+
+              <details class="faq-item">
+                <summary>
+                  Can my child ride without an adult on the jet ski?
+                  <svg class="faq-chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+                </summary>
+                <div class="faq-answer">
+                  <p>No. Riders under 16 must be on the back of an adult's jet ski. Book the child package for them. There's no minimum age for tandem riding, but the combined weight of both riders can't exceed 350 lb.</p>
+                  <p>If a teenager (under 16) wants their own jet ski, they can book under the adult package with parent permission. Staff will confirm on arrival.</p>
+                </div>
+              </details>
+
+              <details class="faq-item">
+                <summary>
+                  Do I need to pre-book or can I walk in?
+                  <svg class="faq-chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+                </summary>
+                <div class="faq-answer">
+                  <p>We recommend booking in advance, especially on weekends and holidays. Walk-ins are welcome but subject to availability. Jet ski sessions are limited per day.</p>
+                </div>
+              </details>
+
+              <details class="faq-item">
+                <summary>
+                  What time should I arrive?
+                  <svg class="faq-chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+                </summary>
+                <div class="faq-answer">
+                  <p>Any time between 10am and 6pm works. We don't assign arrival slots. If you want to maximize your beach time, earlier is better. Last jet ski sessions go out well before 6pm.</p>
+                </div>
+              </details>
+
+              <details class="faq-item">
+                <summary>
+                  What happens if it rains or the weather is bad?
+                  <svg class="faq-chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+                </summary>
+                <div class="faq-answer">
+                  <p>We run in light rain and most conditions. If weather forces a cancellation, you'll get a full refund or can reschedule with no fee and no hassle. We'll contact you if we need to cancel on our end.</p>
+                </div>
+              </details>
+
+              <details class="faq-item">
+                <summary>
+                  Can I leave valuables somewhere safe?
+                  <svg class="faq-chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+                </summary>
+                <div class="faq-answer">
+                  <p>There's no secure storage on site. Leave phones, wallets, and keys locked in your vehicle or hotel before you arrive. We're not responsible for items left on the beach.</p>
+                </div>
+              </details>
+
+              <details class="faq-item">
+                <summary>
+                  Is equipment shared between groups?
+                  <svg class="faq-chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+                </summary>
+                <div class="faq-answer">
+                  <p>Beach equipment (kayaks, paddleboards, etc.) and jet skis are shared across groups on busy days. Our staff coordinate turns to keep things running smoothly. On quieter days, you'll often have gear to yourselves.</p>
+                </div>
+              </details>
+
+              <details class="faq-item">
+                <summary>
+                  What is the cancellation policy?
+                  <svg class="faq-chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+                </summary>
+                <div class="faq-answer">
+                  <p>Full refund if you cancel 7 or more days before your visit. No refund for cancellations within 7 days of the date.</p>
+                  <p>To cancel, email <a href="mailto:booking@summazescape.com">booking@summazescape.com</a> with your booking reference. Weather-related cancellations initiated by us are always fully refunded or rescheduled.</p>
+                </div>
+              </details>
+
+            </div>
+          </section>
+
+          <!-- Meet the Kids -->
+          <section class="listing-section" id="kids">
+            <p class="section-label">At the beach every day</p>
+            <h2 class="section-heading">Meet Lil Summaz and Darion</h2>
+            <div class="section-body">
+              <p>These two are the heartbeat of Summaz Escape. You will spot them at the beach every single day, full of energy, ready to hype up every guest who walks through. Whether they are cheering you on from the shore or showing off on the water themselves, Lil Summaz and Darion bring a kind of joy to this place that no itinerary can plan for. Do not be surprised if they become the highlight of your day.</p>
+              <p>At just 7 years old, Tareno Deveaux, known as Lil Summaz, is already making waves both on and off the water. With a bright personality, fearless energy, and a smile that lights up every room, Tareno has quickly become a fan favorite alongside his father. Following in his dad's footsteps, he has developed impressive jet ski skills at a young age, performing tricks while always practicing proper safety. Outside of the water, he shines in school and carries himself with positivity and confidence. Talented, adventurous, and full of charisma, Lil Summaz represents the next generation of Bahamian talent and family tradition.</p>
+            </div>
+            <div class="kids-grid">
+              <div class="vcard" data-src="https://res.cloudinary.com/dko76z0df/video/upload/v1782304822/summaz/lil-summaz.mp4" role="button" tabindex="0" aria-label="Play Lil Summaz clip">
+                <img class="vcard__poster" src="https://res.cloudinary.com/dko76z0df/image/upload/v1782304727/summaz/lil-summaz-poster.jpg" alt="Lil Summaz" loading="lazy">
+                <div class="vcard__play"><svg viewBox="0 0 24 24" width="48" height="48"><circle cx="12" cy="12" r="12" fill="rgba(0,0,0,0.45)"/><polygon points="10,8 10,16 17,12" fill="white"/></svg></div>
+              </div>
+              <div class="vcard" data-src="https://res.cloudinary.com/dko76z0df/video/upload/v1782304715/summaz/darion-clip.mp4" role="button" tabindex="0" aria-label="Play Darion clip">
+                <img class="vcard__poster" src="https://res.cloudinary.com/dko76z0df/image/upload/v1782304720/summaz/darion-poster.jpg" alt="Darion" loading="lazy">
+                <div class="vcard__play"><svg viewBox="0 0 24 24" width="48" height="48"><circle cx="12" cy="12" r="12" fill="rgba(0,0,0,0.45)"/><polygon points="10,8 10,16 17,12" fill="white"/></svg></div>
+              </div>
+            </div>
+          </section>
+
+          <!-- More from Experience -->
+          <section class="listing-section" id="experience">
+            <p class="section-label">See for yourself</p>
+            <h2 class="section-heading">More from the Experience</h2>
+            <div class="section-body">
+              <p>This is what you are going to get when you book through Summaz Escape. The most premium water experience in Nassau, built for people who want more than a standard beach day. Every clip is real, unscripted, and straight from the beach. Watch the energy, feel the water, and when you are ready, lock in your spot.</p>
+            </div>
+            <button class="btn btn--primary experience-cta" onclick="openBooking()">Book Your Spot</button>
+            <div class="vcards-grid vcards-grid--5">
+              <div class="vcard" data-src="https://res.cloudinary.com/dko76z0df/video/upload/v1782304647/summaz/clip7.mp4" role="button" tabindex="0" aria-label="Play clip 7">
+                <img class="vcard__poster" src="https://res.cloudinary.com/dko76z0df/image/upload/v1782304643/summaz/clip7-poster.jpg" alt="Beach experience" loading="lazy">
+                <div class="vcard__play"><svg viewBox="0 0 24 24" width="44" height="44"><circle cx="12" cy="12" r="12" fill="rgba(0,0,0,0.45)"/><polygon points="10,8 10,16 17,12" fill="white"/></svg></div>
+              </div>
+              <div class="vcard" data-src="https://res.cloudinary.com/dko76z0df/video/upload/v1782304655/summaz/clip8.mp4" role="button" tabindex="0" aria-label="Play clip 8">
+                <img class="vcard__poster" src="https://res.cloudinary.com/dko76z0df/image/upload/v1782304650/summaz/clip8-poster.jpg" alt="Beach experience" loading="lazy">
+                <div class="vcard__play"><svg viewBox="0 0 24 24" width="44" height="44"><circle cx="12" cy="12" r="12" fill="rgba(0,0,0,0.45)"/><polygon points="10,8 10,16 17,12" fill="white"/></svg></div>
+              </div>
+              <div class="vcard" data-src="https://res.cloudinary.com/dko76z0df/video/upload/v1782304659/summaz/clip9.mp4" role="button" tabindex="0" aria-label="Play clip 9">
+                <img class="vcard__poster" src="https://res.cloudinary.com/dko76z0df/image/upload/v1782304657/summaz/clip9-poster.jpg" alt="Beach experience" loading="lazy">
+                <div class="vcard__play"><svg viewBox="0 0 24 24" width="44" height="44"><circle cx="12" cy="12" r="12" fill="rgba(0,0,0,0.45)"/><polygon points="10,8 10,16 17,12" fill="white"/></svg></div>
+              </div>
+              <div class="vcard" data-src="https://res.cloudinary.com/dko76z0df/video/upload/v1782304516/summaz/clip10.mp4" role="button" tabindex="0" aria-label="Play clip 10">
+                <img class="vcard__poster" src="https://res.cloudinary.com/dko76z0df/image/upload/v1782304508/summaz/clip10-poster.jpg" alt="Beach experience" loading="lazy">
+                <div class="vcard__play"><svg viewBox="0 0 24 24" width="44" height="44"><circle cx="12" cy="12" r="12" fill="rgba(0,0,0,0.45)"/><polygon points="10,8 10,16 17,12" fill="white"/></svg></div>
+              </div>
+              <div class="vcard" data-src="https://res.cloudinary.com/dko76z0df/video/upload/v1782304538/summaz/clip11.mp4" role="button" tabindex="0" aria-label="Play clip 11">
+                <img class="vcard__poster" src="https://res.cloudinary.com/dko76z0df/image/upload/v1782304519/summaz/clip11-poster.jpg" alt="Beach experience" loading="lazy">
+                <div class="vcard__play"><svg viewBox="0 0 24 24" width="44" height="44"><circle cx="12" cy="12" r="12" fill="rgba(0,0,0,0.45)"/><polygon points="10,8 10,16 17,12" fill="white"/></svg></div>
+              </div>
+            </div>
+          </section>
+
+        </div><!-- /listing-content -->
+
+        <!-- ── Right: booking widget ──────────────────────── -->
+        <div class="listing-sidebar">
+          <div class="booking-widget" id="bookingWidget">
+            <div class="bw-head">
+              <div class="bw-head-from">From</div>
+              <div class="bw-head-price">$180 <span>per person</span></div>
+            </div>
+            <div class="bw-body">
+              <div class="bw-field-label">Your visit date</div>
+              <input
+                class="bw-date-input"
+                type="date"
+                id="widgetDate"
+                onchange="sidebarDateChange(this.value)"
+                aria-label="Select visit date"
+              >
+              <div class="bw-field-label" style="margin-top:14px">Guests</div>
+              <div class="bw-stepper-rows">
+                <div class="bw-stepper-row">
+                  <div class="bw-stepper-info">
+                    <div class="bw-stepper-name">Adults</div>
+                    <div class="bw-stepper-price">$180 each · solo rider</div>
+                  </div>
+                  <div class="bw-stepper">
+                    <button class="bw-stepper-btn" id="wAdultMinus" onclick="sidebarCount('adults',-1)" aria-label="Remove adult">−</button>
+                    <span class="bw-stepper-count" id="wAdultCount">1</span>
+                    <button class="bw-stepper-btn" onclick="sidebarCount('adults',1)" aria-label="Add adult">+</button>
+                  </div>
+                </div>
+                <div class="bw-stepper-row">
+                  <div class="bw-stepper-info">
+                    <div class="bw-stepper-name">Children</div>
+                    <div class="bw-stepper-price">$115 each · rides tandem</div>
+                  </div>
+                  <div class="bw-stepper">
+                    <button class="bw-stepper-btn" id="wChildMinus" onclick="sidebarCount('children',-1)" aria-label="Remove child">−</button>
+                    <span class="bw-stepper-count" id="wChildCount">0</span>
+                    <button class="bw-stepper-btn" onclick="sidebarCount('children',1)" aria-label="Add child">+</button>
+                  </div>
+                </div>
+              </div>
+              <div class="bw-total">
+                <div class="bw-total-label">Estimated total</div>
+                <div class="bw-total-amount" id="wTotal">$180</div>
+              </div>
+            </div>
+            <div class="bw-foot">
+              <button class="btn btn--primary btn--full" onclick="openBookingFromSidebar()">Book Now</button>
+            </div>
+            <div class="bw-trust">
+              <div class="bw-trust-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                Free cancellation 7+ days before
+              </div>
+              <div class="bw-trust-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                No account needed to book
+              </div>
+              <a href="https://wa.me/12428175387" target="_blank" rel="noopener" class="bw-whatsapp">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
+                </svg>
+                Questions? WhatsApp us
+              </a>
+            </div>
+          </div>
+        </div><!-- /listing-sidebar -->
+
+      </div><!-- /listing-grid -->
+    </div><!-- /container -->
+  </div><!-- /listing-body -->
+
+
+  <!-- ══════════════════════════════════════════════════════
+       REELS SLIDER
+       ══════════════════════════════════════════════════════ -->
+  <section class="reels-section" id="reels">
+    <div class="container">
+      <div class="feed-head">
+        <div>
+          <p class="section-label">@10summaz_adventures</p>
+          <h2 class="section-heading" style="color:#fff">See it in action</h2>
+        </div>
+        <a href="https://www.instagram.com/10summaz_adventures/" target="_blank" rel="noopener" class="feed-ig-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+          Follow on Instagram
+        </a>
+      </div>
+    </div>
+    <div class="reels-strip-wrap">
+      <div class="reels-strip" id="beholdReelsTrack">
+        <!-- JS-rendered reel cards go here -->
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════════════════════════════
+       PHOTO GALLERY
+       ══════════════════════════════════════════════════════ -->
+  <section class="behold-section" id="gallery">
+    <div class="container">
+      <div class="feed-head">
+        <div>
+          <p class="section-label">Gallery</p>
+          <h2 class="section-heading">At the water</h2>
+        </div>
+      </div>
+      <div class="behold-grid" id="beholdGalleryGrid">
+        <!-- JS-rendered photo cards go here -->
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════════════════════════════
+       REVIEWS
+       ══════════════════════════════════════════════════════ -->
+  <section class="reviews-section" id="reviews">
+    <div class="container">
+      <div class="tcols-header">
+        <div class="tcols-badge">Reviews</div>
+        <h2 class="tcols-title">What our guests say</h2>
+        <p class="tcols-sub">Real experiences from people who've been out on the water with us in Nassau.</p>
+      </div>
+    </div>
+
+    <div class="tcols-outer">
+
+      <!-- Column 1 -->
+      <div class="tcols-col">
+        <div class="tcol-inner" style="animation-duration:28s">
+          <div class="tcol-card">
+            <div class="tcol-card__rating"><span class="tcol-stars">★★★★★</span><span class="tcol-score">10/10</span></div>
+            <p class="tcol-card__text">"This was honestly the highlight of my Bahamas trip. First time ever riding a jet ski and I was nervous at first, but Summaz made me feel comfortable right away. Super fun energy, beautiful water, and they showed us some amazing spots."</p>
+            <div class="tcol-card__author"><img src="https://randomuser.me/api/portraits/women/1.jpg" alt="Ashley M." class="tcol-card__avatar"><div><div class="tcol-card__name">Ashley M.</div><div class="tcol-card__loc">Atlanta, Georgia</div></div></div>
+          </div>
+          <div class="tcol-card">
+            <div class="tcol-card__rating"><span class="tcol-stars">★★★★★</span><span class="tcol-score">9.5/10</span></div>
+            <p class="tcol-card__text">"This experience was crazy in the best way possible 😂 The jet skis were fast, the vibes were good, and the guides were real cool and patient. Definitely worth every dollar. Next time I'm booking a longer excursion for sure."</p>
+            <div class="tcol-card__author"><img src="https://randomuser.me/api/portraits/men/2.jpg" alt="Marcus T." class="tcol-card__avatar"><div><div class="tcol-card__name">Marcus T.</div><div class="tcol-card__loc">Houston, Texas</div></div></div>
+          </div>
+          <div class="tcol-card">
+            <div class="tcol-card__rating"><span class="tcol-stars">★★★★★</span><span class="tcol-score">10/10</span></div>
+            <p class="tcol-card__text">"I had the BEST time! This was my first time on a jet ski and now I'm obsessed. The water was crystal clear and the whole experience felt safe and exciting at the same time. Everybody was friendly and professional. 10/10 easy."</p>
+            <div class="tcol-card__author"><img src="https://randomuser.me/api/portraits/women/3.jpg" alt="Jasmine R." class="tcol-card__avatar"><div><div class="tcol-card__name">Jasmine R.</div><div class="tcol-card__loc">Orlando, Florida</div></div></div>
+          </div>
+          <div class="tcol-card">
+            <div class="tcol-card__rating"><span class="tcol-stars">★★★★★</span><span class="tcol-score">9/10</span></div>
+            <p class="tcol-card__text">"Booked this excursion with my cousins while visiting Nassau and we all loved it. Great customer service and the scenery was unreal. They made sure we were comfortable before taking off. Definitely something I'd recommend to anybody visiting the island."</p>
+            <div class="tcol-card__author"><img src="https://randomuser.me/api/portraits/men/4.jpg" alt="Kevin L." class="tcol-card__avatar"><div><div class="tcol-card__name">Kevin L.</div><div class="tcol-card__loc">Chicago, Illinois</div></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Column 2 (tablet+) -->
+      <div class="tcols-col tcols-col--2">
+        <div class="tcol-inner" style="animation-duration:34s">
+          <div class="tcol-card">
+            <div class="tcol-card__rating"><span class="tcol-stars">★★★★☆</span><span class="tcol-score">8/10</span></div>
+            <p class="tcol-card__text">"Such a vibe from beginning to end! The staff was funny, welcoming, and made the whole experience unforgettable. I was scared to ride at first but by the end I didn't want to get off the jet ski 😂 It was very hot this day too, so the umbrellas came in clutch."</p>
+            <div class="tcol-card__author"><img src="https://randomuser.me/api/portraits/women/5.jpg" alt="Brianna S." class="tcol-card__avatar"><div><div class="tcol-card__name">Brianna S.</div><div class="tcol-card__loc">Charlotte, North Carolina</div></div></div>
+          </div>
+          <div class="tcol-card">
+            <div class="tcol-card__rating"><span class="tcol-stars">★★★★★</span><span class="tcol-score">9.5/10</span></div>
+            <p class="tcol-card__text">"First time in the Bahamas and this excursion made the trip complete. Smooth booking process, great communication, and the guides knew all the best photo spots. Felt more like hanging with friends than a regular tourist activity. 🇧🇸"</p>
+            <div class="tcol-card__author"><img src="https://randomuser.me/api/portraits/men/6.jpg" alt="Daniel P." class="tcol-card__avatar"><div><div class="tcol-card__name">Daniel P.</div><div class="tcol-card__loc">Brooklyn, New York</div></div></div>
+          </div>
+          <div class="tcol-card">
+            <div class="tcol-card__rating"><span class="tcol-stars">★★★★★</span><span class="tcol-score">10/10</span></div>
+            <p class="tcol-card__text">"The energy was EVERYTHING. Music, views, laughs, good people… just an overall amazing experience. My boyfriend and I had so much fun and already said we're booking again the next time we visit Nassau."</p>
+            <div class="tcol-card__author"><img src="https://randomuser.me/api/portraits/women/7.jpg" alt="Tiana W." class="tcol-card__avatar"><div><div class="tcol-card__name">Tiana W.</div><div class="tcol-card__loc">Detroit, Michigan</div></div></div>
+          </div>
+          <div class="tcol-card">
+            <div class="tcol-card__rating"><span class="tcol-stars">★★★★★</span><span class="tcol-score">9/10</span></div>
+            <p class="tcol-card__text">"I've done jet skiing before in other places but this was by far the best experience. The water in Nassau is beautiful and the guides really know how to make it fun. You can tell they care about guests having a good time."</p>
+            <div class="tcol-card__author"><img src="https://randomuser.me/api/portraits/men/8.jpg" alt="Ryan C." class="tcol-card__avatar"><div><div class="tcol-card__name">Ryan C.</div><div class="tcol-card__loc">Los Angeles, California</div></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Column 3 (desktop only) -->
+      <div class="tcols-col tcols-col--3">
+        <div class="tcol-inner" style="animation-duration:30s">
+          <div class="tcol-card">
+            <div class="tcol-card__rating"><span class="tcol-stars">★★★★★</span><span class="tcol-score">10/10</span></div>
+            <p class="tcol-card__text">"I came with a group of my girls for my birthday trip and this ended up being everybody's favorite activity. Super fun, organized, and the pictures came out amazing. We really enjoyed seeing Lil Summaz in action too 🌊"</p>
+            <div class="tcol-card__author"><img src="https://randomuser.me/api/portraits/women/9.jpg" alt="Samantha G." class="tcol-card__avatar"><div><div class="tcol-card__name">Samantha G.</div><div class="tcol-card__loc">Miami, Florida</div></div></div>
+          </div>
+          <div class="tcol-card">
+            <div class="tcol-card__rating"><span class="tcol-stars">★★★★★</span><span class="tcol-score">9.5/10</span></div>
+            <p class="tcol-card__text">"Real good people and real good vibes. They explained everything clearly and made sure everybody stayed safe while still having fun. Riding through that blue water was something I'll never forget."</p>
+            <div class="tcol-card__author"><img src="https://randomuser.me/api/portraits/men/10.jpg" alt="Chris B." class="tcol-card__avatar"><div><div class="tcol-card__name">Chris B.</div><div class="tcol-card__loc">Philadelphia, Pennsylvania</div></div></div>
+          </div>
+          <div class="tcol-card">
+            <div class="tcol-card__rating"><span class="tcol-stars">★★★★☆</span><span class="tcol-score">7.5/10</span></div>
+            <p class="tcol-card__text">"This was my first time trying any water sport and now I see what the hype is about! The staff was patient and encouraging which helped calm my nerves. Nassau is beautiful and this excursion made me appreciate it even more."</p>
+            <div class="tcol-card__author"><img src="https://randomuser.me/api/portraits/women/11.jpg" alt="Natalie H." class="tcol-card__avatar"><div><div class="tcol-card__name">Natalie H.</div><div class="tcol-card__loc">Toronto, Canada</div></div></div>
+          </div>
+          <div class="tcol-card">
+            <div class="tcol-card__rating"><span class="tcol-stars">★★★★★</span><span class="tcol-score">9/10</span></div>
+            <p class="tcol-card__text">"Can't lie, this was one of the best excursions I've done on vacation. Good music, good laughs, and amazing scenery. The whole team was welcoming and made sure everyone enjoyed themselves. Definitely recommending this to my friends."</p>
+            <div class="tcol-card__author"><img src="https://randomuser.me/api/portraits/men/12.jpg" alt="Jerome K." class="tcol-card__avatar"><div><div class="tcol-card__name">Jerome K.</div><div class="tcol-card__loc">New Orleans, Louisiana</div></div></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════════════════════════════
+       CTA STRIP
+       ══════════════════════════════════════════════════════ -->
+  <section class="cta-strip">
+    <div class="container">
+      <p class="cta-strip__eyebrow">Ready?</p>
+      <h2 class="cta-strip__title">Your beach day is waiting.</h2>
+      <p class="cta-strip__sub">Takes 2 minutes. No account needed. Pay on arrival or send via Zelle / Venmo.</p>
+      <div class="cta-strip__actions">
+        <button class="btn btn--teal btn--lg" onclick="openBooking()">Book Now · From $180</button>
+        <a href="https://wa.me/12428175387" target="_blank" rel="noopener" class="btn btn--ghost btn--lg">WhatsApp Us</a>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════════════════════════════
+       FOOTER
+       ══════════════════════════════════════════════════════ -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer__inner">
+        <div>
+          <div class="footer__logo"><img src="https://res.cloudinary.com/dko76z0df/image/upload/v1782304824/summaz/logo.png" alt="Summaz Escape"></div>
+        </div>
+        <div class="footer__col">
+          <div class="footer__col-head">Legal</div>
+          <div class="footer__links">
+            <a href="terms-and-conditions.html" class="footer__link">Terms &amp; Conditions</a>
+            <a href="refunds-and-cancellation.html" class="footer__link">Cancellation Policy</a>
+            <a href="privacy-policy.html" class="footer__link">Privacy Policy</a>
+          </div>
+        </div>
+        <div class="footer__col">
+          <div class="footer__col-head">Contact</div>
+          <div class="footer__links">
+            <a href="https://wa.me/12428175387" target="_blank" rel="noopener" class="footer__link">WhatsApp</a>
+            <a href="mailto:booking@summazescape.com" class="footer__link">booking@summazescape.com</a>
+            <a href="https://maps.app.goo.gl/FAUBZqZ5e4TNKpBZ7" target="_blank" rel="noopener" class="footer__link">Arawak Cay, Nassau</a>
+          </div>
+        </div>
+      </div>
+      <div class="footer__bottom">
+        <span>&copy; 2026 Summaz Escape. All rights reserved. · booking.summazescape.com</span>
+        <div class="footer__socials">
+          <a href="https://www.facebook.com" target="_blank" rel="noopener" class="footer__social" aria-label="Facebook">
+            <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+          </a>
+          <a href="https://www.instagram.com" target="_blank" rel="noopener" class="footer__social" aria-label="Instagram">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+          </a>
+          <a href="https://www.tiktok.com" target="_blank" rel="noopener" class="footer__social" aria-label="TikTok">
+            <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.18 8.18 0 0 0 4.78 1.52V6.76a4.85 4.85 0 0 1-1.01-.07z"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+
+  <!-- ══════════════════════════════════════════════════════
+       MOBILE BOTTOM BAR
+       ══════════════════════════════════════════════════════ -->
+  <div class="mobile-bar">
+    <div>
+      <div class="mobile-bar__price" id="mobileBarTotal">From $180</div>
+      <div class="mobile-bar__label">per person</div>
+    </div>
+    <button class="btn btn--primary" onclick="openBookingFromSidebar()">Book Now</button>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════════════════
+       BOOKING MODAL
+       ══════════════════════════════════════════════════════ -->
+  <div class="modal-overlay" id="bookingModal" role="dialog" aria-modal="true" aria-labelledby="modalStepTitle">
+    <div class="modal" id="modalPanel">
+
+      <!-- Honeypot — hidden from humans, visible to bots -->
+      <div class="form-honeypot" aria-hidden="true">
+        <input type="text" name="email_confirm" id="hpField" tabindex="-1"
+               autocomplete="off" oninput="state.honeypot = this.value">
+      </div>
+
+      <!-- Loading overlay (inside modal) -->
+      <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+        <p class="loading-text">Securing your spot…</p>
+      </div>
+
+      <!-- Progress line -->
+      <div class="modal-progress">
+        <div class="modal-progress-fill" id="modalProgressFill"></div>
+      </div>
+
+      <!-- Modal header -->
+      <div class="modal__head" id="modalHeader">
+        <div class="modal__step-meta">
+          <div class="modal__step-counter" id="modalStepCounter">Step 1 of 7</div>
+          <div class="modal__step-title" id="modalStepTitle">How many guests?</div>
+        </div>
+        <button class="modal__close" onclick="closeBooking()" aria-label="Close booking">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+
+      <!-- Modal body -->
+      <div class="modal__body" id="modalBody"></div>
+
+      <!-- Modal footer -->
+      <div class="modal__foot" id="modalFooter">
+        <div class="modal__foot-total">
+          <div class="modal__foot-label">Total</div>
+          <div class="modal__foot-amount" id="footerTotalAmount">$180</div>
+        </div>
+        <div class="modal__foot-actions">
+          <button class="btn btn--outline btn--sm" id="backBtn" onclick="prevStep()" style="display:none">← Back</button>
+          <button class="btn btn--primary" id="nextBtn" onclick="nextStep()">Continue →</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- Config -->
+  <script>
+    window.SUMMAZ_CONFIG = {
+      zelle:       'booking@summazescape.com',
+      venmo:       '@SummazEscape',
+      whatsapp:    '12428175387',
+      bookingEmail:'booking@summazescape.com',
+      scriptUrl:   '/api/register'
+    };
+  </script>
+  <!-- Video lightbox -->
+  <div class="vlightbox" id="vlightbox" role="dialog" aria-modal="true" aria-label="Video player">
+    <button class="vlightbox__close" id="vlightboxClose" aria-label="Close video">
+      <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" width="20" height="20"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <div class="vlightbox__wrap" id="vlightboxWrap"></div>
+  </div>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
