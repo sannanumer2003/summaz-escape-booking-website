@@ -53,9 +53,9 @@ module.exports = async function handler(req, res) {
   /* 1. Honeypot */
   if (body.honeypot) return spamOk(res);
 
-  /* 2. Timing — under 30s = bot, under 3s = direct API hit */
+  /* 2. Timing — under 20s = bot, under 3s = direct API hit */
   const elapsed = Number(body.elapsed) || 0;
-  if (elapsed < 3000 || elapsed < 30000) return spamOk(res);
+  if (elapsed < 3000 || elapsed < 20000) return spamOk(res);
 
   const {
     adults        = 1,
