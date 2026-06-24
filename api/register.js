@@ -203,8 +203,8 @@ function shell(rows) {
 
       <!-- Header -->
       <tr><td style="background:#ffffff;padding:26px 36px;text-align:center;">
-        <img src="${LOGO_URL}" alt="Summaz Escape" height="42"
-             style="height:42px;width:auto;display:inline-block;" />
+        <img src="${LOGO_URL}" alt="Summaz Escape" height="110"
+             style="height:110px;width:auto;display:inline-block;" />
       </td></tr>
 
       ${rows}
