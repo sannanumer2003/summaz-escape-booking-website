@@ -76,7 +76,7 @@
       <div class="anchor-nav__links">
         <a href="#overview"    class="anchor-nav__link is-active" data-section="overview">Overview</a>
         <a href="#included"    class="anchor-nav__link" data-section="included">What's Included</a>
-        <a href="#jetski"      class="anchor-nav__link" data-section="jetski">Jet Ski</a>
+        <a href="#pricing"     class="anchor-nav__link" data-section="pricing">Pricing</a>
         <a href="#extras"      class="anchor-nav__link" data-section="extras">Add-Ons</a>
         <a href="#location"    class="anchor-nav__link" data-section="location">Location</a>
         <a href="#faq"         class="anchor-nav__link" data-section="faq">FAQ</a>
@@ -187,16 +187,15 @@
             </ul>
           </section>
 
-          <!-- Jet Ski Details -->
-          <section class="listing-section" id="jetski">
-            <p class="section-label">Jet ski details</p>
-            <h2 class="section-heading">Solo or tandem</h2>
-            <p class="section-body" style="margin-bottom:20px">The adult and child packages reflect how you'll ride, not strictly your age. If you want your own jet ski, book adult. If you want to ride behind someone in your group, book child.</p>
+          <!-- Pricing -->
+          <section class="listing-section" id="pricing">
+            <p class="section-label">Pricing</p>
+            <h2 class="section-heading">Adult &amp; Child Pricing</h2>
+            <p class="section-body" style="margin-bottom:20px">One package, two pricing tiers. Adults get their own jet ski. Children ride tandem with an adult in the group.</p>
             <div class="ticket-options">
               <div class="ticket ticket--featured">
-                <div class="ticket__badge">Most booked</div>
                 <div class="ticket__price">$180<span class="ticket__per">/ adult</span></div>
-                <div class="ticket__name">Adult Package</div>
+                <div class="ticket__name">Adult</div>
                 <div class="ticket__tagline">Solo rider. You control the jet ski.</div>
                 <div class="ticket__features">
                   <div class="ticket__feature">
@@ -220,15 +219,23 @@
                     No driver's license required
                   </div>
                 </div>
+                <div class="ticket__adder">
+                  <div class="ticket__counter">
+                    <button class="ticket__counter-btn" id="ticketAdultMinus" onclick="ticketCount('adult',-1)" disabled aria-label="Remove adult">−</button>
+                    <span class="ticket__counter-num" id="ticketAdultCount">0</span>
+                    <button class="ticket__counter-btn" onclick="ticketCount('adult',1)" aria-label="Add adult">+</button>
+                  </div>
+                  <button class="btn btn--primary ticket__add-btn" onclick="addToSidebar('adults')">Add an Adult</button>
+                </div>
               </div>
               <div class="ticket">
                 <div class="ticket__price">$115<span class="ticket__per">/ child</span></div>
-                <div class="ticket__name">Child Package</div>
-                <div class="ticket__tagline">Rides tandem with an adult in your group.</div>
+                <div class="ticket__name">Child</div>
+                <div class="ticket__tagline">Rides behind an adult in the group.</div>
                 <div class="ticket__features">
                   <div class="ticket__feature">
                     <span class="chk"><svg viewBox="0 0 15 15" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="2.5 7.5 6 11 12.5 4"/></svg></span>
-                    Rides tandem, no minimum age
+                    Rides behind an adult, no minimum age
                   </div>
                   <div class="ticket__feature">
                     <span class="chk"><svg viewBox="0 0 15 15" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="2.5 7.5 6 11 12.5 4"/></svg></span>
@@ -243,7 +250,15 @@
                     Life vest provided
                   </div>
                 </div>
-                <div class="ticket__note">Each child must be paired with an adult from your booking. Solo riding is available on the adult package only.</div>
+                <div class="ticket__note">Each child books with an adult from the same group. Children do not ride solo.</div>
+                <div class="ticket__adder">
+                  <div class="ticket__counter">
+                    <button class="ticket__counter-btn" id="ticketChildMinus" onclick="ticketCount('child',-1)" disabled aria-label="Remove child">−</button>
+                    <span class="ticket__counter-num" id="ticketChildCount">0</span>
+                    <button class="ticket__counter-btn" onclick="ticketCount('child',1)" aria-label="Add child">+</button>
+                  </div>
+                  <button class="btn btn--primary ticket__add-btn" onclick="addToSidebar('children')">Add a Child</button>
+                </div>
               </div>
             </div>
           </section>
@@ -290,7 +305,7 @@
                 <div class="extra-row__price">Via WhatsApp</div>
               </div>
             </div>
-            <a href="addons.html" target="_blank" rel="noopener" class="extras-learn-more">Understand how add-ons work →</a>
+            <a href="addons.html" target="_blank" rel="noopener" class="btn btn--primary" style="display:inline-flex;align-items:center;gap:6px;margin-top:20px;">Understand how add-ons work →</a>
           </section>
 
           <!-- Location -->

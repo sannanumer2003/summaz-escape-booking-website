@@ -59,7 +59,7 @@ window.addEventListener('scroll', () => {
 
 /* ── Anchor nav active section tracking + auto-scroll ───── */
 (function() {
-  const sections = ['overview','included','jetski','extras','location','faq','kids','experience','reels','gallery','reviews'];
+  const sections = ['overview','included','pricing','extras','location','faq','kids','experience','reels','gallery','reviews'];
   const anchors  = document.querySelectorAll('.anchor-nav__link[data-section]');
   if (!anchors.length) return;
 
@@ -170,6 +170,14 @@ function closeBooking() {
   document.getElementById('bookingModal').classList.remove('is-open');
   document.body.style.overflow = '';
   if (previousFocus) previousFocus.focus();
+  // Sync sidebar DOM to whatever counts are in state after modal changes
+  var wAdult = document.getElementById('wAdultCount');
+  var wChild = document.getElementById('wChildCount');
+  if (wAdult) wAdult.textContent = state.adults;
+  if (wChild) wChild.textContent = state.children;
+  updateSidebarTotal();
+  updateSidebarMinusButtons();
+  updateMobileBarTotal();
 }
 
 /* Close on overlay click */
@@ -1108,4 +1116,35 @@ function renderGallery(posts) {
     card.addEventListener('keydown', function(e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openVideo(card.dataset.src); } });
   });
 })();
+
+/* ── Pricing card counters ───────────────────────────────── */
+var _ticketAdult = 0;
+var _ticketChild = 0;
+
+function ticketCount(type, delta) {
+  if (type === 'adult') {
+    _ticketAdult = Math.max(0, _ticketAdult + delta);
+    document.getElementById('ticketAdultCount').textContent = _ticketAdult;
+    document.getElementById('ticketAdultMinus').disabled = _ticketAdult <= 0;
+  } else {
+    _ticketChild = Math.max(0, _ticketChild + delta);
+    document.getElementById('ticketChildCount').textContent = _ticketChild;
+    document.getElementById('ticketChildMinus').disabled = _ticketChild <= 0;
+  }
+}
+
+function addToSidebar(field) {
+  var count = field === 'adults' ? _ticketAdult : _ticketChild;
+  if (count === 0) return;
+  sidebarCount(field, count);
+  if (field === 'adults') {
+    _ticketAdult = 0;
+    document.getElementById('ticketAdultCount').textContent = 0;
+    document.getElementById('ticketAdultMinus').disabled = true;
+  } else {
+    _ticketChild = 0;
+    document.getElementById('ticketChildCount').textContent = 0;
+    document.getElementById('ticketChildMinus').disabled = true;
+  }
+}
 

@@ -326,6 +326,28 @@ ul { list-style: none; }
   display: flex; align-items: center; justify-content: center;
 }
 .ticket__feature .chk svg { width: 15px; height: 15px; stroke: var(--teal); stroke-width: 2.2; }
+.ticket__adder {
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  margin-top: 20px; padding-top: 20px;
+  border-top: 1px solid #E5E7EB;
+}
+.ticket__counter {
+  display: flex; align-items: center;
+  border: 1.5px solid #E5E7EB; border-radius: 8px; overflow: hidden;
+}
+.ticket__counter-btn {
+  width: 36px; height: 36px; background: none; border: none;
+  font-size: 18px; cursor: pointer; color: #031D2F; transition: background .12s;
+}
+.ticket__counter-btn:hover:not(:disabled) { background: #F3F4F6; }
+.ticket__counter-btn:disabled { color: #D1D5DB; cursor: default; }
+.ticket__counter-num {
+  min-width: 34px; text-align: center;
+  font-size: 15px; font-weight: 700; color: #111827;
+  border-left: 1.5px solid #E5E7EB; border-right: 1.5px solid #E5E7EB;
+  padding: 0 4px; line-height: 36px;
+}
+.ticket__add-btn { flex: none; }
 .ticket__note {
   margin-top: 12px; padding: 10px 12px;
   background: var(--surface); border-radius: var(--radius-sm);
