@@ -467,11 +467,11 @@ function togglePolicy(labelEl, event) {
 function renderStep6(body) {
   const methods = [
     {
-      id: 'zelle', label: 'Zelle', tag: 'US bank accounts only',
+      id: 'zelle', label: 'Zelle', tag: 'Send to anel@summazescape.com · or scan QR in your bank app',
       icon: '<img src="https://res.cloudinary.com/dko76z0df/image/upload/v1782304826/summaz/zelle-logo.png" class="payment-option__logo" alt="Zelle">'
     },
     {
-      id: 'venmo', label: 'Venmo', tag: 'US bank accounts only',
+      id: 'venmo', label: 'Venmo', tag: 'Pay via @summaz-escape · by username, link, or QR scan',
       icon: '<img src="https://res.cloudinary.com/dko76z0df/image/upload/v1782304825/summaz/venmo-logo.png" class="payment-option__logo" alt="Venmo">'
     },
     {
@@ -493,33 +493,14 @@ function renderStep6(body) {
   `).join('');
 
   body.innerHTML = `
-    <p class="step-sub">Zelle and Venmo are settled after booking. You'll receive instructions by email. Pay on Arrival means a card machine at the beach.</p>
+    <p class="step-sub">Zelle and Venmo are settled after booking. You'll receive full instructions and a QR code on the next screen and by email. Pay on Arrival means a card machine at the beach.</p>
     <div class="payment-options">${options}</div>
-    <div class="payment-note" id="zelleNote">
-      <div class="payment-note__qr-row">
-        <img src="https://res.cloudinary.com/dko76z0df/image/upload/v1782858825/summaz/zelle-qr.jpg" alt="Zelle QR code" class="payment-note__qr">
-        <div>
-          <p>Zelle to <strong>anel@summazescape.com</strong> — or scan the QR code.</p>
-          <p style="margin-top:8px;color:#6B7280;font-size:13px;">After paying, email a screenshot to <strong>booking@summazescape.com</strong> with your reference number. Your spot holds for 24 hours.</p>
-        </div>
-      </div>
-    </div>
-    <div class="payment-note" id="venmoNote">
-      <div class="payment-note__qr-row">
-        <img src="https://res.cloudinary.com/dko76z0df/image/upload/v1782858823/summaz/venmo-qr.png" alt="Venmo QR code" class="payment-note__qr">
-        <div>
-          <p>Venmo <strong>@summaz-escape</strong> — or scan the QR code.</p>
-          <p style="margin-top:6px;"><a href="https://account.venmo.com/u/summaz-escape" target="_blank" rel="noopener" style="color:#0077B6;font-size:13px;">account.venmo.com/u/summaz-escape</a></p>
-          <p style="margin-top:8px;color:#6B7280;font-size:13px;">After paying, email a screenshot to <strong>booking@summazescape.com</strong> with your reference number. Your spot holds for 24 hours.</p>
-        </div>
-      </div>
-    </div>
     <div class="payment-note is-arrival" id="arrivalNote">
       You'll pay by credit card machine when you arrive. Our team will call to confirm your booking shortly after you submit.
     </div>
     <p class="form-error" id="paymentErr" style="margin-top:8px">Please select a payment method.</p>
   `;
-  if (state.paymentMethod) updatePaymentNotes(state.paymentMethod);
+  if (state.paymentMethod === 'arrival') updatePaymentNotes('arrival');
 }
 
 function selectPayment(id, labelEl) {
@@ -829,13 +810,25 @@ function showConfirmation(data) {
     : '';
 
   let instructions = '';
-  if (method === 'zelle' || method === 'venmo') {
-    const handle = method === 'zelle' ? cfg.zelle : cfg.venmo;
-    const appName = method === 'zelle' ? 'Zelle' : 'Venmo';
+  if (method === 'zelle') {
     instructions = `
       <div class="confirmation__instructions">
-        <p>Open <strong>${appName}</strong> and send <strong>${total}</strong> to <strong>${handle}</strong>.</p>
-        <p style="margin-top:12px;font-weight:600;">Then send us your payment screenshot:</p>
+        <p>Open Zelle and send <strong>${total}</strong> to <strong>${escHtml(cfg.zelle)}</strong> — or scan the QR code below in your bank's app to send the payment directly into our Zelle:</p>
+        <img src="${escHtml(cfg.zelleQr)}" alt="Zelle QR code" class="confirmation__qr">
+        <p style="margin-top:16px;font-weight:600;">Then send us your payment screenshot:</p>
+        <ol>
+          <li>Reply to your confirmation email with your screenshot attached. In the message body write: <strong>Payment for ${escHtml(ref)}</strong></li>
+          <li>Or send a new email to <strong><a href="mailto:${cfg.bookingEmail}">${cfg.bookingEmail}</a></strong> with subject <strong>Payment for ${escHtml(ref)}</strong> and your screenshot attached.</li>
+        </ol>
+        <p style="margin-top:10px;font-size:13px;color:var(--text-muted);">Your reservation holds for 24 hours. Once we receive your screenshot, we'll confirm your booking.</p>
+      </div>
+    `;
+  } else if (method === 'venmo') {
+    instructions = `
+      <div class="confirmation__instructions">
+        <p>Send <strong>${total}</strong> to <strong>${escHtml(cfg.venmo)}</strong> on Venmo — or <a href="${cfg.venmoUrl}" target="_blank" rel="noopener" style="color:#0077B6;">click here to open Venmo</a> — or scan the QR code below to pay directly:</p>
+        <img src="${escHtml(cfg.venmoQr)}" alt="Venmo QR code" class="confirmation__qr">
+        <p style="margin-top:16px;font-weight:600;">Then send us your payment screenshot:</p>
         <ol>
           <li>Reply to your confirmation email with your screenshot attached. In the message body write: <strong>Payment for ${escHtml(ref)}</strong></li>
           <li>Or send a new email to <strong><a href="mailto:${cfg.bookingEmail}">${cfg.bookingEmail}</a></strong> with subject <strong>Payment for ${escHtml(ref)}</strong> and your screenshot attached.</li>

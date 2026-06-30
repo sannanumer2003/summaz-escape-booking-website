@@ -295,17 +295,14 @@ function guestEmail(b) {
       <table width="100%" cellpadding="0" cellspacing="0" role="presentation"
              style="background:#F0F7FF;border:2px solid #0077B6;border-radius:10px;padding:22px;">
         <tr><td>
-          <table cellpadding="0" cellspacing="0" role="presentation" width="100%">
-            <tr>
-              <td style="vertical-align:top;padding-right:18px;">
-                <p style="margin:0 0 5px;font-size:13px;color:#6B7280;">Open Zelle and send <strong style="color:#111827;">${totalDisplay}</strong> to:</p>
-                <p style="margin:0 0 16px;font-size:22px;font-weight:800;color:#031D2F;letter-spacing:-0.3px;">${h(ZELLE_HANDLE)}</p>
-              </td>
-              <td style="vertical-align:top;text-align:right;width:96px;">
-                <img src="${ZELLE_QR_URL}" alt="Zelle QR" width="88" style="border-radius:6px;border:1px solid #E5E7EB;display:block;">
-              </td>
-            </tr>
-          </table>
+          <p style="margin:0 0 5px;font-size:13px;color:#6B7280;">Open Zelle and send <strong style="color:#111827;">${totalDisplay}</strong> to:</p>
+          <p style="margin:0 0 16px;font-size:22px;font-weight:800;color:#031D2F;letter-spacing:-0.3px;">${h(ZELLE_HANDLE)}</p>
+          <p style="margin:0 0 14px;font-size:14px;color:#374151;line-height:1.6;">
+            Or scan the QR code below in your bank's app to send the payment directly into our Zelle:
+          </p>
+          <p style="margin:0 0 20px;text-align:center;">
+            <img src="${ZELLE_QR_URL}" alt="Zelle QR code" width="180" style="border-radius:8px;border:1px solid #E5E7EB;display:inline-block;">
+          </p>
           <p style="margin:0 0 12px;font-size:14px;font-weight:700;color:#111827;">
             Then send us your payment screenshot:
           </p>
@@ -323,20 +320,16 @@ function guestEmail(b) {
       <table width="100%" cellpadding="0" cellspacing="0" role="presentation"
              style="background:#F0F7FF;border:2px solid #0077B6;border-radius:10px;padding:22px;">
         <tr><td>
-          <table cellpadding="0" cellspacing="0" role="presentation" width="100%">
-            <tr>
-              <td style="vertical-align:top;padding-right:18px;">
-                <p style="margin:0 0 5px;font-size:13px;color:#6B7280;">Open Venmo and send <strong style="color:#111827;">${totalDisplay}</strong> to:</p>
-                <p style="margin:0 0 8px;font-size:22px;font-weight:800;color:#031D2F;letter-spacing:-0.3px;">${h(VENMO_HANDLE)}</p>
-                <p style="margin:0 0 16px;font-size:13px;">
-                  <a href="${VENMO_URL}" style="color:#0077B6;text-decoration:none;">${VENMO_URL}</a>
-                </p>
-              </td>
-              <td style="vertical-align:top;text-align:right;width:96px;">
-                <img src="${VENMO_QR_URL}" alt="Venmo QR" width="88" style="border-radius:6px;border:1px solid #E5E7EB;display:block;">
-              </td>
-            </tr>
-          </table>
+          <p style="margin:0 0 5px;font-size:13px;color:#6B7280;">Send <strong style="color:#111827;">${totalDisplay}</strong> to <strong style="color:#031D2F;">${h(VENMO_HANDLE)}</strong> on Venmo — or open Venmo directly:</p>
+          <p style="margin:0 0 16px;">
+            <a href="${VENMO_URL}" style="color:#0077B6;font-size:14px;text-decoration:none;">${VENMO_URL}</a>
+          </p>
+          <p style="margin:0 0 14px;font-size:14px;color:#374151;line-height:1.6;">
+            Or scan the QR code below to pay:
+          </p>
+          <p style="margin:0 0 20px;text-align:center;">
+            <img src="${VENMO_QR_URL}" alt="Venmo QR code" width="180" style="border-radius:8px;border:1px solid #E5E7EB;display:inline-block;">
+          </p>
           <p style="margin:0 0 12px;font-size:14px;font-weight:700;color:#111827;">
             Then send us your payment screenshot:
           </p>
