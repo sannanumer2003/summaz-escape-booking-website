@@ -5,6 +5,7 @@
     "node": ">=18.0.0"
   },
   "devDependencies": {
-    "cloudinary": "^2.10.0"
+    "cloudinary": "^2.10.0",
+    "qrcode": "^1.5.4"
   }
 }

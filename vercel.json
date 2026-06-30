@@ -3,8 +3,5 @@
     "api/register.js": {
       "maxDuration": 15
     }
-  },
-  "rewrites": [
-    { "source": "/", "destination": "/coming-soon.html" }
-  ]
+  }
 }

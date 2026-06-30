@@ -9,8 +9,11 @@
      GAS_URL          → Google Apps Script URL (keeps Sheets updated)
 ============================================================ */
 
-const ZELLE_HANDLE  = process.env.ZELLE_HANDLE  || 'booking@summazescape.com';
-const VENMO_HANDLE  = process.env.VENMO_HANDLE  || '@SummazEscape';
+const ZELLE_HANDLE  = process.env.ZELLE_HANDLE  || 'anel@summazescape.com';
+const VENMO_HANDLE  = process.env.VENMO_HANDLE  || '@summaz-escape';
+const ZELLE_QR_URL  = 'https://res.cloudinary.com/dko76z0df/image/upload/v1782858825/summaz/zelle-qr.jpg';
+const VENMO_QR_URL  = 'https://res.cloudinary.com/dko76z0df/image/upload/v1782858823/summaz/venmo-qr.png';
+const VENMO_URL     = 'https://account.venmo.com/u/summaz-escape';
 const GAS_URL       = process.env.GAS_URL        || '';
 const RESEND_KEY    = process.env.RESEND_API_KEY;
 
@@ -266,21 +269,7 @@ function guestEmail(b) {
 
   let payBlock;
 
-  const zelleVenmoBlock = (appName, handle) => `
-    <tr><td style="padding:0 36px 32px;">
-      <p style="margin:0 0 14px;font-size:16px;font-weight:700;color:#111827;">How to pay</p>
-      <table width="100%" cellpadding="0" cellspacing="0" role="presentation"
-             style="background:#F0F7FF;border:2px solid #0077B6;border-radius:10px;padding:22px;">
-        <tr><td>
-          <p style="margin:0 0 5px;font-size:13px;color:#6B7280;">
-            Open ${appName} and send <strong style="color:#111827;">${totalDisplay}</strong> to:
-          </p>
-          <p style="margin:0 0 22px;font-size:22px;font-weight:800;color:#031D2F;letter-spacing:-0.3px;">
-            ${h(handle)}
-          </p>
-          <p style="margin:0 0 12px;font-size:14px;font-weight:700;color:#111827;">
-            Then send us your payment screenshot. Two ways to do it:
-          </p>
+  const payInstructions = (steps) => `
           <table cellpadding="0" cellspacing="0" role="presentation" width="100%">
             <tr>
               <td style="vertical-align:top;padding-right:8px;font-size:13px;color:#0077B6;font-weight:700;width:18px;">1.</td>
@@ -298,7 +287,60 @@ function guestEmail(b) {
                 and your screenshot attached.
               </td>
             </tr>
+          </table>`;
+
+  const zelleBlock = `
+    <tr><td style="padding:0 36px 32px;">
+      <p style="margin:0 0 14px;font-size:16px;font-weight:700;color:#111827;">How to pay</p>
+      <table width="100%" cellpadding="0" cellspacing="0" role="presentation"
+             style="background:#F0F7FF;border:2px solid #0077B6;border-radius:10px;padding:22px;">
+        <tr><td>
+          <table cellpadding="0" cellspacing="0" role="presentation" width="100%">
+            <tr>
+              <td style="vertical-align:top;padding-right:18px;">
+                <p style="margin:0 0 5px;font-size:13px;color:#6B7280;">Open Zelle and send <strong style="color:#111827;">${totalDisplay}</strong> to:</p>
+                <p style="margin:0 0 16px;font-size:22px;font-weight:800;color:#031D2F;letter-spacing:-0.3px;">${h(ZELLE_HANDLE)}</p>
+              </td>
+              <td style="vertical-align:top;text-align:right;width:96px;">
+                <img src="${ZELLE_QR_URL}" alt="Zelle QR" width="88" style="border-radius:6px;border:1px solid #E5E7EB;display:block;">
+              </td>
+            </tr>
           </table>
+          <p style="margin:0 0 12px;font-size:14px;font-weight:700;color:#111827;">
+            Then send us your payment screenshot:
+          </p>
+          ${payInstructions()}
+        </td></tr>
+      </table>
+      <p style="margin:14px 0 0;font-size:14px;color:#6B7280;line-height:1.7;">
+        Your spot holds for 24 hours. Once we receive your screenshot, we will confirm your booking right away.
+      </p>
+    </td></tr>`;
+
+  const venmoBlock = `
+    <tr><td style="padding:0 36px 32px;">
+      <p style="margin:0 0 14px;font-size:16px;font-weight:700;color:#111827;">How to pay</p>
+      <table width="100%" cellpadding="0" cellspacing="0" role="presentation"
+             style="background:#F0F7FF;border:2px solid #0077B6;border-radius:10px;padding:22px;">
+        <tr><td>
+          <table cellpadding="0" cellspacing="0" role="presentation" width="100%">
+            <tr>
+              <td style="vertical-align:top;padding-right:18px;">
+                <p style="margin:0 0 5px;font-size:13px;color:#6B7280;">Open Venmo and send <strong style="color:#111827;">${totalDisplay}</strong> to:</p>
+                <p style="margin:0 0 8px;font-size:22px;font-weight:800;color:#031D2F;letter-spacing:-0.3px;">${h(VENMO_HANDLE)}</p>
+                <p style="margin:0 0 16px;font-size:13px;">
+                  <a href="${VENMO_URL}" style="color:#0077B6;text-decoration:none;">${VENMO_URL}</a>
+                </p>
+              </td>
+              <td style="vertical-align:top;text-align:right;width:96px;">
+                <img src="${VENMO_QR_URL}" alt="Venmo QR" width="88" style="border-radius:6px;border:1px solid #E5E7EB;display:block;">
+              </td>
+            </tr>
+          </table>
+          <p style="margin:0 0 12px;font-size:14px;font-weight:700;color:#111827;">
+            Then send us your payment screenshot:
+          </p>
+          ${payInstructions()}
         </td></tr>
       </table>
       <p style="margin:14px 0 0;font-size:14px;color:#6B7280;line-height:1.7;">
@@ -307,9 +349,9 @@ function guestEmail(b) {
     </td></tr>`;
 
   if (paymentMethod === 'zelle') {
-    payBlock = zelleVenmoBlock('Zelle', ZELLE_HANDLE);
+    payBlock = zelleBlock;
   } else if (paymentMethod === 'venmo') {
-    payBlock = zelleVenmoBlock('Venmo', VENMO_HANDLE);
+    payBlock = venmoBlock;
   } else {
     payBlock = `
     <tr><td style="padding:0 36px 32px;">

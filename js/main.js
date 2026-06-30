@@ -496,10 +496,23 @@ function renderStep6(body) {
     <p class="step-sub">Zelle and Venmo are settled after booking. You'll receive instructions by email. Pay on Arrival means a card machine at the beach.</p>
     <div class="payment-options">${options}</div>
     <div class="payment-note" id="zelleNote">
-      After confirming your booking, you'll send payment via Zelle and email a screenshot to <strong>booking@summazescape.com</strong> with your reference number. Your spot holds for 24 hours.
+      <div class="payment-note__qr-row">
+        <img src="https://res.cloudinary.com/dko76z0df/image/upload/v1782858825/summaz/zelle-qr.jpg" alt="Zelle QR code" class="payment-note__qr">
+        <div>
+          <p>Zelle to <strong>anel@summazescape.com</strong> — or scan the QR code.</p>
+          <p style="margin-top:8px;color:#6B7280;font-size:13px;">After paying, email a screenshot to <strong>booking@summazescape.com</strong> with your reference number. Your spot holds for 24 hours.</p>
+        </div>
+      </div>
     </div>
     <div class="payment-note" id="venmoNote">
-      After confirming your booking, you'll send payment via Venmo and email a screenshot to <strong>booking@summazescape.com</strong> with your reference number. Your spot holds for 24 hours.
+      <div class="payment-note__qr-row">
+        <img src="https://res.cloudinary.com/dko76z0df/image/upload/v1782858823/summaz/venmo-qr.png" alt="Venmo QR code" class="payment-note__qr">
+        <div>
+          <p>Venmo <strong>@summaz-escape</strong> — or scan the QR code.</p>
+          <p style="margin-top:6px;"><a href="https://account.venmo.com/u/summaz-escape" target="_blank" rel="noopener" style="color:#0077B6;font-size:13px;">account.venmo.com/u/summaz-escape</a></p>
+          <p style="margin-top:8px;color:#6B7280;font-size:13px;">After paying, email a screenshot to <strong>booking@summazescape.com</strong> with your reference number. Your spot holds for 24 hours.</p>
+        </div>
+      </div>
     </div>
     <div class="payment-note is-arrival" id="arrivalNote">
       You'll pay by credit card machine when you arrive. Our team will call to confirm your booking shortly after you submit.

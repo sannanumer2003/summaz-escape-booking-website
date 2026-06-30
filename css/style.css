@@ -987,6 +987,8 @@ ul { list-style: none; }
 }
 .payment-note.is-visible { display: block; }
 .payment-note.is-arrival { background: rgba(0,196,161,.06); border-color: rgba(0,196,161,.2); }
+.payment-note__qr-row { display: flex; gap: 14px; align-items: flex-start; }
+.payment-note__qr { width: 80px; height: 80px; border-radius: 6px; flex-shrink: 0; border: 1px solid #E5E7EB; }
 
 /* Review step */
 .submit-error {
