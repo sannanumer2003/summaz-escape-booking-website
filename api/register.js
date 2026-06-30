@@ -11,7 +11,7 @@
 
 const ZELLE_HANDLE  = process.env.ZELLE_HANDLE  || 'anel@summazescape.com';
 const VENMO_HANDLE  = process.env.VENMO_HANDLE  || '@summaz-escape';
-const ZELLE_QR_URL  = 'https://res.cloudinary.com/dko76z0df/image/upload/v1782858825/summaz/zelle-qr.jpg';
+const ZELLE_QR_URL  = 'https://res.cloudinary.com/dko76z0df/image/upload/v1782860926/summaz/zelle-qr.jpg';
 const VENMO_QR_URL  = 'https://res.cloudinary.com/dko76z0df/image/upload/v1782858823/summaz/venmo-qr.png';
 const VENMO_URL     = 'https://account.venmo.com/u/summaz-escape';
 const GAS_URL       = process.env.GAS_URL        || '';
