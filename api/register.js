@@ -320,7 +320,7 @@ function guestEmail(b) {
       <table width="100%" cellpadding="0" cellspacing="0" role="presentation"
              style="background:#F0F7FF;border:2px solid #0077B6;border-radius:10px;padding:22px;">
         <tr><td>
-          <p style="margin:0 0 5px;font-size:13px;color:#6B7280;">Send <strong style="color:#111827;">${totalDisplay}</strong> to <strong style="color:#031D2F;">${h(VENMO_HANDLE)}</strong> on Venmo — or open Venmo directly:</p>
+          <p style="margin:0 0 5px;font-size:13px;color:#6B7280;">Send <strong style="color:#111827;">${totalDisplay}</strong> to <strong style="color:#031D2F;">${h(VENMO_HANDLE)}</strong> on Venmo. Or open Venmo directly:</p>
           <p style="margin:0 0 16px;">
             <a href="${VENMO_URL}" style="color:#0077B6;font-size:14px;text-decoration:none;">${VENMO_URL}</a>
           </p>

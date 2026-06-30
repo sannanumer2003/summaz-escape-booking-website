@@ -813,7 +813,7 @@ function showConfirmation(data) {
   if (method === 'zelle') {
     instructions = `
       <div class="confirmation__instructions">
-        <p>Open Zelle and send <strong>${total}</strong> to <strong>${escHtml(cfg.zelle)}</strong> — or scan the QR code below in your bank's app to send the payment directly into our Zelle:</p>
+        <p>Open Zelle and send <strong>${total}</strong> to <strong>${escHtml(cfg.zelle)}</strong>. Or scan the QR code below in your bank's app to send the payment directly into our Zelle:</p>
         <img src="${escHtml(cfg.zelleQr)}" alt="Zelle QR code" class="confirmation__qr">
         <p style="margin-top:16px;font-weight:600;">Then send us your payment screenshot:</p>
         <ol>
@@ -826,7 +826,7 @@ function showConfirmation(data) {
   } else if (method === 'venmo') {
     instructions = `
       <div class="confirmation__instructions">
-        <p>Send <strong>${total}</strong> to <strong>${escHtml(cfg.venmo)}</strong> on Venmo — or <a href="${cfg.venmoUrl}" target="_blank" rel="noopener" style="color:#0077B6;">click here to open Venmo</a> — or scan the QR code below to pay directly:</p>
+        <p>Send <strong>${total}</strong> to <strong>${escHtml(cfg.venmo)}</strong> on Venmo. You can also <a href="${cfg.venmoUrl}" target="_blank" rel="noopener" style="color:#0077B6;">click here to open Venmo</a>, or scan the QR code below to pay directly:</p>
         <img src="${escHtml(cfg.venmoQr)}" alt="Venmo QR code" class="confirmation__qr">
         <p style="margin-top:16px;font-weight:600;">Then send us your payment screenshot:</p>
         <ol>
