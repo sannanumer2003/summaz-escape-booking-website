@@ -294,12 +294,12 @@ ul { list-style: none; }
 
 /* ── 10. Ticket options (pricing blocks) ──────────────────── */
 .ticket-options {
-  display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 4px;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 4px;
 }
 .ticket {
   border: 1.5px solid var(--border);
   border-radius: var(--radius);
-  padding: 22px; position: relative;
+  padding: 28px 26px; position: relative;
   transition: border-color .2s;
 }
 .ticket--featured { border-color: var(--sea); box-shadow: 0 0 0 3px rgba(0,119,182,.06); }
@@ -311,24 +311,24 @@ ul { list-style: none; }
 }
 .ticket__price {
   font-size: 30px; font-weight: 800; letter-spacing: -.02em;
-  color: var(--text); line-height: 1; margin-bottom: 2px;
+  color: var(--text); line-height: 1; margin-bottom: 12px;
 }
 .ticket__per { font-size: 13px; color: var(--text-muted); font-weight: 400; margin-left: 2px; }
-.ticket__name { font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 3px; }
-.ticket__tagline { font-size: 13px; color: var(--text-sub); margin-bottom: 14px; line-height: 1.5; }
-.ticket__features { display: flex; flex-direction: column; gap: 7px; }
+.ticket__name { font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 10px; }
+.ticket__tagline { font-size: 13px; color: var(--text-sub); margin-bottom: 20px; line-height: 1.6; }
+.ticket__features { display: flex; flex-direction: column; gap: 11px; }
 .ticket__feature {
   display: flex; align-items: flex-start; gap: 8px;
-  font-size: 13.5px; color: var(--text-sub); line-height: 1.4;
+  font-size: 13.5px; color: var(--text-sub); line-height: 1.5;
 }
 .ticket__feature .chk {
-  flex-shrink: 0; width: 15px; height: 15px; margin-top: 1px;
+  flex-shrink: 0; width: 15px; height: 15px; margin-top: 2px;
   display: flex; align-items: center; justify-content: center;
 }
 .ticket__feature .chk svg { width: 15px; height: 15px; stroke: var(--teal); stroke-width: 2.2; }
 .ticket__adder {
   display: flex; align-items: center; justify-content: center; gap: 10px;
-  margin-top: 20px; padding-top: 20px;
+  margin-top: 28px; padding-top: 24px;
   border-top: 1px solid #E5E7EB;
 }
 .ticket__counter {
@@ -348,10 +348,14 @@ ul { list-style: none; }
   padding: 0 4px; line-height: 36px;
 }
 .ticket__add-btn { flex: none; }
+.ticket__price-row { display: flex; align-items: baseline; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+.ticket__price-sep { font-size: 13px; color: var(--text-muted); }
+.ticket__adder--stacked { flex-direction: column; align-items: stretch; gap: 14px; }
+.ticket__adder-row { display: flex; align-items: center; justify-content: center; gap: 10px; }
 .ticket__note {
-  margin-top: 12px; padding: 10px 12px;
+  margin-top: 16px; padding: 12px 14px;
   background: var(--surface); border-radius: var(--radius-sm);
-  font-size: 12.5px; color: var(--text-sub); line-height: 1.55;
+  font-size: 12.5px; color: var(--text-sub); line-height: 1.6;
 }
 
 /* ── Extras learn-more link ───────────────────────────────── */
@@ -477,14 +481,15 @@ ul { list-style: none; }
 .bw-date-input:focus { outline: none; border-color: var(--border-focus); }
 .bw-stepper-rows { border: 1.5px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; }
 .bw-stepper-row {
-  display: flex; align-items: center; justify-content: space-between;
-  gap: 12px; padding: 12px 14px;
+  display: flex; align-items: flex-start; justify-content: space-between;
+  gap: 12px; padding: 14px 14px;
   border-bottom: 1px solid var(--border);
 }
 .bw-stepper-row:last-child { border-bottom: none; }
-.bw-stepper-info {}
-.bw-stepper-name { font-size: 14px; font-weight: 500; color: var(--text); }
-.bw-stepper-price { font-size: 12px; color: var(--text-muted); margin-top: 1px; }
+.bw-stepper-info { flex: 1; min-width: 0; }
+.bw-stepper-name { font-size: 13px; font-weight: 600; color: var(--text); line-height: 1.4; }
+.bw-stepper-price { font-size: 12px; color: var(--text-muted); margin-top: 3px; }
+.bw-stepper { padding-top: 2px; }
 .bw-stepper { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
 .bw-stepper-btn {
   width: 28px; height: 28px; border-radius: 50%;
@@ -817,12 +822,14 @@ ul { list-style: none; }
   border: 1.5px solid var(--border); border-radius: var(--radius);
   overflow: hidden; margin-bottom: 20px;
 }
+.stepper-group__label { padding: 8px 18px; font-size: 11px; font-weight: 700; letter-spacing: 0.6px; text-transform: uppercase; color: var(--text-muted); background: var(--surface); border-bottom: 1px solid var(--border); }
 .stepper-row {
   display: flex; align-items: center; justify-content: space-between;
   padding: 14px 18px; gap: 16px; border-bottom: 1px solid var(--border);
 }
 .stepper-row:last-child { border-bottom: none; }
 .stepper-row__label { font-size: 15px; font-weight: 600; color: var(--text); }
+.stepper-row__label-price { font-size: 14px; font-weight: 400; color: var(--text-muted); margin-left: 6px; }
 .stepper-row__price { font-size: 13px; color: var(--text-muted); margin-top: 1px; }
 .stepper { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
 .stepper__btn {
@@ -843,8 +850,8 @@ ul { list-style: none; }
 }
 .price-summary__rows { padding: 2px 0; }
 .price-summary__row {
-  display: flex; justify-content: space-between; align-items: center;
-  padding: 9px 16px; font-size: 14px; color: var(--text-sub);
+  display: flex; justify-content: space-between; align-items: flex-start;
+  gap: 8px; padding: 10px 16px; font-size: 13px; color: var(--text-sub); line-height: 1.45;
 }
 .price-summary__row.is-hidden { display: none; }
 .price-summary__total {

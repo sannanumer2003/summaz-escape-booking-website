@@ -3,13 +3,15 @@
    ============================================================ */
 
 const STEPS = 7;
-const ADULT_PRICE  = 180;
-const CHILD_PRICE  = 115;
+const BEACH_ADULT_PRICE  = 75;
+const BEACH_CHILD_PRICE  = 60;
+const JETSKI_ADULT_PRICE = 150;
 
 /* Booking state */
 let state = {
-  adults:          1,
-  children:        0,
+  beachAdults:     0,
+  beachChildren:   0,
+  jetSkiAdults:    0,
   date:            '',
   name:            '',
   email:           '',
@@ -26,12 +28,15 @@ let state = {
 
 /* ── Utility ────────────────────────────────────────────── */
 function calcTotal() {
-  return (state.adults * ADULT_PRICE) + (state.children * CHILD_PRICE);
+  return (state.beachAdults * BEACH_ADULT_PRICE)
+       + (state.beachChildren * BEACH_CHILD_PRICE)
+       + (state.jetSkiAdults  * JETSKI_ADULT_PRICE);
 }
 
 function formatMoney(n) {
   return '$' + n.toLocaleString();
 }
+
 
 /* Returns today's date string (YYYY-MM-DD) in Bahamas Eastern time */
 function todayInBahamas() {
@@ -105,9 +110,9 @@ function sidebarDateChange(val) {
 
 function sidebarCount(field, delta) {
   const newVal = Math.max(0, state[field] + delta);
-  if (field === 'adults' && newVal < 0) return;
   state[field] = newVal;
-  const countEl = document.getElementById(field === 'adults' ? 'wAdultCount' : 'wChildCount');
+  const idMap = { beachAdults: 'wBeachAdultCount', beachChildren: 'wBeachChildCount', jetSkiAdults: 'wJetSkiAdultCount' };
+  const countEl = document.getElementById(idMap[field]);
   if (countEl) countEl.textContent = newVal;
   updateSidebarTotal();
   updateSidebarMinusButtons();
@@ -127,10 +132,12 @@ function updateMobileBarTotal() {
 }
 
 function updateSidebarMinusButtons() {
-  const am = document.getElementById('wAdultMinus');
-  const cm = document.getElementById('wChildMinus');
-  if (am) am.disabled = state.adults <= 0;
-  if (cm) cm.disabled = state.children <= 0;
+  const bam = document.getElementById('wBeachAdultMinus');
+  const bcm = document.getElementById('wBeachChildMinus');
+  const jsm = document.getElementById('wJetSkiAdultMinus');
+  if (bam) bam.disabled = state.beachAdults  <= 0;
+  if (bcm) bcm.disabled = state.beachChildren <= 0;
+  if (jsm) jsm.disabled = state.jetSkiAdults  <= 0;
 }
 
 function openBookingFromSidebar() {
@@ -148,13 +155,15 @@ function openBooking() {
   _formOpenedAt = Date.now();
   previousFocus = document.activeElement;
   // Preserve counts from sidebar, only reset non-sidebar fields
-  const savedAdults   = state.adults;
-  const savedChildren = state.children;
-  const savedDate     = state.date;
+  const savedBeachAdults   = state.beachAdults;
+  const savedBeachChildren = state.beachChildren;
+  const savedJetSkiAdults  = state.jetSkiAdults;
+  const savedDate          = state.date;
   resetState();
-  state.adults   = savedAdults;
-  state.children = savedChildren;
-  state.date     = savedDate;
+  state.beachAdults   = savedBeachAdults;
+  state.beachChildren = savedBeachChildren;
+  state.jetSkiAdults  = savedJetSkiAdults;
+  state.date          = savedDate;
   state.currentStep = 1;
   updateModalProgress(1);
   renderStep(1);
@@ -171,10 +180,12 @@ function closeBooking() {
   document.body.style.overflow = '';
   if (previousFocus) previousFocus.focus();
   // Sync sidebar DOM to whatever counts are in state after modal changes
-  var wAdult = document.getElementById('wAdultCount');
-  var wChild = document.getElementById('wChildCount');
-  if (wAdult) wAdult.textContent = state.adults;
-  if (wChild) wChild.textContent = state.children;
+  var wBA = document.getElementById('wBeachAdultCount');
+  var wBC = document.getElementById('wBeachChildCount');
+  var wJS = document.getElementById('wJetSkiAdultCount');
+  if (wBA) wBA.textContent = state.beachAdults;
+  if (wBC) wBC.textContent = state.beachChildren;
+  if (wJS) wJS.textContent = state.jetSkiAdults;
   updateSidebarTotal();
   updateSidebarMinusButtons();
   updateMobileBarTotal();
@@ -193,8 +204,9 @@ document.addEventListener('keydown', function(e) {
 });
 
 function resetState() {
-  state.adults         = 1;
-  state.children       = 0;
+  state.beachAdults    = 0;
+  state.beachChildren  = 0;
+  state.jetSkiAdults   = 0;
   state.date           = '';
   state.name           = '';
   state.email          = '';
@@ -258,41 +270,58 @@ function renderStep(step) {
 
 /* ── Step 1: Guest count ─────────────────────────────────── */
 function renderStep1(body) {
+  const baAmt = state.beachAdults  * BEACH_ADULT_PRICE;
+  const bcAmt = state.beachChildren * BEACH_CHILD_PRICE;
+  const jsAmt = state.jetSkiAdults  * JETSKI_ADULT_PRICE;
   body.innerHTML = `
-    <p class="step-sub">Adults ride solo. Children ride tandem with an adult in your group.</p>
+    <p class="step-sub">Choose your package. You can mix: some guests beach only, others with a jet ski included.</p>
     <div class="stepper-group">
+      <div class="stepper-group__label">Beach Access Package</div>
       <div class="stepper-row">
         <div class="stepper-row__info">
-          <p class="stepper-row__label">Adults</p>
-          <p class="stepper-row__price">Rides solo, <strong>$${ADULT_PRICE} each</strong></p>
+          <p class="stepper-row__label">Adults <span class="stepper-row__label-price">$${BEACH_ADULT_PRICE}</span></p>
         </div>
         <div class="stepper">
-          <button class="stepper__btn" id="adultMinus" onclick="changeCount('adults',-1)" aria-label="Remove adult">−</button>
-          <span class="stepper__count" id="adultCount">${state.adults}</span>
-          <button class="stepper__btn" onclick="changeCount('adults',1)" aria-label="Add adult">+</button>
+          <button class="stepper__btn" id="beachAdultMinus" onclick="changeCount('beachAdults',-1)" aria-label="Remove beach adult">−</button>
+          <span class="stepper__count" id="beachAdultCount">${state.beachAdults}</span>
+          <button class="stepper__btn" onclick="changeCount('beachAdults',1)" aria-label="Add beach adult">+</button>
         </div>
       </div>
       <div class="stepper-row">
         <div class="stepper-row__info">
-          <p class="stepper-row__label">Children</p>
-          <p class="stepper-row__price">Rides tandem with an adult, <strong>$${CHILD_PRICE} each</strong></p>
+          <p class="stepper-row__label">Children <span class="stepper-row__label-price">$${BEACH_CHILD_PRICE}</span></p>
         </div>
         <div class="stepper">
-          <button class="stepper__btn" id="childMinus" onclick="changeCount('children',-1)" aria-label="Remove child">−</button>
-          <span class="stepper__count" id="childCount">${state.children}</span>
-          <button class="stepper__btn" onclick="changeCount('children',1)" aria-label="Add child">+</button>
+          <button class="stepper__btn" id="beachChildMinus" onclick="changeCount('beachChildren',-1)" aria-label="Remove beach child">−</button>
+          <span class="stepper__count" id="beachChildCount">${state.beachChildren}</span>
+          <button class="stepper__btn" onclick="changeCount('beachChildren',1)" aria-label="Add beach child">+</button>
+        </div>
+      </div>
+      <div class="stepper-group__label" style="margin-top:10px">Beach Access Package + Jet Ski Ride</div>
+      <div class="stepper-row">
+        <div class="stepper-row__info">
+          <p class="stepper-row__label">Adults <span class="stepper-row__label-price">$${JETSKI_ADULT_PRICE}</span></p>
+        </div>
+        <div class="stepper">
+          <button class="stepper__btn" id="jetSkiAdultMinus" onclick="changeCount('jetSkiAdults',-1)" aria-label="Remove jet ski adult">−</button>
+          <span class="stepper__count" id="jetSkiAdultCount">${state.jetSkiAdults}</span>
+          <button class="stepper__btn" onclick="changeCount('jetSkiAdults',1)" aria-label="Add jet ski adult">+</button>
         </div>
       </div>
     </div>
     <div class="price-summary">
       <div class="price-summary__rows">
-        <div class="price-summary__row" id="adultSummaryRow">
-          <span><span id="adultSummaryCount">${state.adults}</span> adult${state.adults !== 1 ? 's' : ''}</span>
-          <strong id="adultSummaryAmt">${formatMoney(state.adults * ADULT_PRICE)}</strong>
+        <div class="price-summary__row ${state.beachAdults === 0 ? 'is-hidden' : ''}" id="beachAdultSummaryRow">
+          <span><span id="beachAdultSummaryCount">${state.beachAdults}</span> x Beach Access Package (Adults)</span>
+          <strong id="beachAdultSummaryAmt">${formatMoney(baAmt)}</strong>
         </div>
-        <div class="price-summary__row ${state.children === 0 ? 'is-hidden' : ''}" id="childSummaryRow">
-          <span><span id="childSummaryCount">${state.children}</span> child${state.children !== 1 ? 'ren' : ''}</span>
-          <strong id="childSummaryAmt">${formatMoney(state.children * CHILD_PRICE)}</strong>
+        <div class="price-summary__row ${state.beachChildren === 0 ? 'is-hidden' : ''}" id="beachChildSummaryRow">
+          <span><span id="beachChildSummaryCount">${state.beachChildren}</span> x Beach Access Package (Children)</span>
+          <strong id="beachChildSummaryAmt">${formatMoney(bcAmt)}</strong>
+        </div>
+        <div class="price-summary__row ${state.jetSkiAdults === 0 ? 'is-hidden' : ''}" id="jetSkiAdultSummaryRow">
+          <span><span id="jetSkiAdultSummaryCount">${state.jetSkiAdults}</span> x Beach Access Package + Jet Ski Ride</span>
+          <strong id="jetSkiAdultSummaryAmt">${formatMoney(jsAmt)}</strong>
         </div>
       </div>
       <div class="price-summary__total">
@@ -305,35 +334,40 @@ function renderStep1(body) {
 }
 
 function changeCount(field, delta) {
-  const newVal = state[field] + delta;
-  if (newVal < 0) return;
+  const newVal = Math.max(0, state[field] + delta);
   state[field] = newVal;
-  // Update stepper display
-  document.getElementById(field === 'adults' ? 'adultCount' : 'childCount').textContent = newVal;
-  // Update summary
-  const total = calcTotal();
-  if (field === 'adults') {
-    const row = document.getElementById('adultSummaryRow');
-    const amt = document.getElementById('adultSummaryAmt');
-    row.querySelector('span').innerHTML = '<span id="adultSummaryCount">' + newVal + '</span> adult' + (newVal !== 1 ? 's' : '');
-    amt.textContent = formatMoney(newVal * ADULT_PRICE);
-  } else {
-    const row = document.getElementById('childSummaryRow');
-    const amt = document.getElementById('childSummaryAmt');
-    row.querySelector('span').innerHTML = '<span id="childSummaryCount">' + newVal + '</span> child' + (newVal !== 1 ? 'ren' : '');
-    amt.textContent = formatMoney(newVal * CHILD_PRICE);
+  const countIds = { beachAdults: 'beachAdultCount', beachChildren: 'beachChildCount', jetSkiAdults: 'jetSkiAdultCount' };
+  const rowIds   = { beachAdults: 'beachAdultSummaryRow', beachChildren: 'beachChildSummaryRow', jetSkiAdults: 'jetSkiAdultSummaryRow' };
+  const amtIds   = { beachAdults: 'beachAdultSummaryAmt', beachChildren: 'beachChildSummaryAmt', jetSkiAdults: 'jetSkiAdultSummaryAmt' };
+  const prices   = { beachAdults: BEACH_ADULT_PRICE, beachChildren: BEACH_CHILD_PRICE, jetSkiAdults: JETSKI_ADULT_PRICE };
+  const labels   = {
+    beachAdults:   'Beach Access Package (Adults)',
+    beachChildren: 'Beach Access Package (Children)',
+    jetSkiAdults:  'Beach Access Package + Jet Ski Ride'
+  };
+
+  const countEl = document.getElementById(countIds[field]);
+  if (countEl) countEl.textContent = newVal;
+
+  const row = document.getElementById(rowIds[field]);
+  const amt = document.getElementById(amtIds[field]);
+  if (row && amt) {
+    row.querySelector('span').innerHTML = '<span>' + newVal + '</span> x ' + labels[field];
+    amt.textContent = formatMoney(newVal * prices[field]);
     row.classList.toggle('is-hidden', newVal === 0);
   }
-  document.getElementById('priceSummaryTotal').textContent = formatMoney(total);
+  document.getElementById('priceSummaryTotal').textContent = formatMoney(calcTotal());
   updateFooterTotal();
   updateStepperButtons();
 }
 
 function updateStepperButtons() {
-  const adultMinus = document.getElementById('adultMinus');
-  const childMinus = document.getElementById('childMinus');
-  if (adultMinus) adultMinus.disabled = state.adults <= 0;
-  if (childMinus) childMinus.disabled = state.children <= 0;
+  const bam = document.getElementById('beachAdultMinus');
+  const bcm = document.getElementById('beachChildMinus');
+  const jsm = document.getElementById('jetSkiAdultMinus');
+  if (bam) bam.disabled = state.beachAdults  <= 0;
+  if (bcm) bcm.disabled = state.beachChildren <= 0;
+  if (jsm) jsm.disabled = state.jetSkiAdults  <= 0;
 }
 
 /* ── Step 2: Date ────────────────────────────────────────── */
@@ -543,13 +577,17 @@ function renderStep7(body) {
           <span class="review-row__label">Date</span>
           <span class="review-row__value">${dateDisplay}</span>
         </div>
-        <div class="review-row">
-          <span class="review-row__label">Adults</span>
-          <span class="review-row__value">${state.adults} × $${ADULT_PRICE} = ${formatMoney(state.adults * ADULT_PRICE)}</span>
-        </div>
-        ${state.children > 0 ? `<div class="review-row">
-          <span class="review-row__label">Children</span>
-          <span class="review-row__value">${state.children} × $${CHILD_PRICE} = ${formatMoney(state.children * CHILD_PRICE)}</span>
+        ${state.beachAdults > 0 ? `<div class="review-row">
+          <span class="review-row__label">Beach Access Package (Adults)</span>
+          <span class="review-row__value">${state.beachAdults} × $${BEACH_ADULT_PRICE} = ${formatMoney(state.beachAdults * BEACH_ADULT_PRICE)}</span>
+        </div>` : ''}
+        ${state.beachChildren > 0 ? `<div class="review-row">
+          <span class="review-row__label">Beach Access Package (Children)</span>
+          <span class="review-row__value">${state.beachChildren} × $${BEACH_CHILD_PRICE} = ${formatMoney(state.beachChildren * BEACH_CHILD_PRICE)}</span>
+        </div>` : ''}
+        ${state.jetSkiAdults > 0 ? `<div class="review-row">
+          <span class="review-row__label">Beach Access Package + Jet Ski Ride</span>
+          <span class="review-row__value">${state.jetSkiAdults} × $${JETSKI_ADULT_PRICE} = ${formatMoney(state.jetSkiAdults * JETSKI_ADULT_PRICE)}</span>
         </div>` : ''}
         ${addonLabels.length > 0 ? `<div class="review-row">
           <span class="review-row__label">Extras interest</span>
@@ -605,7 +643,7 @@ function clearFieldErr(id) {
 async function validateStep(step) {
   switch (step) {
     case 1:
-      if (state.adults + state.children < 1) {
+      if (state.beachAdults + state.beachChildren + state.jetSkiAdults < 1) {
         alert('Please add at least one guest.');
         return false;
       }
@@ -735,8 +773,9 @@ function submitBooking() {
   loading.classList.add('is-visible');
 
   const payload = {
-    adults:        state.adults,
-    children:      state.children,
+    beachAdults:   state.beachAdults,
+    beachChildren: state.beachChildren,
+    jetSkiAdults:  state.jetSkiAdults,
     date:          state.date,
     name:          state.name.trim(),
     email:         state.email.trim().toLowerCase(),
@@ -883,7 +922,11 @@ function showConfirmation(data) {
         </div>
         <div class="confirmation__meta-item">
           <div class="confirmation__meta-label">Guests</div>
-          <div class="confirmation__meta-value">${state.adults} adult${state.adults !== 1 ? 's' : ''}${state.children > 0 ? ` · ${state.children} child${state.children !== 1 ? 'ren' : ''}` : ''}</div>
+          <div class="confirmation__meta-value">${[
+            state.beachAdults  > 0 ? `${state.beachAdults} beach adult${state.beachAdults !== 1 ? 's' : ''}`    : '',
+            state.beachChildren > 0 ? `${state.beachChildren} beach child${state.beachChildren !== 1 ? 'ren' : ''}` : '',
+            state.jetSkiAdults  > 0 ? `${state.jetSkiAdults} jet ski adult${state.jetSkiAdults !== 1 ? 's' : ''}`  : ''
+          ].filter(Boolean).join(' · ')}</div>
         </div>
         <div class="confirmation__meta-item">
           <div class="confirmation__meta-label">Total</div>
@@ -1124,33 +1167,43 @@ function renderGallery(posts) {
 })();
 
 /* ── Pricing card counters ───────────────────────────────── */
-var _ticketAdult = 0;
-var _ticketChild = 0;
+var _ticketBeachAdult  = 0;
+var _ticketBeachChild  = 0;
+var _ticketJetSki      = 0;
 
 function ticketCount(type, delta) {
-  if (type === 'adult') {
-    _ticketAdult = Math.max(0, _ticketAdult + delta);
-    document.getElementById('ticketAdultCount').textContent = _ticketAdult;
-    document.getElementById('ticketAdultMinus').disabled = _ticketAdult <= 0;
+  if (type === 'beachAdult') {
+    _ticketBeachAdult = Math.max(0, _ticketBeachAdult + delta);
+    document.getElementById('ticketBeachAdultCount').textContent = _ticketBeachAdult;
+    document.getElementById('ticketBeachAdultMinus').disabled = _ticketBeachAdult <= 0;
+  } else if (type === 'beachChild') {
+    _ticketBeachChild = Math.max(0, _ticketBeachChild + delta);
+    document.getElementById('ticketBeachChildCount').textContent = _ticketBeachChild;
+    document.getElementById('ticketBeachChildMinus').disabled = _ticketBeachChild <= 0;
   } else {
-    _ticketChild = Math.max(0, _ticketChild + delta);
-    document.getElementById('ticketChildCount').textContent = _ticketChild;
-    document.getElementById('ticketChildMinus').disabled = _ticketChild <= 0;
+    _ticketJetSki = Math.max(0, _ticketJetSki + delta);
+    document.getElementById('ticketJetSkiCount').textContent = _ticketJetSki;
+    document.getElementById('ticketJetSkiMinus').disabled = _ticketJetSki <= 0;
   }
 }
 
 function addToSidebar(field) {
-  var count = field === 'adults' ? _ticketAdult : _ticketChild;
-  if (count === 0) return;
+  var countMap = { beachAdults: _ticketBeachAdult, beachChildren: _ticketBeachChild, jetSkiAdults: _ticketJetSki };
+  var count = countMap[field];
+  if (!count) return;
   sidebarCount(field, count);
-  if (field === 'adults') {
-    _ticketAdult = 0;
-    document.getElementById('ticketAdultCount').textContent = 0;
-    document.getElementById('ticketAdultMinus').disabled = true;
+  if (field === 'beachAdults') {
+    _ticketBeachAdult = 0;
+    document.getElementById('ticketBeachAdultCount').textContent = 0;
+    document.getElementById('ticketBeachAdultMinus').disabled = true;
+  } else if (field === 'beachChildren') {
+    _ticketBeachChild = 0;
+    document.getElementById('ticketBeachChildCount').textContent = 0;
+    document.getElementById('ticketBeachChildMinus').disabled = true;
   } else {
-    _ticketChild = 0;
-    document.getElementById('ticketChildCount').textContent = 0;
-    document.getElementById('ticketChildMinus').disabled = true;
+    _ticketJetSki = 0;
+    document.getElementById('ticketJetSkiCount').textContent = 0;
+    document.getElementById('ticketJetSkiMinus').disabled = true;
   }
 }
 

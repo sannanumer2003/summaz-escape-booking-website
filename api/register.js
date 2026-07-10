@@ -25,8 +25,9 @@ const TEAM_INBOX    = 'booking@summazescape.com';
 const SUPPORT_PHONE = '+1 (242) 817-5387';
 const SUPPORT_EMAIL = 'booking@summazescape.com';
 const LOGO_URL      = 'https://res.cloudinary.com/dko76z0df/image/upload/v1782304824/summaz/logo.png';
-const ADULT_PRICE   = 180;
-const CHILD_PRICE   = 115;
+const BEACH_ADULT_PRICE  = 75;
+const BEACH_CHILD_PRICE  = 60;
+const JETSKI_ADULT_PRICE = 150;
 
 /* ── Disposable email domain blocklist ───────────────────── */
 const BLOCKED_DOMAINS = new Set([
@@ -61,8 +62,9 @@ module.exports = async function handler(req, res) {
   if (elapsed < 3000 || elapsed < 20000) return spamOk(res);
 
   const {
-    adults        = 1,
-    children      = 0,
+    beachAdults   = 0,
+    beachChildren = 0,
+    jetSkiAdults  = 0,
     date          = '',
     name          = '',
     email         = '',
@@ -76,7 +78,7 @@ module.exports = async function handler(req, res) {
   const emailClean = String(email).trim().toLowerCase();
   const phoneDigs  = String(phone).replace(/\D/g, '');
   if (!name.trim() || !emailClean || !date || !paymentMethod ||
-      (Number(adults) + Number(children) < 1)) {
+      (Number(beachAdults) + Number(beachChildren) + Number(jetSkiAdults) < 1)) {
     return spamOk(res);
   }
 
@@ -102,8 +104,10 @@ module.exports = async function handler(req, res) {
 
   /* ── Passed all checks — process real booking ─────────── */
   const reference = 'SE-' + Math.floor(100000 + Math.random() * 900000);
-  const total     = (Number(adults) * ADULT_PRICE) + (Number(children) * CHILD_PRICE);
-  const booking   = { adults, children, date, name, email: emailClean, phone, addons, notes, paymentMethod, reference, total, spamFlag };
+  const total     = (Number(beachAdults) * BEACH_ADULT_PRICE)
+                  + (Number(beachChildren) * BEACH_CHILD_PRICE)
+                  + (Number(jetSkiAdults)  * JETSKI_ADULT_PRICE);
+  const booking   = { beachAdults, beachChildren, jetSkiAdults, date, name, email: emailClean, phone, addons, notes, paymentMethod, reference, total, spamFlag };
 
   const [emailResult, gasResult] = await Promise.allSettled([
     sendBookingEmails(booking),
@@ -180,10 +184,19 @@ function fmtDate(dateStr) {
   });
 }
 
-function fmtGroup(adults, children) {
-  const a = `${adults} adult${adults !== 1 ? 's' : ''}`;
-  const c = children > 0 ? `, ${children} child${children !== 1 ? 'ren' : ''}` : '';
-  return a + c;
+function fmtGroup(beachAdults, beachChildren, jetSkiAdults) {
+  const parts = [];
+  if (beachAdults  > 0) parts.push(`${beachAdults} beach adult${beachAdults !== 1 ? 's' : ''}`);
+  if (beachChildren > 0) parts.push(`${beachChildren} beach child${beachChildren !== 1 ? 'ren' : ''}`);
+  if (jetSkiAdults  > 0) parts.push(`${jetSkiAdults} jet ski adult${jetSkiAdults !== 1 ? 's' : ''}`);
+  return parts.join(', ') || '0 guests';
+}
+
+function fmtPackage(beachAdults, beachChildren, jetSkiAdults) {
+  const packages = [];
+  if (beachAdults > 0 || beachChildren > 0) packages.push('Beach Access Package');
+  if (jetSkiAdults > 0) packages.push('Beach Access Package + Jet Ski Ride');
+  return packages.join(' + ') || 'None';
 }
 
 /* ══════════════════════════════════════════════════════════
@@ -233,13 +246,13 @@ function shell(rows) {
    GUEST EMAIL  (Zelle / Venmo / Card in one function)
    ══════════════════════════════════════════════════════════ */
 function guestEmail(b) {
-  const { name, adults, children, date, addons, paymentMethod, reference, total } = b;
+  const { name, beachAdults, beachChildren, jetSkiAdults, date, addons, paymentMethod, reference, total } = b;
 
   const firstName     = h(name).split(' ')[0];
   const dateDisplay   = fmtDate(date);
-  const groupDisplay  = fmtGroup(Number(adults), Number(children));
   const addonsDisplay = addons || 'None';
   const totalDisplay  = '$' + Number(total).toLocaleString();
+  const ba = Number(beachAdults), bc = Number(beachChildren), js = Number(jetSkiAdults);
 
   const summaryRows = `
     <tr>
@@ -250,14 +263,18 @@ function guestEmail(b) {
       <td style="padding:6px 0;font-size:14px;color:#6B7280;">Date</td>
       <td style="padding:6px 0;font-size:14px;color:#111827;">${dateDisplay}</td>
     </tr>
-    <tr>
-      <td style="padding:6px 0;font-size:14px;color:#6B7280;">Group</td>
-      <td style="padding:6px 0;font-size:14px;color:#111827;">${groupDisplay}</td>
-    </tr>
-    <tr>
-      <td style="padding:6px 0;font-size:14px;color:#6B7280;">Package</td>
-      <td style="padding:6px 0;font-size:14px;color:#111827;">Classic Package</td>
-    </tr>
+    ${ba > 0 ? `<tr>
+      <td style="padding:6px 0;font-size:14px;color:#6B7280;">Beach Access Package (Adults)</td>
+      <td style="padding:6px 0;font-size:14px;color:#111827;">${ba} × $${BEACH_ADULT_PRICE} = $${ba * BEACH_ADULT_PRICE}</td>
+    </tr>` : ''}
+    ${bc > 0 ? `<tr>
+      <td style="padding:6px 0;font-size:14px;color:#6B7280;">Beach Access Package (Children)</td>
+      <td style="padding:6px 0;font-size:14px;color:#111827;">${bc} × $${BEACH_CHILD_PRICE} = $${bc * BEACH_CHILD_PRICE}</td>
+    </tr>` : ''}
+    ${js > 0 ? `<tr>
+      <td style="padding:6px 0;font-size:14px;color:#6B7280;">Beach Access Package + Jet Ski Ride</td>
+      <td style="padding:6px 0;font-size:14px;color:#111827;">${js} × $${JETSKI_ADULT_PRICE} = $${js * JETSKI_ADULT_PRICE}</td>
+    </tr>` : ''}
     <tr>
       <td style="padding:6px 0;font-size:14px;color:#6B7280;">Add-ons</td>
       <td style="padding:6px 0;font-size:14px;color:#111827;">${h(addonsDisplay)}</td>
@@ -427,11 +444,11 @@ function guestEmail(b) {
    TEAM NOTIFICATION EMAIL  (all 3 methods)
    ══════════════════════════════════════════════════════════ */
 function teamEmail(b) {
-  const { name, email, phone, adults, children, date, addons, notes, paymentMethod, reference, total } = b;
+  const { name, email, phone, beachAdults, beachChildren, jetSkiAdults, date, addons, notes, paymentMethod, reference, total } = b;
 
   const dateDisplay   = fmtDate(date);
-  const groupDisplay  = fmtGroup(Number(adults), Number(children));
   const label         = methodName(paymentMethod);
+  const ba = Number(beachAdults), bc = Number(beachChildren), js = Number(jetSkiAdults);
   const addonsDisplay = addons || 'None';
   const totalDisplay  = '$' + Number(total).toLocaleString();
   const badgeColor    = paymentMethod === 'arrival' ? '#00C4A1' : '#0077B6';
@@ -498,14 +515,18 @@ function teamEmail(b) {
             <td style="padding:5px 0;font-size:14px;color:#6B7280;">Date</td>
             <td style="padding:5px 0;font-size:14px;color:#111827;">${dateDisplay}</td>
           </tr>
-          <tr>
-            <td style="padding:5px 0;font-size:14px;color:#6B7280;">Group</td>
-            <td style="padding:5px 0;font-size:14px;color:#111827;">${groupDisplay}</td>
-          </tr>
-          <tr>
-            <td style="padding:5px 0;font-size:14px;color:#6B7280;">Package</td>
-            <td style="padding:5px 0;font-size:14px;color:#111827;">Classic Package</td>
-          </tr>
+          ${ba > 0 ? `<tr>
+            <td style="padding:5px 0;font-size:14px;color:#6B7280;">Beach Access Package (Adults)</td>
+            <td style="padding:5px 0;font-size:14px;color:#111827;">${ba} × $${BEACH_ADULT_PRICE} = $${ba * BEACH_ADULT_PRICE}</td>
+          </tr>` : ''}
+          ${bc > 0 ? `<tr>
+            <td style="padding:5px 0;font-size:14px;color:#6B7280;">Beach Access Package (Children)</td>
+            <td style="padding:5px 0;font-size:14px;color:#111827;">${bc} × $${BEACH_CHILD_PRICE} = $${bc * BEACH_CHILD_PRICE}</td>
+          </tr>` : ''}
+          ${js > 0 ? `<tr>
+            <td style="padding:5px 0;font-size:14px;color:#6B7280;">Beach Access Package + Jet Ski Ride</td>
+            <td style="padding:5px 0;font-size:14px;color:#111827;">${js} × $${JETSKI_ADULT_PRICE} = $${js * JETSKI_ADULT_PRICE}</td>
+          </tr>` : ''}
           <tr>
             <td style="padding:5px 0;font-size:14px;color:#6B7280;">Add-ons</td>
             <td style="padding:5px 0;font-size:14px;color:#111827;">${h(addonsDisplay)}</td>
