@@ -274,8 +274,9 @@ function renderStep1(body) {
   const bcAmt = state.beachChildren * BEACH_CHILD_PRICE;
   const jsAmt = state.jetSkiAdults  * JETSKI_ADULT_PRICE;
   body.innerHTML = `
-    <p class="step-sub">Choose your package. You can mix: some guests beach only, others with a jet ski included.</p>
+    <p class="step-sub">Pick what each person in your group is getting. Beach access for everyone, jet ski session for whoever wants one.</p>
     <div class="stepper-group">
+      <div class="stepper-group__label stepper-group__label--parent">The Family Wave Package</div>
       <div class="stepper-group__label">Beach Access Package</div>
       <div class="stepper-row">
         <div class="stepper-row__info">
