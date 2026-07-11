@@ -696,28 +696,6 @@ async function validateStep(step) {
 
       if (!valid) return false;
 
-      /* Disposable email check — fail open on API error */
-      const domain = emailTrimmed.split('@')[1];
-      try {
-        const ctrl = new AbortController();
-        const t = setTimeout(() => ctrl.abort(), 3000);
-        const nextBtn = document.getElementById('nextBtn');
-        if (nextBtn) { nextBtn.disabled = true; nextBtn.textContent = 'Checking…'; }
-        const r = await fetch(`https://api.mailcheck.ai/domain/${encodeURIComponent(domain)}`, { signal: ctrl.signal });
-        clearTimeout(t);
-        if (nextBtn) { nextBtn.disabled = false; nextBtn.textContent = 'Continue →'; }
-        if (r.ok) {
-          const data = await r.json();
-          if (data.disposable) {
-            showFieldErr('emailErr', 'Please use a permanent email address.');
-            return false;
-          }
-        }
-      } catch (_) {
-        /* timed out or network error — let user through */
-        const nextBtn = document.getElementById('nextBtn');
-        if (nextBtn) { nextBtn.disabled = false; nextBtn.textContent = 'Continue →'; }
-      }
 
       return true;
     }
