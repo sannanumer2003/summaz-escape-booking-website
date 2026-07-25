@@ -349,6 +349,7 @@ function renderStep1AllFamilyWave(body) {
       <div class="stepper-row">
         <div class="stepper-row__info">
           <p class="stepper-row__label">Children <span class="stepper-row__label-price">$${BEACH_CHILD_PRICE}</span></p>
+          <p class="stepper-row__sub">Under 12</p>
         </div>
         <div class="stepper">
           <button class="stepper__btn" id="beachChildMinus" onclick="changeCount('beachChildren',-1)">−</button>
@@ -411,6 +412,7 @@ function renderStep1BeachAccessOnly(body) {
       <div class="stepper-row">
         <div class="stepper-row__info">
           <p class="stepper-row__label">Children <span class="stepper-row__label-price">$${BEACH_CHILD_PRICE}</span></p>
+          <p class="stepper-row__sub">Under 12</p>
         </div>
         <div class="stepper">
           <button class="stepper__btn" id="beachChildMinus" onclick="changeCount('beachChildren',-1)">−</button>
@@ -1667,7 +1669,11 @@ function panelContentBeachAccess() {
       </details>
       <details class="panel-faq-item">
         <summary>Are children able to join?</summary>
-        <p>Yes. The Beach Access Package is open to all ages. Children under 12 are $60 per person.</p>
+        <p>Yes, absolutely. The Beach Access Package is open to all ages, no restrictions.</p>
+      </details>
+      <details class="panel-faq-item">
+        <summary>What counts as a child for pricing?</summary>
+        <p>Anyone under 12 books as a child at $60. Ages 12 and up are booked as adults at $75. If you're not sure, go with the age they'll be on the day of the visit.</p>
       </details>
       <details class="panel-faq-item">
         <summary>Is food available on-site?</summary>

@@ -1210,6 +1210,7 @@ ul { list-style: none; }
 .stepper-row:last-child { border-bottom: none; }
 .stepper-row__label { font-size: 15px; font-weight: 600; color: var(--text); }
 .stepper-row__label-price { font-size: 14px; font-weight: 400; color: var(--text-muted); margin-left: 6px; }
+.stepper-row__sub { font-size: 12px; color: var(--text-muted); margin-top: 1px; }
 .stepper-row__price { font-size: 13px; color: var(--text-muted); margin-top: 1px; }
 .stepper { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
 .stepper__btn {
