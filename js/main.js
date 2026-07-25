@@ -1815,6 +1815,7 @@ function panelSidebarFamilyWave() {
       <div>
         <div class="ps-counter-name">Children</div>
         <div class="ps-counter-price">$${BEACH_CHILD_PRICE} per person</div>
+        <div class="ps-counter-sub">Under 12</div>
       </div>
       <div class="ps-stepper">
         <button class="ps-stepper-btn" id="psFWBeachChildMinus" onclick="panelCount('beachChildren',-1)" ${panel.beachChildren <= 0 ? 'disabled' : ''}>−</button>
