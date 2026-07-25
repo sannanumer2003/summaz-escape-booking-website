@@ -116,7 +116,7 @@ module.exports = async function handler(req, res) {
   /* ── Passed all checks — process real booking ─────────── */
   const reference = 'SE-' + Math.floor(100000 + Math.random() * 900000);
   const total     = isJSR
-    ? slots.reduce((sum, s) => sum + Number(s.price || 0), 0)
+    ? slots.reduce((sum, s) => sum + Number(s.price || 0), 0) + (Number(bigMableAddon) * BIG_MABLE_PRICE)
     : isBigMable
     ? bmCount * BIG_MABLE_PRICE
     : (Number(beachAdults)   * BEACH_ADULT_PRICE)
@@ -275,32 +275,34 @@ function guestEmail(b) {
   const ba = Number(beachAdults), bc = Number(beachChildren), js = Number(jetSkiAdults);
 
   const bm = Number(b.bigMableAddon);
+  const bmAddonRow = (n) => n > 0 ? `<tr>
+      <td style="padding:6px 0;font-size:14px;color:#6B7280;width:38%;">Big Mable Tube Ride (Add-on)</td>
+      <td style="padding:6px 0;font-size:14px;color:#111827;">${n} &times; $${BIG_MABLE_PRICE} = $${n * BIG_MABLE_PRICE}</td>
+    </tr>` : '';
+
   const itemRows = isJSR
     ? slots.map((s, i) => `<tr>
-      <td style="padding:6px 0;font-size:14px;color:#6B7280;width:38%;">Jet Ski Rental &mdash; Rider ${i + 1} (${s.duration} min)</td>
+      <td style="padding:6px 0;font-size:14px;color:#6B7280;width:38%;">Jet Ski Rental - Rider ${i + 1} (${s.duration} min)</td>
       <td style="padding:6px 0;font-size:14px;color:#111827;">$${s.price}</td>
-    </tr>`).join('')
+    </tr>`).join('') + bmAddonRow(bm)
     : isBigMable
     ? `<tr>
       <td style="padding:6px 0;font-size:14px;color:#6B7280;width:38%;">Big Mable Tube Ride</td>
       <td style="padding:6px 0;font-size:14px;color:#111827;">${bmStandalone} &times; $${BIG_MABLE_PRICE} = $${bmStandalone * BIG_MABLE_PRICE}</td>
     </tr>`
     : `${ba > 0 ? `<tr>
-      <td style="padding:6px 0;font-size:14px;color:#6B7280;width:38%;">Beach Access Package &mdash; Adults</td>
+      <td style="padding:6px 0;font-size:14px;color:#6B7280;width:38%;">Beach Access Package - Adults</td>
       <td style="padding:6px 0;font-size:14px;color:#111827;">${ba} &times; $${BEACH_ADULT_PRICE} = $${ba * BEACH_ADULT_PRICE}</td>
     </tr>` : ''}
     ${bc > 0 ? `<tr>
-      <td style="padding:6px 0;font-size:14px;color:#6B7280;">Beach Access Package &mdash; Children</td>
+      <td style="padding:6px 0;font-size:14px;color:#6B7280;">Beach Access Package - Children</td>
       <td style="padding:6px 0;font-size:14px;color:#111827;">${bc} &times; $${BEACH_CHILD_PRICE} = $${bc * BEACH_CHILD_PRICE}</td>
     </tr>` : ''}
     ${js > 0 ? `<tr>
       <td style="padding:6px 0;font-size:14px;color:#6B7280;">Beach Access + Jet Ski Ride</td>
       <td style="padding:6px 0;font-size:14px;color:#111827;">${js} &times; $${JETSKI_ADULT_PRICE} = $${js * JETSKI_ADULT_PRICE}</td>
     </tr>` : ''}
-    ${bm > 0 ? `<tr>
-      <td style="padding:6px 0;font-size:14px;color:#6B7280;">Big Mable Tube Ride (Add-on)</td>
-      <td style="padding:6px 0;font-size:14px;color:#111827;">${bm} &times; $${BIG_MABLE_PRICE} = $${bm * BIG_MABLE_PRICE}</td>
-    </tr>` : ''}`;
+    ${bmAddonRow(bm)}`;
 
   const summaryRows = `
     <tr>
@@ -558,20 +560,23 @@ function teamEmail(b) {
           </tr>
           ${isJSR
             ? slots.map((s, i) => `<tr>
-            <td style="padding:5px 0;font-size:14px;color:#6B7280;">Jet Ski Rental &mdash; Rider ${i + 1} (${s.duration} min)</td>
+            <td style="padding:5px 0;font-size:14px;color:#6B7280;">Jet Ski Rental - Rider ${i + 1} (${s.duration} min)</td>
             <td style="padding:5px 0;font-size:14px;color:#111827;">$${s.price}</td>
-          </tr>`).join('')
+          </tr>`).join('') + (bm > 0 ? `<tr>
+            <td style="padding:5px 0;font-size:14px;color:#6B7280;">Big Mable Tube Ride (Add-on)</td>
+            <td style="padding:5px 0;font-size:14px;color:#111827;">${bm} &times; $${BIG_MABLE_PRICE} = $${bm * BIG_MABLE_PRICE}</td>
+          </tr>` : '')
             : isBigMable
             ? `<tr>
             <td style="padding:5px 0;font-size:14px;color:#6B7280;">Big Mable Tube Ride</td>
             <td style="padding:5px 0;font-size:14px;color:#111827;">${bmStandalone} &times; $${BIG_MABLE_PRICE} = $${bmStandalone * BIG_MABLE_PRICE}</td>
           </tr>`
             : `${ba > 0 ? `<tr>
-            <td style="padding:5px 0;font-size:14px;color:#6B7280;">Beach Access Package &mdash; Adults</td>
+            <td style="padding:5px 0;font-size:14px;color:#6B7280;">Beach Access Package - Adults</td>
             <td style="padding:5px 0;font-size:14px;color:#111827;">${ba} &times; $${BEACH_ADULT_PRICE} = $${ba * BEACH_ADULT_PRICE}</td>
           </tr>` : ''}
           ${bc > 0 ? `<tr>
-            <td style="padding:5px 0;font-size:14px;color:#6B7280;">Beach Access Package &mdash; Children</td>
+            <td style="padding:5px 0;font-size:14px;color:#6B7280;">Beach Access Package - Children</td>
             <td style="padding:5px 0;font-size:14px;color:#111827;">${bc} &times; $${BEACH_CHILD_PRICE} = $${bc * BEACH_CHILD_PRICE}</td>
           </tr>` : ''}
           ${js > 0 ? `<tr>

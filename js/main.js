@@ -875,7 +875,7 @@ function renderStep7(body) {
   const guestRows = isJSR
     ? state.jetSkiRentalSlots.map((slot, i) => `
         <div class="review-row">
-          <span class="review-row__label">Rider ${i + 1} (${slot.duration} min)</span>
+          <span class="review-row__label">Jet Ski Rental - Rider ${i + 1} (${slot.duration} min)</span>
           <span class="review-row__value">${formatMoney(slot.price)}</span>
         </div>`).join('') + mableAddonRow
     : isMable
