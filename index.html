@@ -24,13 +24,39 @@
         <span class="nav__wordmark">SummazEscape</span>
       </a>
       <div class="nav__right">
-        <a href="https://wa.me/12428175387" target="_blank" rel="noopener" class="nav__whatsapp" aria-label="WhatsApp">
-          <svg viewBox="-1 -1 34 34" width="46" height="46" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="16" cy="16" r="16" fill="#25D366"/>
-            <path d="M22.94 9.06A9.71 9.71 0 0 0 16 6.3a9.74 9.74 0 0 0-8.44 14.6L6.3 25.7l4.93-1.29a9.74 9.74 0 0 0 4.77 1.22h.01A9.74 9.74 0 0 0 25.7 16a9.71 9.71 0 0 0-2.76-6.94zm-6.94 14.98h-.01a8.09 8.09 0 0 1-4.12-1.13l-.3-.18-3.08.81.82-3-.19-.31a8.1 8.1 0 1 1 6.88 3.81zm4.44-6.07c-.24-.12-1.43-.7-1.65-.78-.22-.08-.38-.12-.54.12s-.62.78-.76.94c-.14.16-.28.18-.52.06a6.57 6.57 0 0 1-1.93-1.19 7.24 7.24 0 0 1-1.34-1.66c-.14-.24-.01-.37.1-.49.11-.11.24-.28.37-.42.12-.14.16-.24.24-.4.08-.16.04-.3-.02-.42s-.54-1.3-.74-1.78c-.19-.47-.39-.4-.54-.41l-.46-.01c-.16 0-.42.06-.64.3s-.84.82-.84 2 .86 2.32.98 2.48c.12.16 1.69 2.58 4.1 3.62.57.25 1.02.4 1.37.5.57.18 1.1.16 1.51.1.46-.07 1.43-.58 1.63-1.15.2-.56.2-1.04.14-1.15-.06-.1-.22-.16-.46-.28z" fill="#fff"/>
-          </svg>
-        </a>
+        <div class="nav__links">
+          <a href="#packages"   class="nav__link">Packages</a>
+          <a href="#overview"   class="nav__link">Overview</a>
+          <a href="#extras"     class="nav__link">Add-Ons</a>
+          <a href="#location"   class="nav__link">Location</a>
+          <a href="#faq"        class="nav__link">FAQ</a>
+          <a href="#kids"       class="nav__link">Meet the Kids</a>
+          <a href="#experience" class="nav__link">Experience</a>
+          <a href="#reels"      class="nav__link">Reels</a>
+          <a href="#gallery"    class="nav__link">Gallery</a>
+          <a href="#reviews"    class="nav__link">Reviews</a>
+        </div>
         <button class="btn btn--primary btn--nav-book" onclick="openBooking()">Book Now</button>
+        <button class="nav__hamburger" id="navHamburger" onclick="toggleMobileMenu()" aria-label="Open menu" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+    <div class="nav__mobile-menu" id="navMobileMenu" aria-hidden="true">
+      <div class="nav__mobile-inner">
+        <a href="#packages"   class="nav__mobile-link" onclick="closeMobileMenu()"><span>Packages</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><polyline points="9 18 15 12 9 6"/></svg></a>
+        <a href="#overview"   class="nav__mobile-link" onclick="closeMobileMenu()"><span>Overview</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><polyline points="9 18 15 12 9 6"/></svg></a>
+        <a href="#experience" class="nav__mobile-link" onclick="closeMobileMenu()"><span>Experience</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><polyline points="9 18 15 12 9 6"/></svg></a>
+        <a href="#reels"      class="nav__mobile-link" onclick="closeMobileMenu()"><span>Reels</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><polyline points="9 18 15 12 9 6"/></svg></a>
+        <a href="#gallery"    class="nav__mobile-link" onclick="closeMobileMenu()"><span>Gallery</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><polyline points="9 18 15 12 9 6"/></svg></a>
+        <a href="#extras"     class="nav__mobile-link" onclick="closeMobileMenu()"><span>Add-Ons</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><polyline points="9 18 15 12 9 6"/></svg></a>
+        <a href="#location"   class="nav__mobile-link" onclick="closeMobileMenu()"><span>Location</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><polyline points="9 18 15 12 9 6"/></svg></a>
+        <a href="#faq"        class="nav__mobile-link" onclick="closeMobileMenu()"><span>FAQ</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><polyline points="9 18 15 12 9 6"/></svg></a>
+        <a href="#kids"       class="nav__mobile-link" onclick="closeMobileMenu()"><span>Meet the Kids</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><polyline points="9 18 15 12 9 6"/></svg></a>
+        <a href="#reviews"    class="nav__mobile-link" onclick="closeMobileMenu()"><span>Reviews</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><polyline points="9 18 15 12 9 6"/></svg></a>
+        <div class="nav__mobile-cta">
+          <button class="btn btn--primary nav__mobile-book" onclick="closeMobileMenu();openBooking()">Book Now</button>
+        </div>
       </div>
     </div>
   </nav>
@@ -44,6 +70,8 @@
     <div class="hero__slide hero__slide--2"></div>
     <div class="hero__slide hero__slide--3"></div>
     <div class="hero__slide hero__slide--4"></div>
+    <div class="hero__slide hero__slide--5"></div>
+    <div class="hero__slide hero__slide--6"></div>
     <div class="container">
       <div class="hero__inner">
         <h1 class="hero__title">Jet skis.<br><em>Open water.</em><br>All day.</h1>
@@ -60,7 +88,7 @@
         </div>
         <div class="hero__ctas">
           <button class="btn btn--primary btn--lg" onclick="openBooking()">Book Now · From $75</button>
-          <a href="#overview" class="btn btn--ghost btn--lg">Learn More ↓</a>
+          <a href="#packages" class="btn btn--ghost btn--lg">Explore Packages ↓</a>
         </div>
       </div>
     </div>
@@ -68,26 +96,98 @@
 
 
   <!-- ══════════════════════════════════════════════════════
-       ANCHOR NAV
+       PACKAGE BROWSE
        ══════════════════════════════════════════════════════ -->
-  <nav class="anchor-nav" id="anchorNav">
-    <div class="container anchor-nav__inner">
-      <div class="anchor-nav__links">
-        <a href="#overview"    class="anchor-nav__link is-active" data-section="overview">Overview</a>
-        <a href="#included"    class="anchor-nav__link" data-section="included">What's Included</a>
-        <a href="#pricing"     class="anchor-nav__link" data-section="pricing">Pricing</a>
-        <a href="#extras"      class="anchor-nav__link" data-section="extras">Add-Ons</a>
-        <a href="#location"    class="anchor-nav__link" data-section="location">Location</a>
-        <a href="#faq"         class="anchor-nav__link" data-section="faq">FAQ</a>
-        <a href="#kids"        class="anchor-nav__link" data-section="kids">Meet the Kids</a>
-        <a href="#experience"  class="anchor-nav__link" data-section="experience">Experience</a>
-        <a href="#reels"       class="anchor-nav__link" data-section="reels">Reels</a>
-        <a href="#gallery"     class="anchor-nav__link" data-section="gallery">Gallery</a>
-        <a href="#reviews"     class="anchor-nav__link" data-section="reviews">Reviews</a>
+  <section class="pkg-browse" id="packages">
+    <div class="container">
+      <div class="pkg-browse__header">
+        <p class="pkg-browse__eyebrow">What We Offer</p>
+        <h2 class="pkg-browse__title">Choose Your Experience</h2>
+        <p class="pkg-browse__sub">Three ways to enjoy Arawak Cay. Pick what suits your group and book it all in one go.</p>
       </div>
-      <button class="btn btn--primary btn--sm" onclick="openBooking()" style="flex-shrink:0">Book Now</button>
+      <div class="pkg-browse__grid">
+
+        <!-- Card 1: Beach Access Package -->
+        <div class="pkg-card">
+          <div class="pkg-card__photo">
+            <img src="https://res.cloudinary.com/dko76z0df/image/upload/c_fill,w_640,h_400,g_auto/v1784948514/summaz/beach-pkg-photo3.jpg" alt="Beach Access Package at Arawak Cay" loading="lazy">
+          </div>
+          <div class="pkg-card__body">
+            <span class="pkg-card__cat pkg-card__cat--family">Family Wave Package</span>
+            <h3 class="pkg-card__name">Beach Access Package</h3>
+            <p class="pkg-card__desc">A full day at Arawak Cay with chairs, kayaks, paddleboards, water scooters, snorkel masks, and floaties included. No timed slots, arrive any time between 10am and 6pm.</p>
+            <div class="pkg-card__price-row">
+              <span class="pkg-card__price">From $60 <em>/ per person</em></span>
+            </div>
+            <div class="pkg-card__actions">
+              <button class="pkg-card__details-btn" onclick="openPanel('beachAccess')">Read Details</button>
+              <button class="pkg-card__cta" onclick="openBooking('beachAccess')">Book Now</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 2: Beach Access Package + Jet Ski Ride -->
+        <div class="pkg-card pkg-card--featured">
+          <div class="pkg-card__photo">
+            <img src="https://res.cloudinary.com/dko76z0df/image/upload/c_fill,w_640,h_400,g_auto/v1784948510/summaz/beach-pkg-photo2.jpg" alt="Beach Access Package + Jet Ski Ride" loading="lazy">
+          </div>
+          <div class="pkg-card__body">
+            <span class="pkg-card__cat pkg-card__cat--family">Family Wave Package</span>
+            <h3 class="pkg-card__name">Beach Access Package + Jet Ski Ride</h3>
+            <p class="pkg-card__desc">Everything in the Beach Access Package plus a solo 25-minute jet ski session on the open water.</p>
+            <div class="pkg-card__price-row">
+              <span class="pkg-card__price">$150 <em>/ per person</em></span>
+            </div>
+            <div class="pkg-card__actions">
+              <button class="pkg-card__details-btn" onclick="openPanel('beachAccessJetSki')">Read Details</button>
+              <button class="pkg-card__cta" onclick="openBooking('beachAccessJetSki')">Book Now</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 3: Jet Ski Rentals -->
+        <div class="pkg-card">
+          <div class="pkg-card__photo">
+            <img src="https://res.cloudinary.com/dko76z0df/image/upload/c_fill,w_640,h_400,g_auto/v1784952080/summaz/jetski-photo1.jpg" alt="Jet Ski Rentals at Arawak Cay" loading="lazy">
+          </div>
+          <div class="pkg-card__body">
+            <span class="pkg-card__cat pkg-card__cat--solo">Individuals</span>
+            <h3 class="pkg-card__name">Jet Ski Rentals</h3>
+            <p class="pkg-card__desc">A solo jet ski session on the open water at Arawak Cay. No beach day required. Choose from 30, 45, or 60 minutes.</p>
+            <div class="pkg-card__price-row">
+              <span class="pkg-card__price">From $105 <em>/ per ride</em></span>
+            </div>
+            <div class="pkg-card__actions">
+              <button class="pkg-card__details-btn" onclick="openPanel('jetSkiRental')">Read Details</button>
+              <button class="pkg-card__cta" onclick="openBooking('jetSkiRental')">Book Now</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 4: Big Mable Tube Ride -->
+        <div class="pkg-card">
+          <div class="pkg-card__photo">
+            <img src="https://res.cloudinary.com/dko76z0df/image/upload/c_fill,w_640,h_400,g_auto/v1782304570/summaz/clip4-poster.jpg" alt="Big Mable Tube Ride at Arawak Cay" loading="lazy">
+          </div>
+          <div class="pkg-card__body">
+            <span class="pkg-card__cat pkg-card__cat--solo">Individuals</span>
+            <h3 class="pkg-card__name">Big Mable Tube Ride</h3>
+            <p class="pkg-card__desc">Up to 6 riders on one giant inflatable tube, towed by a jet ski through open water. A 10 to 12 minute ride. Ages 7 and up.</p>
+            <div class="pkg-card__price-row">
+              <span class="pkg-card__price">$45 <em>/ per person</em></span>
+            </div>
+            <div class="pkg-card__actions">
+              <button class="pkg-card__details-btn" onclick="openPanel('bigMable')">Read Details</button>
+              <button class="pkg-card__cta" onclick="openBooking('bigMable')">Book Now</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
     </div>
-  </nav>
+  </section>
+
+
 
 
   <!-- ══════════════════════════════════════════════════════
@@ -108,13 +208,14 @@
               </div>
               <div class="vcard__play"><svg viewBox="0 0 24 24" width="52" height="52"><circle cx="12" cy="12" r="12" fill="rgba(0,0,0,0.35)"/><polygon points="10,8 10,16 17,12" fill="white"/></svg></div>
             </div>
-            <p class="section-label">Beach Day, Nassau</p>
-            <h2 class="section-heading">A full beach day at Arawak Cay</h2>
+            <p class="section-label">Arawak Cay, Nassau</p>
+            <h2 class="section-heading">Water, gear, and open sky</h2>
             <div class="section-body">
-              <p>Summaz Escape is at Arawak Cay, a quieter stretch of Nassau coastline just past the fish fry. Clear water, real gear, no resort crowds.</p>
-              <p>If you're bringing the whole family, here's how it works. The kids get a full beach day: chairs, kayaks, paddleboards, snorkel masks, floaties, all of it. The adults who want to get out on the water can add a 25-minute jet ski session. The adults who'd rather stay on the beach? Same package as the kids.</p>
-              <p>That's what <strong>The Family Wave Package</strong> is built for. One booking, everyone covered, you pick what works for each person in your group.</p>
-              <p>Arrive any time between 10am and 6pm. No timed slots, no rush.</p>
+              <p>Summaz Escape is at Arawak Cay, a quieter stretch of Nassau coastline just past the fish fry. Clear Caribbean water, real gear, no resort crowds.</p>
+              <p>Coming with the whole family? The <strong>Family Wave Package</strong> covers everyone in one booking. Beach access for the kids and anyone who wants to stay on shore. A 25-minute jet ski session for the adults who want to get out on the water. You pick what each person in your group is getting.</p>
+              <p>Want to add more action to your beach day? The <strong>Big Mable Tube Ride</strong> is available on-site for the whole group. Up to 6 riders pile onto a giant inflatable tube and get towed by a jet ski across open water. About 10 to 12 minutes. Kids 7 and up can join. $45 per person, paid on arrival.</p>
+              <p>Just here for the jet ski? The <strong>Jet Ski Rentals</strong> package gets you straight on the water. No beach day required. Pick your duration, 30, 45, or 60 minutes, and ride.</p>
+              <p>Either way, you arrive between 10am and 6pm. No timed slots. No rush.</p>
             </div>
             <div class="vcards-grid">
               <div class="vcard" data-src="https://res.cloudinary.com/dko76z0df/video/upload/v1782304506/summaz/clip1.mp4" role="button" tabindex="0" aria-label="Play clip 1">
@@ -144,157 +245,20 @@
             </div>
           </section>
 
-          <!-- What's Included -->
-          <section class="listing-section" id="included">
-            <p class="section-label">Included in The Family Wave Package</p>
-            <h2 class="section-heading">What comes with your booking</h2>
-            <ul class="check-list">
-              <li>
-                <span class="check-icon"><svg viewBox="0 0 12 12" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="2 6 5 9 10 3"/></svg></span>
-                <div><strong>25-minute jet ski session</strong><p>Included with the Beach Access Package + Jet Ski Ride. Solo ride, minimum age 16.</p></div>
-              </li>
-              <li>
-                <span class="check-icon"><svg viewBox="0 0 12 12" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="2 6 5 9 10 3"/></svg></span>
-                <div><strong>Beach chairs &amp; umbrella</strong><p>Set up for your group for the full day.</p></div>
-              </li>
-              <li>
-                <span class="check-icon"><svg viewBox="0 0 12 12" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="2 6 5 9 10 3"/></svg></span>
-                <div><strong>Clear-hull kayaks</strong><p>See straight through the bottom to the seafloor.</p></div>
-              </li>
-              <li>
-                <span class="check-icon"><svg viewBox="0 0 12 12" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="2 6 5 9 10 3"/></svg></span>
-                <div><strong>Paddleboards</strong><p>Good water conditions for all levels.</p></div>
-              </li>
-              <li>
-                <span class="check-icon"><svg viewBox="0 0 12 12" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="2 6 5 9 10 3"/></svg></span>
-                <div><strong>Water scooters</strong><p>Motorized and easy to control, great for exploring the bay.</p></div>
-              </li>
-              <li>
-                <span class="check-icon"><svg viewBox="0 0 12 12" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="2 6 5 9 10 3"/></svg></span>
-                <div><strong>Snorkel masks</strong><p>The bay has clear water. Worth using.</p></div>
-              </li>
-              <li>
-                <span class="check-icon"><svg viewBox="0 0 12 12" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="2 6 5 9 10 3"/></svg></span>
-                <div><strong>Floaties &amp; water hammock</strong><p>Float out and stay in the water as long as you like.</p></div>
-              </li>
-              <li>
-                <span class="check-icon"><svg viewBox="0 0 12 12" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="2 6 5 9 10 3"/></svg></span>
-                <div><strong>Bottled water</strong><p>One per guest in your booking.</p></div>
-              </li>
-              <li>
-                <span class="check-icon"><svg viewBox="0 0 12 12" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="2 6 5 9 10 3"/></svg></span>
-                <div><strong>Restrooms on site</strong><p>Clean facilities available throughout the day.</p></div>
-              </li>
-            </ul>
-          </section>
 
-          <!-- Pricing -->
-          <section class="listing-section" id="pricing">
-            <p class="section-label">Pricing</p>
-            <h2 class="section-heading">The Family Wave Package</h2>
-            <p class="section-body" style="margin-bottom:28px">Beach access for the whole group. Jet ski session for the adults who want one. You pick what each person in your group is getting. All in a single booking, no need to book separately for different people.</p>
-            <div class="ticket-options">
-
-              <!-- Beach Access Package -->
-              <div class="ticket">
-                <div class="ticket__name">Beach Access Package</div>
-                <div class="ticket__price-row">
-                  <span class="ticket__price">$75<span class="ticket__per">/ adult</span></span>
-                  <span class="ticket__price-sep">·</span>
-                  <span class="ticket__price">$60<span class="ticket__per">/ child</span></span>
-                </div>
-                <div class="ticket__tagline">Full day at the beach. Kayaks, paddleboards, water scooters, snorkel masks, floaties, chairs, and more.</div>
-                <div class="ticket__features">
-                  <div class="ticket__feature">
-                    <span class="chk"><svg viewBox="0 0 15 15" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="2.5 7.5 6 11 12.5 4"/></svg></span>
-                    Full day beach access, no timed slots
-                  </div>
-                  <div class="ticket__feature">
-                    <span class="chk"><svg viewBox="0 0 15 15" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="2.5 7.5 6 11 12.5 4"/></svg></span>
-                    Beach chairs, umbrella, floaties, water hammock
-                  </div>
-                  <div class="ticket__feature">
-                    <span class="chk"><svg viewBox="0 0 15 15" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="2.5 7.5 6 11 12.5 4"/></svg></span>
-                    Clear-hull kayaks, paddleboards, water scooters
-                  </div>
-                  <div class="ticket__feature">
-                    <span class="chk"><svg viewBox="0 0 15 15" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="2.5 7.5 6 11 12.5 4"/></svg></span>
-                    Snorkel masks &amp; bottled water included
-                  </div>
-                  <div class="ticket__feature">
-                    <span class="chk"><svg viewBox="0 0 15 15" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="2.5 7.5 6 11 12.5 4"/></svg></span>
-                    Open to all ages, adults and children
-                  </div>
-                </div>
-                <div class="ticket__adder ticket__adder--stacked">
-                  <div class="ticket__adder-row">
-                    <div class="ticket__counter">
-                      <button class="ticket__counter-btn" id="ticketBeachAdultMinus" onclick="ticketCount('beachAdult',-1)" disabled aria-label="Remove beach adult">−</button>
-                      <span class="ticket__counter-num" id="ticketBeachAdultCount">0</span>
-                      <button class="ticket__counter-btn" onclick="ticketCount('beachAdult',1)" aria-label="Add beach adult">+</button>
-                    </div>
-                    <button class="btn btn--primary ticket__add-btn" onclick="addToSidebar('beachAdults')">Add an Adult · $75</button>
-                  </div>
-                  <div class="ticket__adder-row">
-                    <div class="ticket__counter">
-                      <button class="ticket__counter-btn" id="ticketBeachChildMinus" onclick="ticketCount('beachChild',-1)" disabled aria-label="Remove beach child">−</button>
-                      <span class="ticket__counter-num" id="ticketBeachChildCount">0</span>
-                      <button class="ticket__counter-btn" onclick="ticketCount('beachChild',1)" aria-label="Add beach child">+</button>
-                    </div>
-                    <button class="btn btn--primary ticket__add-btn" onclick="addToSidebar('beachChildren')">Add a Child · $60</button>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Beach Access Package + Jet Ski Ride -->
-              <div class="ticket ticket--featured">
-                <div class="ticket__name">Beach Access Package + Jet Ski Ride</div>
-                <div class="ticket__price">$150<span class="ticket__per">/ adult</span></div>
-                <div class="ticket__tagline">Everything in the Beach Access Package plus a 25-minute solo jet ski session on the open water.</div>
-                <div class="ticket__features">
-                  <div class="ticket__feature">
-                    <span class="chk"><svg viewBox="0 0 15 15" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="2.5 7.5 6 11 12.5 4"/></svg></span>
-                    Everything in the Beach Access Package
-                  </div>
-                  <div class="ticket__feature">
-                    <span class="chk"><svg viewBox="0 0 15 15" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="2.5 7.5 6 11 12.5 4"/></svg></span>
-                    25-minute solo jet ski session
-                  </div>
-                  <div class="ticket__feature">
-                    <span class="chk"><svg viewBox="0 0 15 15" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="2.5 7.5 6 11 12.5 4"/></svg></span>
-                    Solo riding, minimum age 16
-                  </div>
-                  <div class="ticket__feature">
-                    <span class="chk"><svg viewBox="0 0 15 15" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="2.5 7.5 6 11 12.5 4"/></svg></span>
-                    Life vest provided, no license required
-                  </div>
-                </div>
-                <div class="ticket__note">Adults only. Children cannot ride solo. Book the Beach Access Package for children in your group.</div>
-                <div class="ticket__adder">
-                  <div class="ticket__counter">
-                    <button class="ticket__counter-btn" id="ticketJetSkiMinus" onclick="ticketCount('jetSki',-1)" disabled aria-label="Remove jet ski adult">−</button>
-                    <span class="ticket__counter-num" id="ticketJetSkiCount">0</span>
-                    <button class="ticket__counter-btn" onclick="ticketCount('jetSki',1)" aria-label="Add jet ski adult">+</button>
-                  </div>
-                  <button class="btn btn--primary ticket__add-btn" onclick="addToSidebar('jetSkiAdults')">Add an Adult · $150</button>
-                </div>
-              </div>
-
-            </div>
-          </section>
 
           <!-- Add-ons -->
           <section class="listing-section" id="extras">
             <p class="section-label">Available on-site</p>
             <h2 class="section-heading">Optional extras</h2>
-            <p class="section-body" style="margin-bottom:16px">These aren't included in your package price. You pay for them on arrival. No upfront charge here. Express your interest during booking and our team will follow up when you arrive.</p>
+            <p class="section-body" style="margin-bottom:16px">The Big Mable Tube Ride can be added directly to your booking and charged with your total. Everything else below is paid on arrival. Express your interest during checkout and our team will follow up when you arrive.</p>
             <div class="extras-list">
               <div class="extra-row">
                 <div>
                   <div class="extra-row__name">Big Mable Tube Ride</div>
-                  <div class="extra-row__desc">~10–12 minutes · 2–6 riders per ride · Ages 7+ · 600 lb combined limit</div>
+                  <div class="extra-row__desc">Up to 6 riders on one giant inflatable tube, towed by jet ski. About 10 to 12 minutes. Ages 7 and up. Add it to your booking and it gets charged with your total.</div>
                 </div>
-                <div class="extra-row__price">$45 / person</div>
+                <div class="extra-row__price" style="color:var(--teal);white-space:nowrap">$45 / person</div>
               </div>
               <div class="extra-row">
                 <div>
@@ -521,53 +485,42 @@
               <div class="bw-head-price">From $75 <span>per person</span></div>
             </div>
             <div class="bw-body">
-              <div class="bw-field-label">Your visit date</div>
-              <input
-                class="bw-date-input"
-                type="date"
-                id="widgetDate"
-                onchange="sidebarDateChange(this.value)"
-                aria-label="Select visit date"
-              >
-              <div class="bw-field-label" style="margin-top:14px">Guests</div>
-              <div class="bw-stepper-rows">
-                <div class="bw-stepper-row">
-                  <div class="bw-stepper-info">
-                    <div class="bw-stepper-name">Beach Access Package</div>
-                    <div class="bw-stepper-price">Adults · $75 per person</div>
-                  </div>
-                  <div class="bw-stepper">
-                    <button class="bw-stepper-btn" id="wBeachAdultMinus" onclick="sidebarCount('beachAdults',-1)" aria-label="Remove beach adult">−</button>
-                    <span class="bw-stepper-count" id="wBeachAdultCount">0</span>
-                    <button class="bw-stepper-btn" onclick="sidebarCount('beachAdults',1)" aria-label="Add beach adult">+</button>
-                  </div>
+              <div class="bw-field-label">Select a Package</div>
+              <div class="bw-pkg-selector">
+                <div class="bw-pkg-group">
+                  <div class="bw-pkg-group-label">Family Wave Package</div>
+                  <label class="bw-pkg-option">
+                    <input type="radio" name="selectedPkg" value="beachAccess" onchange="sidebarPackageChange(this.value)">
+                    <div class="bw-pkg-option-content">
+                      <span class="bw-pkg-option-name">Beach Access Package</span>
+                      <span class="bw-pkg-option-price">Adults $75 · Children $60</span>
+                    </div>
+                  </label>
+                  <label class="bw-pkg-option">
+                    <input type="radio" name="selectedPkg" value="beachAccessJetSki" onchange="sidebarPackageChange(this.value)">
+                    <div class="bw-pkg-option-content">
+                      <span class="bw-pkg-option-name">Beach Access Package + Jet Ski Ride</span>
+                      <span class="bw-pkg-option-price">Adults $150 per person</span>
+                    </div>
+                  </label>
                 </div>
-                <div class="bw-stepper-row">
-                  <div class="bw-stepper-info">
-                    <div class="bw-stepper-name">Beach Access Package</div>
-                    <div class="bw-stepper-price">Children · $60 per person</div>
-                  </div>
-                  <div class="bw-stepper">
-                    <button class="bw-stepper-btn" id="wBeachChildMinus" onclick="sidebarCount('beachChildren',-1)" aria-label="Remove beach child">−</button>
-                    <span class="bw-stepper-count" id="wBeachChildCount">0</span>
-                    <button class="bw-stepper-btn" onclick="sidebarCount('beachChildren',1)" aria-label="Add beach child">+</button>
-                  </div>
+                <div class="bw-pkg-group">
+                  <div class="bw-pkg-group-label">Individuals</div>
+                  <label class="bw-pkg-option">
+                    <input type="radio" name="selectedPkg" value="jetSkiRental" onchange="sidebarPackageChange(this.value)">
+                    <div class="bw-pkg-option-content">
+                      <span class="bw-pkg-option-name">Jet Ski Rentals</span>
+                      <span class="bw-pkg-option-price">From $105 per ride</span>
+                    </div>
+                  </label>
+                  <label class="bw-pkg-option">
+                    <input type="radio" name="selectedPkg" value="bigMable" onchange="sidebarPackageChange(this.value)">
+                    <div class="bw-pkg-option-content">
+                      <span class="bw-pkg-option-name">Big Mable Tube Ride</span>
+                      <span class="bw-pkg-option-price">$45 per person · 2 to 6 riders</span>
+                    </div>
+                  </label>
                 </div>
-                <div class="bw-stepper-row">
-                  <div class="bw-stepper-info">
-                    <div class="bw-stepper-name">Beach Access Package + Jet Ski Ride</div>
-                    <div class="bw-stepper-price">Adults only · $150 per person</div>
-                  </div>
-                  <div class="bw-stepper">
-                    <button class="bw-stepper-btn" id="wJetSkiAdultMinus" onclick="sidebarCount('jetSkiAdults',-1)" aria-label="Remove jet ski adult">−</button>
-                    <span class="bw-stepper-count" id="wJetSkiAdultCount">0</span>
-                    <button class="bw-stepper-btn" onclick="sidebarCount('jetSkiAdults',1)" aria-label="Add jet ski adult">+</button>
-                  </div>
-                </div>
-              </div>
-              <div class="bw-total">
-                <div class="bw-total-label">Estimated total</div>
-                <div class="bw-total-amount" id="wTotal">$0</div>
               </div>
             </div>
             <div class="bw-foot">
@@ -879,6 +832,39 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" width="20" height="20"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
     </button>
     <div class="vlightbox__wrap" id="vlightboxWrap"></div>
+  </div>
+
+  <!-- Package detail panels overlay -->
+  <div class="pkg-panel-overlay" id="pkgPanelOverlay" onclick="panelOverlayClick(event)">
+    <div class="pkg-panel" id="pkgPanel">
+      <div class="pkg-panel__header">
+        <span class="pkg-panel__breadcrumb">All Packages / <span id="pkgPanelBreadcrumb"></span></span>
+        <button class="pkg-panel__close" onclick="closePanel()" aria-label="Close panel">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="pkg-panel__layout">
+        <div class="pkg-panel__content" id="pkgPanelContent"></div>
+        <div class="pkg-panel__sidebar" id="pkgPanelSidebar"></div>
+      </div>
+      <div class="panel-mobile-bar" id="panelMobileBar">
+        <button class="btn btn--primary panel-mobile-bar__btn" onclick="openPanelSheet()">Book This Package</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile booking sheet (slides up from bottom on mobile) -->
+  <div class="panel-sheet-overlay" id="panelSheetOverlay" onclick="panelSheetOverlayClick(event)">
+    <div class="panel-sheet" id="panelSheet">
+      <div class="panel-sheet__handle"></div>
+      <div class="panel-sheet__body" id="panelSheetBody"></div>
+    </div>
+  </div>
+
+  <!-- Photo lightbox -->
+  <div class="img-lightbox" id="imgLightbox" onclick="closeImgLightbox()">
+    <button class="img-lightbox__close" onclick="closeImgLightbox()" aria-label="Close photo">&#x2715;</button>
+    <img class="img-lightbox__img" id="imgLightboxImg" src="" alt="">
   </div>
 
   <script src="js/main.js"></script>

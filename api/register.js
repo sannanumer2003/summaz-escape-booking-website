@@ -28,6 +28,7 @@ const LOGO_URL      = 'https://res.cloudinary.com/dko76z0df/image/upload/v178230
 const BEACH_ADULT_PRICE  = 75;
 const BEACH_CHILD_PRICE  = 60;
 const JETSKI_ADULT_PRICE = 150;
+const BIG_MABLE_PRICE    = 45;
 
 /* ── Disposable email domain blocklist ───────────────────── */
 const BLOCKED_DOMAINS = new Set([
@@ -57,30 +58,40 @@ module.exports = async function handler(req, res) {
   /* 1. Honeypot */
   if (body.honeypot) return spamOk(res);
 
-  /* 2. Timing — under 20s = bot, under 3s = direct API hit */
+  /* 2. Timing — under 8s likely a bot or direct API hit */
   const elapsed = Number(body.elapsed) || 0;
-  if (elapsed < 3000 || elapsed < 20000) return spamOk(res);
+  if (elapsed < 8000) return spamOk(res);
 
   const {
-    beachAdults   = 0,
-    beachChildren = 0,
-    jetSkiAdults  = 0,
-    date          = '',
-    name          = '',
-    email         = '',
-    phone         = '',
-    addons        = '',
-    notes         = '',
-    paymentMethod = 'card',
+    selectedPackage    = '',
+    beachAdults        = 0,
+    beachChildren      = 0,
+    jetSkiAdults       = 0,
+    bigMableAddon      = 0,
+    bigMableCount      = 0,
+    jetSkiRentalSlots  = [],
+    date               = '',
+    name               = '',
+    email              = '',
+    phone              = '',
+    addons             = '',
+    notes              = '',
+    paymentMethod      = 'card',
   } = body;
+
+  const isJSR     = selectedPackage === 'jetSkiRental';
+  const isBigMable = selectedPackage === 'bigMable';
+  const slots      = Array.isArray(jetSkiRentalSlots) ? jetSkiRentalSlots : [];
+  const bmCount    = Number(bigMableCount);
 
   /* 3. Required fields */
   const emailClean = String(email).trim().toLowerCase();
   const phoneDigs  = String(phone).replace(/\D/g, '');
-  if (!name.trim() || !emailClean || !date || !paymentMethod ||
-      (Number(beachAdults) + Number(beachChildren) + Number(jetSkiAdults) < 1)) {
-    return spamOk(res);
-  }
+  const guestCount = Number(beachAdults) + Number(beachChildren) + Number(jetSkiAdults);
+  if (!name.trim() || !emailClean || !date || !paymentMethod) return spamOk(res);
+  if (isJSR      && slots.length < 1) return spamOk(res);
+  if (isBigMable && bmCount < 2)      return spamOk(res);
+  if (!isJSR && !isBigMable && guestCount < 1) return spamOk(res);
 
   /* 4. Phone sanity */
   if (phoneDigs.length < 7) return spamOk(res);
@@ -104,10 +115,15 @@ module.exports = async function handler(req, res) {
 
   /* ── Passed all checks — process real booking ─────────── */
   const reference = 'SE-' + Math.floor(100000 + Math.random() * 900000);
-  const total     = (Number(beachAdults) * BEACH_ADULT_PRICE)
-                  + (Number(beachChildren) * BEACH_CHILD_PRICE)
-                  + (Number(jetSkiAdults)  * JETSKI_ADULT_PRICE);
-  const booking   = { beachAdults, beachChildren, jetSkiAdults, date, name, email: emailClean, phone, addons, notes, paymentMethod, reference, total, spamFlag };
+  const total     = isJSR
+    ? slots.reduce((sum, s) => sum + Number(s.price || 0), 0)
+    : isBigMable
+    ? bmCount * BIG_MABLE_PRICE
+    : (Number(beachAdults)   * BEACH_ADULT_PRICE)
+    + (Number(beachChildren) * BEACH_CHILD_PRICE)
+    + (Number(jetSkiAdults)  * JETSKI_ADULT_PRICE)
+    + (Number(bigMableAddon) * BIG_MABLE_PRICE);
+  const booking   = { selectedPackage, beachAdults, beachChildren, jetSkiAdults, bigMableAddon, bigMableCount: bmCount, slots, date, name, email: emailClean, phone, addons, notes, paymentMethod, reference, total, spamFlag };
 
   const [emailResult, gasResult] = await Promise.allSettled([
     sendBookingEmails(booking),
@@ -246,13 +262,45 @@ function shell(rows) {
    GUEST EMAIL  (Zelle / Venmo / Card in one function)
    ══════════════════════════════════════════════════════════ */
 function guestEmail(b) {
-  const { name, beachAdults, beachChildren, jetSkiAdults, date, addons, paymentMethod, reference, total } = b;
+  const { selectedPackage, name, beachAdults, beachChildren, jetSkiAdults, date, addons, paymentMethod, reference, total } = b;
+  const slots      = Array.isArray(b.slots) ? b.slots : [];
+  const isJSR      = selectedPackage === 'jetSkiRental';
+  const isBigMable = selectedPackage === 'bigMable';
+  const bmStandalone = Number(b.bigMableCount);
 
   const firstName     = h(name).split(' ')[0];
   const dateDisplay   = fmtDate(date);
   const addonsDisplay = addons || 'None';
   const totalDisplay  = '$' + Number(total).toLocaleString();
   const ba = Number(beachAdults), bc = Number(beachChildren), js = Number(jetSkiAdults);
+
+  const bm = Number(b.bigMableAddon);
+  const itemRows = isJSR
+    ? slots.map((s, i) => `<tr>
+      <td style="padding:6px 0;font-size:14px;color:#6B7280;width:38%;">Jet Ski Rental &mdash; Rider ${i + 1} (${s.duration} min)</td>
+      <td style="padding:6px 0;font-size:14px;color:#111827;">$${s.price}</td>
+    </tr>`).join('')
+    : isBigMable
+    ? `<tr>
+      <td style="padding:6px 0;font-size:14px;color:#6B7280;width:38%;">Big Mable Tube Ride</td>
+      <td style="padding:6px 0;font-size:14px;color:#111827;">${bmStandalone} &times; $${BIG_MABLE_PRICE} = $${bmStandalone * BIG_MABLE_PRICE}</td>
+    </tr>`
+    : `${ba > 0 ? `<tr>
+      <td style="padding:6px 0;font-size:14px;color:#6B7280;width:38%;">Beach Access Package &mdash; Adults</td>
+      <td style="padding:6px 0;font-size:14px;color:#111827;">${ba} &times; $${BEACH_ADULT_PRICE} = $${ba * BEACH_ADULT_PRICE}</td>
+    </tr>` : ''}
+    ${bc > 0 ? `<tr>
+      <td style="padding:6px 0;font-size:14px;color:#6B7280;">Beach Access Package &mdash; Children</td>
+      <td style="padding:6px 0;font-size:14px;color:#111827;">${bc} &times; $${BEACH_CHILD_PRICE} = $${bc * BEACH_CHILD_PRICE}</td>
+    </tr>` : ''}
+    ${js > 0 ? `<tr>
+      <td style="padding:6px 0;font-size:14px;color:#6B7280;">Beach Access + Jet Ski Ride</td>
+      <td style="padding:6px 0;font-size:14px;color:#111827;">${js} &times; $${JETSKI_ADULT_PRICE} = $${js * JETSKI_ADULT_PRICE}</td>
+    </tr>` : ''}
+    ${bm > 0 ? `<tr>
+      <td style="padding:6px 0;font-size:14px;color:#6B7280;">Big Mable Tube Ride (Add-on)</td>
+      <td style="padding:6px 0;font-size:14px;color:#111827;">${bm} &times; $${BIG_MABLE_PRICE} = $${bm * BIG_MABLE_PRICE}</td>
+    </tr>` : ''}`;
 
   const summaryRows = `
     <tr>
@@ -263,22 +311,11 @@ function guestEmail(b) {
       <td style="padding:6px 0;font-size:14px;color:#6B7280;">Date</td>
       <td style="padding:6px 0;font-size:14px;color:#111827;">${dateDisplay}</td>
     </tr>
-    ${ba > 0 ? `<tr>
-      <td style="padding:6px 0;font-size:14px;color:#6B7280;">Beach Access Package (Adults)</td>
-      <td style="padding:6px 0;font-size:14px;color:#111827;">${ba} × $${BEACH_ADULT_PRICE} = $${ba * BEACH_ADULT_PRICE}</td>
-    </tr>` : ''}
-    ${bc > 0 ? `<tr>
-      <td style="padding:6px 0;font-size:14px;color:#6B7280;">Beach Access Package (Children)</td>
-      <td style="padding:6px 0;font-size:14px;color:#111827;">${bc} × $${BEACH_CHILD_PRICE} = $${bc * BEACH_CHILD_PRICE}</td>
-    </tr>` : ''}
-    ${js > 0 ? `<tr>
-      <td style="padding:6px 0;font-size:14px;color:#6B7280;">Beach Access Package + Jet Ski Ride</td>
-      <td style="padding:6px 0;font-size:14px;color:#111827;">${js} × $${JETSKI_ADULT_PRICE} = $${js * JETSKI_ADULT_PRICE}</td>
-    </tr>` : ''}
-    <tr>
-      <td style="padding:6px 0;font-size:14px;color:#6B7280;">Add-ons</td>
+    ${itemRows}
+    ${addonsDisplay !== 'None' ? `<tr>
+      <td style="padding:6px 0;font-size:14px;color:#6B7280;">Other Add-ons</td>
       <td style="padding:6px 0;font-size:14px;color:#111827;">${h(addonsDisplay)}</td>
-    </tr>
+    </tr>` : ''}
     <tr>
       <td style="padding:6px 0;font-size:14px;color:#6B7280;font-weight:700;">Total</td>
       <td style="padding:6px 0;font-size:15px;font-weight:800;color:#031D2F;">${totalDisplay}</td>
@@ -444,11 +481,15 @@ function guestEmail(b) {
    TEAM NOTIFICATION EMAIL  (all 3 methods)
    ══════════════════════════════════════════════════════════ */
 function teamEmail(b) {
-  const { name, email, phone, beachAdults, beachChildren, jetSkiAdults, date, addons, notes, paymentMethod, reference, total } = b;
+  const { selectedPackage, name, email, phone, beachAdults, beachChildren, jetSkiAdults, date, addons, notes, paymentMethod, reference, total } = b;
+  const slots       = Array.isArray(b.slots) ? b.slots : [];
+  const isJSR       = selectedPackage === 'jetSkiRental';
+  const isBigMable  = selectedPackage === 'bigMable';
+  const bmStandalone = Number(b.bigMableCount);
 
   const dateDisplay   = fmtDate(date);
   const label         = methodName(paymentMethod);
-  const ba = Number(beachAdults), bc = Number(beachChildren), js = Number(jetSkiAdults);
+  const ba = Number(beachAdults), bc = Number(beachChildren), js = Number(jetSkiAdults), bm = Number(b.bigMableAddon);
   const addonsDisplay = addons || 'None';
   const totalDisplay  = '$' + Number(total).toLocaleString();
   const badgeColor    = paymentMethod === 'arrival' ? '#00C4A1' : '#0077B6';
@@ -515,22 +556,36 @@ function teamEmail(b) {
             <td style="padding:5px 0;font-size:14px;color:#6B7280;">Date</td>
             <td style="padding:5px 0;font-size:14px;color:#111827;">${dateDisplay}</td>
           </tr>
-          ${ba > 0 ? `<tr>
-            <td style="padding:5px 0;font-size:14px;color:#6B7280;">Beach Access Package (Adults)</td>
-            <td style="padding:5px 0;font-size:14px;color:#111827;">${ba} × $${BEACH_ADULT_PRICE} = $${ba * BEACH_ADULT_PRICE}</td>
+          ${isJSR
+            ? slots.map((s, i) => `<tr>
+            <td style="padding:5px 0;font-size:14px;color:#6B7280;">Jet Ski Rental &mdash; Rider ${i + 1} (${s.duration} min)</td>
+            <td style="padding:5px 0;font-size:14px;color:#111827;">$${s.price}</td>
+          </tr>`).join('')
+            : isBigMable
+            ? `<tr>
+            <td style="padding:5px 0;font-size:14px;color:#6B7280;">Big Mable Tube Ride</td>
+            <td style="padding:5px 0;font-size:14px;color:#111827;">${bmStandalone} &times; $${BIG_MABLE_PRICE} = $${bmStandalone * BIG_MABLE_PRICE}</td>
+          </tr>`
+            : `${ba > 0 ? `<tr>
+            <td style="padding:5px 0;font-size:14px;color:#6B7280;">Beach Access Package &mdash; Adults</td>
+            <td style="padding:5px 0;font-size:14px;color:#111827;">${ba} &times; $${BEACH_ADULT_PRICE} = $${ba * BEACH_ADULT_PRICE}</td>
           </tr>` : ''}
           ${bc > 0 ? `<tr>
-            <td style="padding:5px 0;font-size:14px;color:#6B7280;">Beach Access Package (Children)</td>
-            <td style="padding:5px 0;font-size:14px;color:#111827;">${bc} × $${BEACH_CHILD_PRICE} = $${bc * BEACH_CHILD_PRICE}</td>
+            <td style="padding:5px 0;font-size:14px;color:#6B7280;">Beach Access Package &mdash; Children</td>
+            <td style="padding:5px 0;font-size:14px;color:#111827;">${bc} &times; $${BEACH_CHILD_PRICE} = $${bc * BEACH_CHILD_PRICE}</td>
           </tr>` : ''}
           ${js > 0 ? `<tr>
-            <td style="padding:5px 0;font-size:14px;color:#6B7280;">Beach Access Package + Jet Ski Ride</td>
-            <td style="padding:5px 0;font-size:14px;color:#111827;">${js} × $${JETSKI_ADULT_PRICE} = $${js * JETSKI_ADULT_PRICE}</td>
+            <td style="padding:5px 0;font-size:14px;color:#6B7280;">Beach Access + Jet Ski Ride</td>
+            <td style="padding:5px 0;font-size:14px;color:#111827;">${js} &times; $${JETSKI_ADULT_PRICE} = $${js * JETSKI_ADULT_PRICE}</td>
           </tr>` : ''}
-          <tr>
-            <td style="padding:5px 0;font-size:14px;color:#6B7280;">Add-ons</td>
+          ${bm > 0 ? `<tr>
+            <td style="padding:5px 0;font-size:14px;color:#6B7280;">Big Mable Tube Ride (Add-on)</td>
+            <td style="padding:5px 0;font-size:14px;color:#111827;">${bm} &times; $${BIG_MABLE_PRICE} = $${bm * BIG_MABLE_PRICE}</td>
+          </tr>` : ''}`}
+          ${addonsDisplay !== 'None' ? `<tr>
+            <td style="padding:5px 0;font-size:14px;color:#6B7280;">Other Add-ons</td>
             <td style="padding:5px 0;font-size:14px;color:#111827;">${h(addonsDisplay)}</td>
-          </tr>
+          </tr>` : ''}
           <tr>
             <td style="padding:5px 0;font-size:14px;color:#6B7280;">Payment</td>
             <td style="padding:5px 0;font-size:14px;font-weight:700;color:#111827;">${h(label)}</td>

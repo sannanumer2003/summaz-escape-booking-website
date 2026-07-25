@@ -6,31 +6,44 @@ const STEPS = 7;
 const BEACH_ADULT_PRICE  = 75;
 const BEACH_CHILD_PRICE  = 60;
 const JETSKI_ADULT_PRICE = 150;
+const BIG_MABLE_PRICE    = 45;
 
 /* Booking state */
 let state = {
-  beachAdults:     0,
-  beachChildren:   0,
-  jetSkiAdults:    0,
-  date:            '',
-  name:            '',
-  email:           '',
-  phone:           '',
-  addons:          [],
-  notes:           '',
-  policyAccepted:  false,
-  paymentMethod:   '',
-  honeypot:        '',
-  currentStep:     1,
-  reference:       '',
-  total:           0
+  beachAdults:        0,
+  beachChildren:      0,
+  jetSkiAdults:       0,
+  bigMableCount:      0,
+  bigMableAddon:      0,
+  selectedPackage:    '',
+  jetSkiRentalSlots:  [],
+  date:               '',
+  name:               '',
+  email:              '',
+  phone:              '',
+  addons:             [],
+  notes:              '',
+  policyAccepted:     false,
+  paymentMethod:      '',
+  honeypot:           '',
+  currentStep:        1,
+  reference:          '',
+  total:              0
 };
 
 /* ── Utility ────────────────────────────────────────────── */
+const JETSKI_RENTAL_PRICES = { 30: 105, 45: 125, 60: 190 };
+
 function calcTotal() {
-  return (state.beachAdults * BEACH_ADULT_PRICE)
-       + (state.beachChildren * BEACH_CHILD_PRICE)
-       + (state.jetSkiAdults  * JETSKI_ADULT_PRICE);
+  if (state.selectedPackage === 'bigMable') {
+    return state.bigMableCount * BIG_MABLE_PRICE;
+  }
+  const base = state.selectedPackage === 'jetSkiRental'
+    ? state.jetSkiRentalSlots.reduce((s, slot) => s + slot.price, 0)
+    : (state.beachAdults * BEACH_ADULT_PRICE)
+    + (state.beachChildren * BEACH_CHILD_PRICE)
+    + (state.jetSkiAdults  * JETSKI_ADULT_PRICE);
+  return base + (state.bigMableAddon * BIG_MABLE_PRICE);
 }
 
 function formatMoney(n) {
@@ -62,51 +75,11 @@ window.addEventListener('scroll', () => {
   }
 }, { passive: true });
 
-/* ── Anchor nav active section tracking + auto-scroll ───── */
-(function() {
-  const sections = ['overview','included','pricing','extras','location','faq','kids','experience','reels','gallery','reviews'];
-  const anchors  = document.querySelectorAll('.anchor-nav__link[data-section]');
-  if (!anchors.length) return;
-
-  function scrollNavToLink(el) {
-    const strip = el.parentElement;
-    if (!strip) return;
-    const sRect = strip.getBoundingClientRect();
-    const eRect = el.getBoundingClientRect();
-    const target = strip.scrollLeft + (eRect.left - sRect.left) - (sRect.width / 2) + (eRect.width / 2);
-    strip.scrollTo({ left: target, behavior: 'smooth' });
-  }
-
-  const obs = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        const id = entry.target.id;
-        anchors.forEach(a => {
-          const isActive = a.dataset.section === id;
-          a.classList.toggle('is-active', isActive);
-          if (isActive) scrollNavToLink(a);
-        });
-      }
-    });
-  }, { rootMargin: '-120px 0px -60% 0px' });
-
-  sections.forEach(id => {
-    const el = document.getElementById(id);
-    if (el) obs.observe(el);
-  });
-})();
 
 /* ── Sidebar booking widget ─────────────────────────────── */
 (function() {
-  const today = todayInBahamas();
-  const wDate = document.getElementById('widgetDate');
-  if (wDate) { wDate.min = today; }
   updateSidebarMinusButtons();
 })();
-
-function sidebarDateChange(val) {
-  state.date = val;
-}
 
 function sidebarCount(field, delta) {
   const newVal = Math.max(0, state[field] + delta);
@@ -141,29 +114,21 @@ function updateSidebarMinusButtons() {
 }
 
 function openBookingFromSidebar() {
-  // Pull date from sidebar input if not already set
-  const wDate = document.getElementById('widgetDate');
-  if (wDate && wDate.value) state.date = wDate.value;
-  openBooking();
+  const checked = document.querySelector('input[name="selectedPkg"]:checked');
+  openBooking(checked ? checked.value : undefined);
 }
 
 /* ── Modal open / close ─────────────────────────────────── */
 let previousFocus = null;
 let _formOpenedAt = 0;
 
-function openBooking() {
+function openBooking(pkg) {
   _formOpenedAt = Date.now();
   previousFocus = document.activeElement;
-  // Preserve counts from sidebar, only reset non-sidebar fields
-  const savedBeachAdults   = state.beachAdults;
-  const savedBeachChildren = state.beachChildren;
-  const savedJetSkiAdults  = state.jetSkiAdults;
-  const savedDate          = state.date;
+  const savedDate = state.date;
   resetState();
-  state.beachAdults   = savedBeachAdults;
-  state.beachChildren = savedBeachChildren;
-  state.jetSkiAdults  = savedJetSkiAdults;
-  state.date          = savedDate;
+  state.date = savedDate;
+  if (pkg) state.selectedPackage = pkg;
   state.currentStep = 1;
   updateModalProgress(1);
   renderStep(1);
@@ -179,16 +144,6 @@ function closeBooking() {
   document.getElementById('bookingModal').classList.remove('is-open');
   document.body.style.overflow = '';
   if (previousFocus) previousFocus.focus();
-  // Sync sidebar DOM to whatever counts are in state after modal changes
-  var wBA = document.getElementById('wBeachAdultCount');
-  var wBC = document.getElementById('wBeachChildCount');
-  var wJS = document.getElementById('wJetSkiAdultCount');
-  if (wBA) wBA.textContent = state.beachAdults;
-  if (wBC) wBC.textContent = state.beachChildren;
-  if (wJS) wJS.textContent = state.jetSkiAdults;
-  updateSidebarTotal();
-  updateSidebarMinusButtons();
-  updateMobileBarTotal();
 }
 
 /* Close on overlay click */
@@ -204,20 +159,24 @@ document.addEventListener('keydown', function(e) {
 });
 
 function resetState() {
-  state.beachAdults    = 0;
-  state.beachChildren  = 0;
-  state.jetSkiAdults   = 0;
-  state.date           = '';
-  state.name           = '';
-  state.email          = '';
-  state.phone          = '';
-  state.addons         = [];
-  state.notes          = '';
-  state.policyAccepted = false;
-  state.paymentMethod  = '';
-  state.honeypot       = '';
-  state.reference      = '';
-  state.total          = 0;
+  state.beachAdults        = 0;
+  state.beachChildren      = 0;
+  state.jetSkiAdults       = 0;
+  state.bigMableCount      = 0;
+  state.bigMableAddon      = 0;
+  state.selectedPackage    = '';
+  state.jetSkiRentalSlots  = [];
+  state.date               = '';
+  state.name               = '';
+  state.email              = '';
+  state.phone              = '';
+  state.addons             = [];
+  state.notes              = '';
+  state.policyAccepted     = false;
+  state.paymentMethod      = '';
+  state.honeypot           = '';
+  state.reference          = '';
+  state.total              = 0;
 }
 
 /* ── Progress ────────────────────────────────────────────── */
@@ -268,8 +227,107 @@ function renderStep(step) {
   body.scrollTop = 0;
 }
 
-/* ── Step 1: Guest count ─────────────────────────────────── */
+/* ── Step 1: Guest count (context-aware) ─────────────────── */
 function renderStep1(body) {
+  if (!state.selectedPackage) {
+    renderStep1PackagePicker(body);
+    return;
+  }
+  if (state.selectedPackage === 'jetSkiRental') {
+    renderStep1JetSkiRental(body);
+  } else if (state.selectedPackage === 'bigMable') {
+    renderStep1BigMable(body);
+  } else {
+    renderStep1AllFamilyWave(body);
+  }
+  updateStepperButtons();
+}
+
+function renderStep1BigMable(body) {
+  const total = state.bigMableCount * BIG_MABLE_PRICE;
+  body.innerHTML = `
+    <p class="step-sub">2 to 6 riders per ride. Ages 7 and up. $45 per person. 600 lb combined weight limit.</p>
+    <div class="stepper-group">
+      <div class="stepper-group__label stepper-group__label--parent">Big Mable Tube Ride</div>
+      <div class="stepper-row">
+        <div class="stepper-row__info">
+          <p class="stepper-row__label">Riders <span class="stepper-row__label-price">$${BIG_MABLE_PRICE} each</span></p>
+          <p class="stepper-row__price">Ages 7+ &middot; max 6 per ride</p>
+        </div>
+        <div class="stepper">
+          <button class="stepper__btn" id="bigMableMinus" onclick="changeCount('bigMableCount',-1)" ${state.bigMableCount === 0 ? 'disabled' : ''}>−</button>
+          <span class="stepper__count" id="bigMableCount">${state.bigMableCount}</span>
+          <button class="stepper__btn" id="bigMablePlus" onclick="changeCount('bigMableCount',1)" ${state.bigMableCount >= 6 ? 'disabled' : ''}>+</button>
+        </div>
+      </div>
+    </div>
+    <div class="price-summary">
+      <div class="price-summary__rows">
+        <div class="price-summary__row ${state.bigMableCount === 0 ? 'is-hidden' : ''}" id="bigMableSummaryRow">
+          <span><span id="bigMableCount2">${state.bigMableCount}</span> x Big Mable Tube Ride</span>
+          <strong id="bigMableSummaryAmt">${formatMoney(total)}</strong>
+        </div>
+      </div>
+      <div class="price-summary__total">
+        <span class="price-summary__total-label">Total</span>
+        <span class="price-summary__total-amount" id="priceSummaryTotal">${formatMoney(calcTotal())}</span>
+      </div>
+    </div>
+  `;
+}
+
+function renderStep1PackagePicker(body) {
+  body.innerHTML = `
+    <p class="step-sub">Not sure which to pick? Tap any option to read the full details, then book from there.</p>
+    <div class="step-pkg-picker">
+      <div class="step-pkg-picker__group">
+        <div class="step-pkg-picker__label">Family Wave Package</div>
+        <button class="step-pkg-card" onclick="selectPackageFromPicker('beachAccess')">
+          <div class="step-pkg-card__left">
+            <div class="step-pkg-card__name">Beach Access Package</div>
+            <div class="step-pkg-card__desc">A full beach day at Arawak Cay. Chairs, kayaks, paddleboards, water toys, and snorkels included. Perfect for families and groups of all ages.</div>
+            <div class="step-pkg-card__price">Adults $75 &middot; Children $60</div>
+          </div>
+          <svg class="step-pkg-card__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+        <button class="step-pkg-card" onclick="selectPackageFromPicker('beachAccessJetSki')">
+          <div class="step-pkg-card__left">
+            <div class="step-pkg-card__name">Beach Access Package + Jet Ski Ride</div>
+            <div class="step-pkg-card__desc">Everything in the beach day package plus a solo 25-minute jet ski session on open water. Ideal for adults who want more than the beach.</div>
+            <div class="step-pkg-card__price">Adults $150 per person</div>
+          </div>
+          <svg class="step-pkg-card__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+      </div>
+      <div class="step-pkg-picker__group">
+        <div class="step-pkg-picker__label">Individuals</div>
+        <button class="step-pkg-card" onclick="selectPackageFromPicker('jetSkiRental')">
+          <div class="step-pkg-card__left">
+            <div class="step-pkg-card__name">Jet Ski Rentals</div>
+            <div class="step-pkg-card__desc">No beach day required. Just book a solo jet ski session by duration and go. Riders must be 16 or older.</div>
+            <div class="step-pkg-card__price">From $105 per ride</div>
+          </div>
+          <svg class="step-pkg-card__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+        <button class="step-pkg-card" onclick="selectPackageFromPicker('bigMable')">
+          <div class="step-pkg-card__left">
+            <div class="step-pkg-card__name">Big Mable Tube Ride</div>
+            <div class="step-pkg-card__desc">Up to 6 riders on one giant inflatable tube, towed by a jet ski. A 10 to 12 minute group ride. Ages 7 and up.</div>
+            <div class="step-pkg-card__price">$45 per person · 2 to 6 riders</div>
+          </div>
+          <svg class="step-pkg-card__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+      </div>
+    </div>
+  `;
+}
+
+function selectPackageFromPicker(pkg) {
+  closeBooking();
+  openPanel(pkg);
+}
+
+function renderStep1AllFamilyWave(body) {
   const baAmt = state.beachAdults  * BEACH_ADULT_PRICE;
   const bcAmt = state.beachChildren * BEACH_CHILD_PRICE;
   const jsAmt = state.jetSkiAdults  * JETSKI_ADULT_PRICE;
@@ -283,9 +341,9 @@ function renderStep1(body) {
           <p class="stepper-row__label">Adults <span class="stepper-row__label-price">$${BEACH_ADULT_PRICE}</span></p>
         </div>
         <div class="stepper">
-          <button class="stepper__btn" id="beachAdultMinus" onclick="changeCount('beachAdults',-1)" aria-label="Remove beach adult">−</button>
+          <button class="stepper__btn" id="beachAdultMinus" onclick="changeCount('beachAdults',-1)">−</button>
           <span class="stepper__count" id="beachAdultCount">${state.beachAdults}</span>
-          <button class="stepper__btn" onclick="changeCount('beachAdults',1)" aria-label="Add beach adult">+</button>
+          <button class="stepper__btn" onclick="changeCount('beachAdults',1)">+</button>
         </div>
       </div>
       <div class="stepper-row">
@@ -293,9 +351,9 @@ function renderStep1(body) {
           <p class="stepper-row__label">Children <span class="stepper-row__label-price">$${BEACH_CHILD_PRICE}</span></p>
         </div>
         <div class="stepper">
-          <button class="stepper__btn" id="beachChildMinus" onclick="changeCount('beachChildren',-1)" aria-label="Remove beach child">−</button>
+          <button class="stepper__btn" id="beachChildMinus" onclick="changeCount('beachChildren',-1)">−</button>
           <span class="stepper__count" id="beachChildCount">${state.beachChildren}</span>
-          <button class="stepper__btn" onclick="changeCount('beachChildren',1)" aria-label="Add beach child">+</button>
+          <button class="stepper__btn" onclick="changeCount('beachChildren',1)">+</button>
         </div>
       </div>
       <div class="stepper-group__label" style="margin-top:10px">Beach Access Package + Jet Ski Ride</div>
@@ -304,9 +362,9 @@ function renderStep1(body) {
           <p class="stepper-row__label">Adults <span class="stepper-row__label-price">$${JETSKI_ADULT_PRICE}</span></p>
         </div>
         <div class="stepper">
-          <button class="stepper__btn" id="jetSkiAdultMinus" onclick="changeCount('jetSkiAdults',-1)" aria-label="Remove jet ski adult">−</button>
+          <button class="stepper__btn" id="jetSkiAdultMinus" onclick="changeCount('jetSkiAdults',-1)">−</button>
           <span class="stepper__count" id="jetSkiAdultCount">${state.jetSkiAdults}</span>
-          <button class="stepper__btn" onclick="changeCount('jetSkiAdults',1)" aria-label="Add jet ski adult">+</button>
+          <button class="stepper__btn" onclick="changeCount('jetSkiAdults',1)">+</button>
         </div>
       </div>
     </div>
@@ -331,20 +389,185 @@ function renderStep1(body) {
       </div>
     </div>
   `;
-  updateStepperButtons();
+}
+
+function renderStep1BeachAccessOnly(body) {
+  const baAmt = state.beachAdults  * BEACH_ADULT_PRICE;
+  const bcAmt = state.beachChildren * BEACH_CHILD_PRICE;
+  body.innerHTML = `
+    <p class="step-sub">Beach Access Package. How many adults and children in your group?</p>
+    <div class="stepper-group">
+      <div class="stepper-group__label stepper-group__label--parent">Beach Access Package</div>
+      <div class="stepper-row">
+        <div class="stepper-row__info">
+          <p class="stepper-row__label">Adults <span class="stepper-row__label-price">$${BEACH_ADULT_PRICE}</span></p>
+        </div>
+        <div class="stepper">
+          <button class="stepper__btn" id="beachAdultMinus" onclick="changeCount('beachAdults',-1)">−</button>
+          <span class="stepper__count" id="beachAdultCount">${state.beachAdults}</span>
+          <button class="stepper__btn" onclick="changeCount('beachAdults',1)">+</button>
+        </div>
+      </div>
+      <div class="stepper-row">
+        <div class="stepper-row__info">
+          <p class="stepper-row__label">Children <span class="stepper-row__label-price">$${BEACH_CHILD_PRICE}</span></p>
+        </div>
+        <div class="stepper">
+          <button class="stepper__btn" id="beachChildMinus" onclick="changeCount('beachChildren',-1)">−</button>
+          <span class="stepper__count" id="beachChildCount">${state.beachChildren}</span>
+          <button class="stepper__btn" onclick="changeCount('beachChildren',1)">+</button>
+        </div>
+      </div>
+    </div>
+    <div class="price-summary">
+      <div class="price-summary__rows">
+        <div class="price-summary__row ${state.beachAdults === 0 ? 'is-hidden' : ''}" id="beachAdultSummaryRow">
+          <span><span id="beachAdultSummaryCount">${state.beachAdults}</span> x Beach Access Package (Adults)</span>
+          <strong id="beachAdultSummaryAmt">${formatMoney(baAmt)}</strong>
+        </div>
+        <div class="price-summary__row ${state.beachChildren === 0 ? 'is-hidden' : ''}" id="beachChildSummaryRow">
+          <span><span id="beachChildSummaryCount">${state.beachChildren}</span> x Beach Access Package (Children)</span>
+          <strong id="beachChildSummaryAmt">${formatMoney(bcAmt)}</strong>
+        </div>
+      </div>
+      <div class="price-summary__total">
+        <span class="price-summary__total-label">Total</span>
+        <span class="price-summary__total-amount" id="priceSummaryTotal">${formatMoney(calcTotal())}</span>
+      </div>
+    </div>
+  `;
+}
+
+function renderStep1JetSkiRideOnly(body) {
+  const jsAmt = state.jetSkiAdults * JETSKI_ADULT_PRICE;
+  body.innerHTML = `
+    <p class="step-sub">Beach Access Package + Jet Ski Ride. Adults only, $${JETSKI_ADULT_PRICE} per person. Includes a full beach day plus a 25-minute solo jet ski session.</p>
+    <div class="stepper-group">
+      <div class="stepper-group__label stepper-group__label--parent">Beach Access Package + Jet Ski Ride</div>
+      <div class="stepper-row">
+        <div class="stepper-row__info">
+          <p class="stepper-row__label">Adults <span class="stepper-row__label-price">$${JETSKI_ADULT_PRICE}</span></p>
+        </div>
+        <div class="stepper">
+          <button class="stepper__btn" id="jetSkiAdultMinus" onclick="changeCount('jetSkiAdults',-1)">−</button>
+          <span class="stepper__count" id="jetSkiAdultCount">${state.jetSkiAdults}</span>
+          <button class="stepper__btn" onclick="changeCount('jetSkiAdults',1)">+</button>
+        </div>
+      </div>
+    </div>
+    <div class="price-summary">
+      <div class="price-summary__rows">
+        <div class="price-summary__row ${state.jetSkiAdults === 0 ? 'is-hidden' : ''}" id="jetSkiAdultSummaryRow">
+          <span><span id="jetSkiAdultSummaryCount">${state.jetSkiAdults}</span> x Beach Access Package + Jet Ski Ride</span>
+          <strong id="jetSkiAdultSummaryAmt">${formatMoney(jsAmt)}</strong>
+        </div>
+      </div>
+      <div class="price-summary__total">
+        <span class="price-summary__total-label">Total</span>
+        <span class="price-summary__total-amount" id="priceSummaryTotal">${formatMoney(calcTotal())}</span>
+      </div>
+    </div>
+  `;
+}
+
+function renderStep1JetSkiRental(body) {
+  body.innerHTML = `
+    <p class="step-sub">Add each rider and choose their session duration. Your total is the sum of all riders.</p>
+    <div class="stepper-group">
+      <div class="stepper-group__label stepper-group__label--parent">Jet Ski Rentals</div>
+      <div class="stepper-row">
+        <div class="stepper-row__info">
+          <p class="stepper-row__label">Riders <span class="stepper-row__label-price" style="font-size:11.5px;font-weight:500;color:var(--text-muted)">16+ only</span></p>
+        </div>
+        <div class="stepper">
+          <button class="stepper__btn" id="jsrRiderMinus" onclick="jsrChangeCount(-1)" ${state.jetSkiRentalSlots.length === 0 ? 'disabled' : ''}>−</button>
+          <span class="stepper__count" id="jsrRiderCount">${state.jetSkiRentalSlots.length}</span>
+          <button class="stepper__btn" onclick="jsrChangeCount(1)">+</button>
+        </div>
+      </div>
+    </div>
+    <div id="jsrSlotsContainer">${jsrSlotsHTML()}</div>
+    <div class="price-summary">
+      <div class="price-summary__rows" id="jsrSummaryRows">${jsrSummaryRowsHTML()}</div>
+      <div class="price-summary__total">
+        <span class="price-summary__total-label">Total</span>
+        <span class="price-summary__total-amount" id="priceSummaryTotal">${formatMoney(calcTotal())}</span>
+      </div>
+    </div>
+  `;
+}
+
+function jsrSlotsHTML() {
+  if (state.jetSkiRentalSlots.length === 0) return '';
+  return state.jetSkiRentalSlots.map((slot, i) => `
+    <div class="ps-rider-slot" id="jsrModalSlot${i}">
+      <div class="ps-rider-slot__label">Rider ${i + 1}</div>
+      <div class="ps-rider-slot__options">
+        <button class="ps-rider-slot__opt ${slot.duration === 30 ? 'is-selected' : ''}" data-duration="30" onclick="jsrSetDuration(${i},30)">30 min<br>$105</button>
+        <button class="ps-rider-slot__opt ${slot.duration === 45 ? 'is-selected' : ''}" data-duration="45" onclick="jsrSetDuration(${i},45)">45 min<br>$125</button>
+        <button class="ps-rider-slot__opt ${slot.duration === 60 ? 'is-selected' : ''}" data-duration="60" onclick="jsrSetDuration(${i},60)">60 min<br>$190</button>
+      </div>
+    </div>`).join('');
+}
+
+function jsrSummaryRowsHTML() {
+  if (state.jetSkiRentalSlots.length === 0) return '';
+  return state.jetSkiRentalSlots.map((slot, i) => `
+    <div class="price-summary__row">
+      <span>Rider ${i + 1} · ${slot.duration} min</span>
+      <strong>${formatMoney(slot.price)}</strong>
+    </div>`).join('');
+}
+
+function jsrChangeCount(delta) {
+  if (delta > 0) {
+    state.jetSkiRentalSlots.push({ duration: 30, price: JETSKI_RENTAL_PRICES[30] });
+  } else if (delta < 0 && state.jetSkiRentalSlots.length > 0) {
+    state.jetSkiRentalSlots.pop();
+  }
+  const count = state.jetSkiRentalSlots.length;
+  const countEl = document.getElementById('jsrRiderCount');
+  if (countEl) countEl.textContent = count;
+  const minBtn = document.getElementById('jsrRiderMinus');
+  if (minBtn) minBtn.disabled = count === 0;
+  const slotsEl = document.getElementById('jsrSlotsContainer');
+  if (slotsEl) slotsEl.innerHTML = jsrSlotsHTML();
+  const summEl = document.getElementById('jsrSummaryRows');
+  if (summEl) summEl.innerHTML = jsrSummaryRowsHTML();
+  const totalEl = document.getElementById('priceSummaryTotal');
+  if (totalEl) totalEl.textContent = formatMoney(calcTotal());
+  updateFooterTotal();
+}
+
+function jsrSetDuration(idx, dur) {
+  if (idx >= state.jetSkiRentalSlots.length) return;
+  state.jetSkiRentalSlots[idx] = { duration: dur, price: JETSKI_RENTAL_PRICES[dur] };
+  const slotEl = document.getElementById(`jsrModalSlot${idx}`);
+  if (slotEl) {
+    slotEl.querySelectorAll('.ps-rider-slot__opt').forEach(btn => {
+      btn.classList.toggle('is-selected', parseInt(btn.dataset.duration) === dur);
+    });
+  }
+  const summEl = document.getElementById('jsrSummaryRows');
+  if (summEl) summEl.innerHTML = jsrSummaryRowsHTML();
+  const totalEl = document.getElementById('priceSummaryTotal');
+  if (totalEl) totalEl.textContent = formatMoney(calcTotal());
+  updateFooterTotal();
 }
 
 function changeCount(field, delta) {
-  const newVal = Math.max(0, state[field] + delta);
+  const maxVal = field === 'bigMableCount' ? 6 : Infinity;
+  const newVal = Math.max(0, Math.min(maxVal, state[field] + delta));
   state[field] = newVal;
-  const countIds = { beachAdults: 'beachAdultCount', beachChildren: 'beachChildCount', jetSkiAdults: 'jetSkiAdultCount' };
-  const rowIds   = { beachAdults: 'beachAdultSummaryRow', beachChildren: 'beachChildSummaryRow', jetSkiAdults: 'jetSkiAdultSummaryRow' };
-  const amtIds   = { beachAdults: 'beachAdultSummaryAmt', beachChildren: 'beachChildSummaryAmt', jetSkiAdults: 'jetSkiAdultSummaryAmt' };
-  const prices   = { beachAdults: BEACH_ADULT_PRICE, beachChildren: BEACH_CHILD_PRICE, jetSkiAdults: JETSKI_ADULT_PRICE };
+  const countIds = { beachAdults: 'beachAdultCount', beachChildren: 'beachChildCount', jetSkiAdults: 'jetSkiAdultCount', bigMableCount: 'bigMableCount' };
+  const rowIds   = { beachAdults: 'beachAdultSummaryRow', beachChildren: 'beachChildSummaryRow', jetSkiAdults: 'jetSkiAdultSummaryRow', bigMableCount: 'bigMableSummaryRow' };
+  const amtIds   = { beachAdults: 'beachAdultSummaryAmt', beachChildren: 'beachChildSummaryAmt', jetSkiAdults: 'jetSkiAdultSummaryAmt', bigMableCount: 'bigMableSummaryAmt' };
+  const prices   = { beachAdults: BEACH_ADULT_PRICE, beachChildren: BEACH_CHILD_PRICE, jetSkiAdults: JETSKI_ADULT_PRICE, bigMableCount: BIG_MABLE_PRICE };
   const labels   = {
     beachAdults:   'Beach Access Package (Adults)',
     beachChildren: 'Beach Access Package (Children)',
-    jetSkiAdults:  'Beach Access Package + Jet Ski Ride'
+    jetSkiAdults:  'Beach Access Package + Jet Ski Ride',
+    bigMableCount: 'Big Mable Tube Ride'
   };
 
   const countEl = document.getElementById(countIds[field]);
@@ -366,9 +589,13 @@ function updateStepperButtons() {
   const bam = document.getElementById('beachAdultMinus');
   const bcm = document.getElementById('beachChildMinus');
   const jsm = document.getElementById('jetSkiAdultMinus');
-  if (bam) bam.disabled = state.beachAdults  <= 0;
-  if (bcm) bcm.disabled = state.beachChildren <= 0;
-  if (jsm) jsm.disabled = state.jetSkiAdults  <= 0;
+  const bmm = document.getElementById('bigMableMinus');
+  const bmp = document.getElementById('bigMablePlus');
+  if (bam) bam.disabled = state.beachAdults   <= 0;
+  if (bcm) bcm.disabled = state.beachChildren  <= 0;
+  if (jsm) jsm.disabled = state.jetSkiAdults   <= 0;
+  if (bmm) bmm.disabled = state.bigMableCount  <= 0;
+  if (bmp) bmp.disabled = state.bigMableCount  >= 6;
 }
 
 /* ── Step 2: Date ────────────────────────────────────────── */
@@ -420,16 +647,49 @@ function renderStep3(body) {
   `;
 }
 
-/* ── Step 4: Add-on interest ─────────────────────────────── */
+/* ── Step 4: Extras + Add-on interest ───────────────────── */
 const ADDON_LIST = [
-  { id: 'mable',    label: 'Big Mable Tube Ride',               note: '$45/person · paid on-site',   tag: '$45' },
   { id: 'drone',    label: 'Drone Photos & Video',              note: '$45 · delivered same day',     tag: '$45' },
   { id: 'extra_js', label: 'Extra Jet Ski Time',                note: 'Priced on the day',            tag: 'Ask staff' },
   { id: 'lunch',    label: 'Lunch Package',                     note: 'At The Bay restaurant on-site',tag: 'On-site' },
   { id: 'transfer', label: 'Airport / Hotel Pickup or Drop-Off',note: 'Arranged via WhatsApp',        tag: 'WhatsApp' }
 ];
 
+const showBigMableBundle = () => state.selectedPackage !== 'bigMable';
+
 function renderStep4(body) {
+  const isChecked = state.bigMableAddon > 0;
+
+  const bundleSection = showBigMableBundle() ? `
+    <div class="step-segment">
+      <p class="step-segment__title">Add to your booking</p>
+      <p class="step-segment__sub">Charged now and included in your total.</p>
+      <div class="addon-bundle-card ${isChecked ? 'is-checked' : ''}" onclick="toggleBigMableAddon(this)">
+        <img class="addon-bundle-card__photo" src="https://res.cloudinary.com/dko76z0df/image/upload/c_fill,w_160,h_160,g_auto/v1782304920/summaz/hero2.jpg" alt="Big Mable Tube Ride">
+        <div class="addon-bundle-card__body">
+          <p class="addon-bundle-card__name">Big Mable Tube Ride</p>
+          <p class="addon-bundle-card__desc">Up to 6 riders on one giant inflatable tube, towed by a jet ski. About 10 to 12 minutes. Ages 7 and up.</p>
+          <p class="addon-bundle-card__price">$${BIG_MABLE_PRICE} <em>/ per person</em></p>
+        </div>
+        <div class="addon-bundle-card__check">
+          <input type="checkbox" ${isChecked ? 'checked' : ''} aria-label="Add Big Mable Tube Ride">
+          <div class="addon-bundle-card__box">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+        </div>
+      </div>
+      <div class="addon-bundle-counter ${isChecked ? 'is-visible' : ''}" id="bigMableAddonCounter">
+        <p class="addon-bundle-counter__label">How many riders?</p>
+        <div class="addon-bundle-counter__ctrl">
+          <button class="counter-btn" onclick="changeBigMableAddonCount(-1); event.stopPropagation()">-</button>
+          <span class="counter-val" id="bigMableAddonVal">${state.bigMableAddon || 2}</span>
+          <button class="counter-btn" onclick="changeBigMableAddonCount(1); event.stopPropagation()">+</button>
+        </div>
+        <span class="addon-bundle-counter__total" id="bigMableAddonTotal">${formatMoney((state.bigMableAddon || 2) * BIG_MABLE_PRICE)}</span>
+      </div>
+    </div>
+  ` : '';
+
   const checks = ADDON_LIST.map(a => `
     <label class="addon-check ${state.addons.includes(a.id) ? 'is-checked' : ''}" onclick="toggleAddon('${a.id}', this, event)">
       <input type="checkbox" ${state.addons.includes(a.id) ? 'checked' : ''} aria-label="${a.label}">
@@ -445,17 +705,54 @@ function renderStep4(body) {
   `).join('');
 
   body.innerHTML = `
-    <p class="step-sub">Select anything you're interested in. All paid for and arranged on-site. Our team will follow up when you arrive.</p>
-    <div class="addon-check-list">${checks}</div>
-    <div class="form-group">
+    ${bundleSection}
+    <div class="step-segment">
+      <p class="step-segment__title">Let us know your interests</p>
+      <p class="step-segment__sub">Tick anything you might want. All paid and arranged on-site. Our team will follow up when you arrive.</p>
+      <div class="addon-check-list">${checks}</div>
+    </div>
+    <div class="form-group" style="margin-top:4px">
       <label class="form-label" for="bookingNotes">Anything else to mention?</label>
       <textarea class="notes-textarea" id="bookingNotes" placeholder="Special requests, accessibility needs, questions for the team…" oninput="state.notes = this.value">${escHtml(state.notes)}</textarea>
     </div>
   `;
 }
 
+function toggleBigMableAddon(cardEl) {
+  const isNowChecked = state.bigMableAddon === 0;
+  if (isNowChecked) {
+    state.bigMableAddon = 2;
+    cardEl.classList.add('is-checked');
+    cardEl.querySelector('input[type="checkbox"]').checked = true;
+    const counter = document.getElementById('bigMableAddonCounter');
+    if (counter) counter.classList.add('is-visible');
+    const val = document.getElementById('bigMableAddonVal');
+    if (val) val.textContent = '2';
+    const tot = document.getElementById('bigMableAddonTotal');
+    if (tot) tot.textContent = formatMoney(2 * BIG_MABLE_PRICE);
+  } else {
+    state.bigMableAddon = 0;
+    cardEl.classList.remove('is-checked');
+    cardEl.querySelector('input[type="checkbox"]').checked = false;
+    const counter = document.getElementById('bigMableAddonCounter');
+    if (counter) counter.classList.remove('is-visible');
+  }
+  updateFooterTotal();
+}
+
+function changeBigMableAddonCount(delta) {
+  const next = (state.bigMableAddon || 2) + delta;
+  if (next < 2 || next > 6) return;
+  state.bigMableAddon = next;
+  const val = document.getElementById('bigMableAddonVal');
+  if (val) val.textContent = next;
+  const tot = document.getElementById('bigMableAddonTotal');
+  if (tot) tot.textContent = formatMoney(next * BIG_MABLE_PRICE);
+  updateFooterTotal();
+}
+
 function toggleAddon(id, labelEl, event) {
-  if (event) event.preventDefault(); // stop label from double-firing the checkbox
+  if (event) event.preventDefault();
   const idx = state.addons.indexOf(id);
   if (idx === -1) {
     state.addons.push(id);
@@ -567,6 +864,39 @@ function renderStep7(body) {
   });
   const paymentLabel = { zelle: 'Zelle', venmo: 'Venmo', arrival: 'Pay on Arrival' };
   const dateDisplay = state.date ? new Date(state.date + 'T12:00:00').toLocaleDateString('en-US', { weekday:'long', year:'numeric', month:'long', day:'numeric' }) : 'Not set';
+  const isJSR   = state.selectedPackage === 'jetSkiRental';
+  const isMable = state.selectedPackage === 'bigMable';
+
+  const mableAddonRow = state.bigMableAddon > 0 ? `<div class="review-row">
+          <span class="review-row__label">Big Mable Tube Ride (add-on)</span>
+          <span class="review-row__value">${state.bigMableAddon} x $${BIG_MABLE_PRICE} = ${formatMoney(state.bigMableAddon * BIG_MABLE_PRICE)}</span>
+        </div>` : '';
+
+  const guestRows = isJSR
+    ? state.jetSkiRentalSlots.map((slot, i) => `
+        <div class="review-row">
+          <span class="review-row__label">Rider ${i + 1} (${slot.duration} min)</span>
+          <span class="review-row__value">${formatMoney(slot.price)}</span>
+        </div>`).join('') + mableAddonRow
+    : isMable
+    ? `<div class="review-row">
+          <span class="review-row__label">Big Mable Tube Ride</span>
+          <span class="review-row__value">${state.bigMableCount} x $${BIG_MABLE_PRICE} = ${formatMoney(state.bigMableCount * BIG_MABLE_PRICE)}</span>
+        </div>`
+    : `
+        ${state.beachAdults > 0 ? `<div class="review-row">
+          <span class="review-row__label">Beach Access Package (Adults)</span>
+          <span class="review-row__value">${state.beachAdults} x $${BEACH_ADULT_PRICE} = ${formatMoney(state.beachAdults * BEACH_ADULT_PRICE)}</span>
+        </div>` : ''}
+        ${state.beachChildren > 0 ? `<div class="review-row">
+          <span class="review-row__label">Beach Access Package (Children)</span>
+          <span class="review-row__value">${state.beachChildren} x $${BEACH_CHILD_PRICE} = ${formatMoney(state.beachChildren * BEACH_CHILD_PRICE)}</span>
+        </div>` : ''}
+        ${state.jetSkiAdults > 0 ? `<div class="review-row">
+          <span class="review-row__label">Beach Access Package + Jet Ski Ride</span>
+          <span class="review-row__value">${state.jetSkiAdults} x $${JETSKI_ADULT_PRICE} = ${formatMoney(state.jetSkiAdults * JETSKI_ADULT_PRICE)}</span>
+        </div>` : ''}
+        ${mableAddonRow}`;
 
   body.innerHTML = `
     <p class="step-sub">Everything look right? Hit Confirm Booking when you're ready.</p>
@@ -578,18 +908,7 @@ function renderStep7(body) {
           <span class="review-row__label">Date</span>
           <span class="review-row__value">${dateDisplay}</span>
         </div>
-        ${state.beachAdults > 0 ? `<div class="review-row">
-          <span class="review-row__label">Beach Access Package (Adults)</span>
-          <span class="review-row__value">${state.beachAdults} × $${BEACH_ADULT_PRICE} = ${formatMoney(state.beachAdults * BEACH_ADULT_PRICE)}</span>
-        </div>` : ''}
-        ${state.beachChildren > 0 ? `<div class="review-row">
-          <span class="review-row__label">Beach Access Package (Children)</span>
-          <span class="review-row__value">${state.beachChildren} × $${BEACH_CHILD_PRICE} = ${formatMoney(state.beachChildren * BEACH_CHILD_PRICE)}</span>
-        </div>` : ''}
-        ${state.jetSkiAdults > 0 ? `<div class="review-row">
-          <span class="review-row__label">Beach Access Package + Jet Ski Ride</span>
-          <span class="review-row__value">${state.jetSkiAdults} × $${JETSKI_ADULT_PRICE} = ${formatMoney(state.jetSkiAdults * JETSKI_ADULT_PRICE)}</span>
-        </div>` : ''}
+        ${guestRows}
         ${addonLabels.length > 0 ? `<div class="review-row">
           <span class="review-row__label">Extras interest</span>
           <span class="review-row__value">${addonLabels.join(', ')}</span>
@@ -644,6 +963,24 @@ function clearFieldErr(id) {
 async function validateStep(step) {
   switch (step) {
     case 1:
+      if (!state.selectedPackage) {
+        alert('Please select a package to continue.');
+        return false;
+      }
+      if (state.selectedPackage === 'jetSkiRental') {
+        if (state.jetSkiRentalSlots.length === 0) {
+          alert('Please add at least one rider.');
+          return false;
+        }
+        return true;
+      }
+      if (state.selectedPackage === 'bigMable') {
+        if (state.bigMableCount < 2) {
+          alert('Big Mable requires a minimum of 2 riders. Please add at least 2.');
+          return false;
+        }
+        return true;
+      }
       if (state.beachAdults + state.beachChildren + state.jetSkiAdults < 1) {
         alert('Please add at least one guest.');
         return false;
@@ -745,27 +1082,34 @@ function prevStep() {
 
 /* ── Form submission ─────────────────────────────────────── */
 function submitBooking() {
-  // One more honeypot check
   if (state.honeypot) return;
 
   const loading = document.getElementById('loadingOverlay');
   loading.classList.add('is-visible');
 
+  const addonStr = state.addons
+    .map(id => { const a = ADDON_LIST.find(x => x.id === id); return a ? a.label : id; })
+    .join(', ');
+
   const payload = {
-    beachAdults:   state.beachAdults,
-    beachChildren: state.beachChildren,
-    jetSkiAdults:  state.jetSkiAdults,
-    date:          state.date,
-    name:          state.name.trim(),
-    email:         state.email.trim().toLowerCase(),
-    phone:         state.phone.trim(),
-    addons:        state.addons.map(id => { const a = ADDON_LIST.find(x => x.id === id); return a ? a.label : id; }).join(', '),
-    notes:         state.notes.trim(),
+    selectedPackage:    state.selectedPackage,
+    beachAdults:        state.beachAdults,
+    beachChildren:      state.beachChildren,
+    jetSkiAdults:       state.jetSkiAdults,
+    bigMableAddon:      state.bigMableAddon,
+    bigMableCount:      state.bigMableCount,
+    jetSkiRentalSlots:  state.selectedPackage === 'jetSkiRental' ? state.jetSkiRentalSlots : [],
+    date:               state.date,
+    name:           state.name.trim(),
+    email:          state.email.trim().toLowerCase(),
+    phone:          state.phone.trim(),
+    addons:         addonStr,
+    notes:          state.notes.trim(),
     policyAccepted: true,
-    paymentMethod: state.paymentMethod,
-    total:         calcTotal(),
-    honeypot:      state.honeypot,
-    elapsed:       Date.now() - _formOpenedAt
+    paymentMethod:  state.paymentMethod,
+    total:          calcTotal(),
+    honeypot:       state.honeypot,
+    elapsed:        Date.now() - _formOpenedAt
   };
 
   const scriptUrl = window.SUMMAZ_CONFIG?.scriptUrl;
@@ -951,7 +1295,7 @@ function escHtml(str) {
 
 /* ── Hero background crossfade ──────────────────────────── */
 (function() {
-  const slides = [1,2,3,4].map(function(n) {
+  const slides = [1,2,3,4,5,6].map(function(n) {
     return document.querySelector('.hero__slide--' + n);
   }).filter(Boolean);
   if (slides.length < 2) return;
@@ -1135,6 +1479,8 @@ function renderGallery(posts) {
     document.body.style.overflow = '';
   }
 
+  window.openPanelVideo = openVideo;
+
   closeBtn.addEventListener('click', closeVideo);
   lb.addEventListener('click', function(e) { if (e.target === lb) closeVideo(); });
   document.addEventListener('keydown', function(e) { if (e.key === 'Escape' && lb.classList.contains('is-open')) closeVideo(); });
@@ -1145,44 +1491,758 @@ function renderGallery(posts) {
   });
 })();
 
-/* ── Pricing card counters ───────────────────────────────── */
-var _ticketBeachAdult  = 0;
-var _ticketBeachChild  = 0;
-var _ticketJetSki      = 0;
 
-function ticketCount(type, delta) {
-  if (type === 'beachAdult') {
-    _ticketBeachAdult = Math.max(0, _ticketBeachAdult + delta);
-    document.getElementById('ticketBeachAdultCount').textContent = _ticketBeachAdult;
-    document.getElementById('ticketBeachAdultMinus').disabled = _ticketBeachAdult <= 0;
-  } else if (type === 'beachChild') {
-    _ticketBeachChild = Math.max(0, _ticketBeachChild + delta);
-    document.getElementById('ticketBeachChildCount').textContent = _ticketBeachChild;
-    document.getElementById('ticketBeachChildMinus').disabled = _ticketBeachChild <= 0;
+/* ══════════════════════════════════════════════════════════
+   PACKAGE PANELS
+   ══════════════════════════════════════════════════════════ */
+
+/* Panel working state (separate from booking state) */
+let panel = {
+  type: null,
+  beachAdults: 0,
+  beachChildren: 0,
+  jetSkiAdults: 0,
+  jetSkiRentalAdults: 0,
+  jetSkiRentalSlots: [],
+  bigMableCount: 0,
+  date: ''
+};
+
+function panelTotal() {
+  if (panel.type === 'jetSkiRental') {
+    return panel.jetSkiRentalSlots.reduce((s, slot) => s + slot.price, 0);
+  }
+  if (panel.type === 'bigMable') {
+    return panel.bigMableCount * BIG_MABLE_PRICE;
+  }
+  return (panel.beachAdults  * BEACH_ADULT_PRICE)
+       + (panel.beachChildren * BEACH_CHILD_PRICE)
+       + (panel.jetSkiAdults  * JETSKI_ADULT_PRICE);
+}
+
+function openPanel(type) {
+  panel.type               = type;
+  panel.beachAdults        = 0;
+  panel.beachChildren      = 0;
+  panel.jetSkiAdults       = 0;
+  panel.jetSkiRentalAdults = 0;
+  panel.jetSkiRentalSlots  = [];
+  panel.bigMableCount      = 0;
+  panel.date               = '';
+
+  const breadcrumbMap = {
+    beachAccess:       'Beach Access Package',
+    beachAccessJetSki: 'Beach Access Package + Jet Ski Ride',
+    jetSkiRental:      'Jet Ski Rentals',
+    bigMable:          'Big Mable Tube Ride'
+  };
+  const bc = document.getElementById('pkgPanelBreadcrumb');
+  if (bc) bc.textContent = breadcrumbMap[type] || '';
+
+  document.getElementById('pkgPanelContent').innerHTML = buildPanelContent(type);
+
+  // Only populate sidebar on desktop; mobile uses the bottom sheet
+  if (window.innerWidth > 768) {
+    document.getElementById('pkgPanelSidebar').innerHTML = buildPanelSidebar(type);
   } else {
-    _ticketJetSki = Math.max(0, _ticketJetSki + delta);
-    document.getElementById('ticketJetSkiCount').textContent = _ticketJetSki;
-    document.getElementById('ticketJetSkiMinus').disabled = _ticketJetSki <= 0;
+    document.getElementById('pkgPanelSidebar').innerHTML = '';
+  }
+
+  const overlay = document.getElementById('pkgPanelOverlay');
+  overlay.classList.add('is-open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closePanel() {
+  closePanelSheet();
+  document.getElementById('pkgPanelOverlay').classList.remove('is-open');
+  document.body.style.overflow = '';
+}
+
+function panelOverlayClick(e) {
+  if (e.target === document.getElementById('pkgPanelOverlay')) closePanel();
+}
+
+function openPanelSheet() {
+  const body = document.getElementById('panelSheetBody');
+  if (body) body.innerHTML = buildPanelSidebar(panel.type);
+  document.getElementById('panelSheetOverlay').classList.add('is-open');
+}
+
+function closePanelSheet() {
+  const overlay = document.getElementById('panelSheetOverlay');
+  if (overlay) overlay.classList.remove('is-open');
+}
+
+function panelSheetOverlayClick(e) {
+  if (e.target === document.getElementById('panelSheetOverlay')) closePanelSheet();
+}
+
+/* ── Panel content builders ─────────────────────────────── */
+function buildPanelContent(type) {
+  switch (type) {
+    case 'beachAccess':       return panelContentBeachAccess();
+    case 'beachAccessJetSki': return panelContentBeachAccessJetSki();
+    case 'jetSkiRental':      return panelContentJetSkiRental();
+    case 'bigMable':          return panelContentBigMable();
+    default: return '';
   }
 }
 
-function addToSidebar(field) {
-  var countMap = { beachAdults: _ticketBeachAdult, beachChildren: _ticketBeachChild, jetSkiAdults: _ticketJetSki };
-  var count = countMap[field];
-  if (!count) return;
-  sidebarCount(field, count);
-  if (field === 'beachAdults') {
-    _ticketBeachAdult = 0;
-    document.getElementById('ticketBeachAdultCount').textContent = 0;
-    document.getElementById('ticketBeachAdultMinus').disabled = true;
-  } else if (field === 'beachChildren') {
-    _ticketBeachChild = 0;
-    document.getElementById('ticketBeachChildCount').textContent = 0;
-    document.getElementById('ticketBeachChildMinus').disabled = true;
-  } else {
-    _ticketJetSki = 0;
-    document.getElementById('ticketJetSkiCount').textContent = 0;
-    document.getElementById('ticketJetSkiMinus').disabled = true;
+function buildPanelSidebar(type) {
+  if (type === 'jetSkiRental') return panelSidebarJetSkiRental();
+  if (type === 'bigMable')     return panelSidebarBigMable();
+  return panelSidebarFamilyWave();
+}
+
+const PANEL_GALLERY_BEACH = [
+  'https://res.cloudinary.com/dko76z0df/image/upload/c_fill,w_640,h_480,g_auto/v1784948510/summaz/beach-pkg-photo2.jpg',
+  'https://res.cloudinary.com/dko76z0df/image/upload/c_fill,w_640,h_480,g_auto/v1784948514/summaz/beach-pkg-photo3.jpg',
+  'https://res.cloudinary.com/dko76z0df/image/upload/c_fill,w_640,h_480,g_auto/v1784948516/summaz/beach-pkg-photo4.jpg',
+  'https://res.cloudinary.com/dko76z0df/image/upload/c_fill,w_640,h_480,g_auto/v1784948499/summaz/beach-pkg-photo1.jpg'
+];
+
+const PANEL_VIDEOS_BEACH = [
+  { src: 'https://res.cloudinary.com/dko76z0df/video/upload/v1782304506/summaz/clip1.mp4',        poster: 'https://res.cloudinary.com/dko76z0df/image/upload/c_fill,w_640,h_480,g_auto/v1782304497/summaz/clip1-poster.jpg' },
+  { src: 'https://res.cloudinary.com/dko76z0df/video/upload/v1782304545/summaz/clip2.mp4',        poster: 'https://res.cloudinary.com/dko76z0df/image/upload/c_fill,w_640,h_480,g_auto/v1782304540/summaz/clip2-poster.jpg' },
+  { src: 'https://res.cloudinary.com/dko76z0df/video/upload/v1782304624/summaz/clip5.mp4',        poster: 'https://res.cloudinary.com/dko76z0df/image/upload/c_fill,w_640,h_480,g_auto/v1782304622/summaz/clip5-poster.jpg' },
+  { src: 'https://res.cloudinary.com/dko76z0df/video/upload/v1784948520/summaz/beach-pkg-clip1.mov', poster: 'https://res.cloudinary.com/dko76z0df/video/upload/c_fill,w_640,h_480,g_auto/v1784948520/summaz/beach-pkg-clip1.jpg' },
+  { src: 'https://res.cloudinary.com/dko76z0df/video/upload/v1784950714/summaz/beach-pkg-clip2.mp4', poster: 'https://res.cloudinary.com/dko76z0df/video/upload/c_fill,w_640,h_480,g_auto/v1784950714/summaz/beach-pkg-clip2.jpg' }
+];
+
+const PANEL_VIDEOS_JETSKI = [
+  { src: 'https://res.cloudinary.com/dko76z0df/video/upload/v1784951674/summaz/jetski-rental-clip1.mp4', poster: 'https://res.cloudinary.com/dko76z0df/video/upload/c_fill,w_640,h_480,g_auto/v1784951674/summaz/jetski-rental-clip1.jpg' },
+  { src: 'https://res.cloudinary.com/dko76z0df/video/upload/v1784951689/summaz/jetski-rental-clip2.mp4', poster: 'https://res.cloudinary.com/dko76z0df/video/upload/c_fill,w_640,h_480,g_auto/v1784951689/summaz/jetski-rental-clip2.jpg' }
+];
+
+const PANEL_GALLERY_JETSKI = [
+  'https://res.cloudinary.com/dko76z0df/image/upload/c_fill,w_640,h_480,g_auto/v1784952080/summaz/jetski-photo1.jpg',
+  'https://res.cloudinary.com/dko76z0df/image/upload/c_fill,w_640,h_480,g_auto/v1784952085/summaz/jetski-photo2.jpg',
+  'https://res.cloudinary.com/dko76z0df/image/upload/c_fill,w_640,h_480,g_auto/v1784952091/summaz/jetski-photo3.jpg'
+];
+
+const PANEL_VIDEOS_MABLE = [
+  { src: 'https://res.cloudinary.com/dko76z0df/video/upload/v1784952633/summaz/mable-clip1.mp4', poster: 'https://res.cloudinary.com/dko76z0df/video/upload/c_fill,w_640,h_480,g_auto/v1784952633/summaz/mable-clip1.jpg' },
+  { src: 'https://res.cloudinary.com/dko76z0df/video/upload/v1784952652/summaz/mable-clip2.mp4', poster: 'https://res.cloudinary.com/dko76z0df/video/upload/c_fill,w_640,h_480,g_auto/v1784952652/summaz/mable-clip2.jpg' }
+];
+
+function galleryHTML(photos) {
+  return '<div class="panel-gallery">' + photos.map((src, i) =>
+    `<div class="panel-gallery__item" onclick="openImgLightbox('${src}')"><img src="${src}" alt="Photo ${i+1}" loading="lazy"></div>`
+  ).join('') + '</div>';
+}
+
+function experienceHTML(videos) {
+  return '<div class="panel-gallery panel-gallery--video">' + videos.map((v, i) =>
+    `<div class="panel-gallery__item panel-gallery__item--video" onclick="openPanelVideo('${v.src}')">
+      <img src="${v.poster}" alt="Video ${i+1}" loading="lazy">
+      <div class="panel-video-play"><svg viewBox="0 0 24 24" width="36" height="36"><circle cx="12" cy="12" r="12" fill="rgba(0,0,0,0.52)"/><polygon points="10,8 10,16 17,12" fill="white"/></svg></div>
+    </div>`
+  ).join('') + '</div>';
+}
+
+function panelContentBeachAccess() {
+  return `
+    <span class="panel__cat-badge panel__cat-badge--family">Family Wave Package</span>
+    <h2 class="panel__title">Beach Access Package</h2>
+    <div class="panel__desc">
+      <p>A full day at Arawak Cay. Beach chairs, water gear, and clear Caribbean water. Arrive any time between 10am and 6pm. No timed slots.</p>
+      <p>Great for families, couples, and groups. Kids can play with floaties and water scooters while adults take out the kayaks or paddleboards. Bottled water is included and restrooms are on-site.</p>
+    </div>
+    <span class="panel__section-label">What's Included</span>
+    <ul class="panel__included-list">
+      <li class="panel__included-item">Beach chairs and umbrella</li>
+      <li class="panel__included-item">Kayaks</li>
+      <li class="panel__included-item">Paddleboards</li>
+      <li class="panel__included-item">Water scooters</li>
+      <li class="panel__included-item">Snorkel masks</li>
+      <li class="panel__included-item">Floaties</li>
+      <li class="panel__included-item">Water hammock</li>
+      <li class="panel__included-item">Bottled water</li>
+      <li class="panel__included-item">Restrooms on-site</li>
+      <li class="panel__included-item">Lifeguard on duty</li>
+    </ul>
+    <span class="panel__section-label">Photos</span>
+    ${galleryHTML(PANEL_GALLERY_BEACH)}
+    <span class="panel__section-label">Experience</span>
+    ${experienceHTML(PANEL_VIDEOS_BEACH)}
+    <span class="panel__section-label">Questions</span>
+    <div class="panel-faq">
+      <details class="panel-faq-item">
+        <summary>What time should we arrive?</summary>
+        <p>Any time between 10am and 6pm. No timed slots. Arrive when it works for your group.</p>
+      </details>
+      <details class="panel-faq-item">
+        <summary>Are children able to join?</summary>
+        <p>Yes. The Beach Access Package is open to all ages. Children under 12 are $60 per person.</p>
+      </details>
+      <details class="panel-faq-item">
+        <summary>Is food available on-site?</summary>
+        <p>The Bay restaurant is located at the venue. You can order food and drinks at any point during your visit.</p>
+      </details>
+      <details class="panel-faq-item">
+        <summary>What should we bring?</summary>
+        <p>Swimwear, sunscreen, and a valid ID. Towels and extra sunscreen are recommended. Bottled water is included.</p>
+      </details>
+    </div>
+  `;
+}
+
+function panelContentBeachAccessJetSki() {
+  return `
+    <span class="panel__cat-badge panel__cat-badge--family">Family Wave Package</span>
+    <h2 class="panel__title">Beach Access Package + Jet Ski Ride</h2>
+    <div class="panel__desc">
+      <p>Everything in the Beach Access Package plus a solo 25-minute jet ski session on the open water. Book this for anyone in your group who wants to get out on the water.</p>
+      <p>Your group can mix. Some people on the Beach Access Package for the day, others on Beach Access + Jet Ski Ride. You choose what each person is getting when you book.</p>
+    </div>
+    <span class="panel__section-label">What's Included</span>
+    <ul class="panel__included-list">
+      <li class="panel__included-item">Beach chairs and umbrella</li>
+      <li class="panel__included-item">Kayaks</li>
+      <li class="panel__included-item">Paddleboards</li>
+      <li class="panel__included-item">Water scooters</li>
+      <li class="panel__included-item">Snorkel masks</li>
+      <li class="panel__included-item">Floaties</li>
+      <li class="panel__included-item">Water hammock</li>
+      <li class="panel__included-item">Bottled water</li>
+      <li class="panel__included-item">25-min solo jet ski session</li>
+      <li class="panel__included-item">Life jacket provided</li>
+    </ul>
+    <span class="panel__section-label">Photos</span>
+    ${galleryHTML(PANEL_GALLERY_BEACH)}
+    <span class="panel__section-label">Experience</span>
+    ${experienceHTML([...PANEL_VIDEOS_JETSKI, ...PANEL_VIDEOS_BEACH])}
+    <span class="panel__section-label">Questions</span>
+    <div class="panel-faq">
+      <details class="panel-faq-item">
+        <summary>Is there a minimum age for the jet ski?</summary>
+        <p>Riders must be 16 or older to operate a jet ski. Anyone under 16 in your group should be booked on the Beach Access Package instead.</p>
+      </details>
+      <details class="panel-faq-item">
+        <summary>Can I add someone to the jet ski after I arrive?</summary>
+        <p>Yes. You can arrange extra jet ski time with the team on-site.</p>
+      </details>
+      <details class="panel-faq-item">
+        <summary>Is the jet ski session guided?</summary>
+        <p>Our crew rides alongside you. They'll show you the route and make sure the experience is safe and enjoyable.</p>
+      </details>
+      <details class="panel-faq-item">
+        <summary>Can children join the beach access portion?</summary>
+        <p>Yes. Book those guests on the Beach Access Package at $60 each and the adults who want the jet ski on the Beach Access + Jet Ski Ride option.</p>
+      </details>
+    </div>
+  `;
+}
+
+function panelContentJetSkiRental() {
+  return `
+    <span class="panel__cat-badge panel__cat-badge--solo">Individuals</span>
+    <h2 class="panel__title">Jet Ski Rentals</h2>
+    <div class="panel__desc">
+      <p>A standalone jet ski session at Arawak Cay. No beach day required. Pick your duration, ride, and go. Perfect if you're in Nassau for a short stop or just want to get out on the water.</p>
+    </div>
+    <span class="panel__section-label">Pricing</span>
+    <div class="panel-tiers">
+      <div class="panel-tier">
+        <div class="panel-tier__dur">30 min</div>
+        <div class="panel-tier__price">$105</div>
+        <div class="panel-tier__price-sub">per rider</div>
+      </div>
+      <div class="panel-tier">
+        <div class="panel-tier__dur">45 min</div>
+        <div class="panel-tier__price">$125</div>
+        <div class="panel-tier__price-sub">per rider</div>
+      </div>
+      <div class="panel-tier">
+        <div class="panel-tier__dur">60 min</div>
+        <div class="panel-tier__price">$190</div>
+        <div class="panel-tier__price-sub">per rider</div>
+      </div>
+    </div>
+    <span class="panel__section-label">What's Included</span>
+    <ul class="panel__included-list">
+      <li class="panel__included-item">Solo jet ski session</li>
+      <li class="panel__included-item">Life jacket provided</li>
+      <li class="panel__included-item">Crew guidance on the water</li>
+      <li class="panel__included-item">No beach access required</li>
+    </ul>
+    <span class="panel__section-label">Photos</span>
+    ${galleryHTML([...PANEL_GALLERY_JETSKI, ...PANEL_GALLERY_BEACH])}
+    <span class="panel__section-label">Experience</span>
+    ${experienceHTML(PANEL_VIDEOS_JETSKI)}
+    <span class="panel__section-label">Questions</span>
+    <div class="panel-faq">
+      <details class="panel-faq-item">
+        <summary>What is the minimum age to ride?</summary>
+        <p>Riders must be 16 or older. No exceptions.</p>
+      </details>
+      <details class="panel-faq-item">
+        <summary>Do I need to book in advance?</summary>
+        <p>Booking ahead is strongly recommended, especially on weekends. Walk-ins depend on availability.</p>
+      </details>
+      <details class="panel-faq-item">
+        <summary>Can multiple people ride on one jet ski?</summary>
+        <p>Most of our jet skis seat two people. If you want a passenger, select the same duration for both riders. Each slot covers one session.</p>
+      </details>
+      <details class="panel-faq-item">
+        <summary>What if the weather is bad on my date?</summary>
+        <p>If we need to cancel due to weather, you'll be offered a full reschedule or refund. We'll contact you in advance.</p>
+      </details>
+    </div>
+  `;
+}
+
+/* ── Panel sidebars ─────────────────────────────────────── */
+function panelSidebarFamilyWave() {
+  const today = todayInBahamas();
+  return `
+    <div class="ps-title">Family Wave Package</div>
+    <div class="ps-subtitle">Mix and match for your group</div>
+    <span class="ps-section-label">Beach Access Package</span>
+    <div class="ps-counter-row" style="border-top:1px solid #e5e9ef">
+      <div>
+        <div class="ps-counter-name">Adults</div>
+        <div class="ps-counter-price">$${BEACH_ADULT_PRICE} per person</div>
+      </div>
+      <div class="ps-stepper">
+        <button class="ps-stepper-btn" id="psFWBeachAdultMinus" onclick="panelCount('beachAdults',-1)" ${panel.beachAdults <= 0 ? 'disabled' : ''}>−</button>
+        <span class="ps-stepper-count" id="psFWBeachAdultCount">${panel.beachAdults}</span>
+        <button class="ps-stepper-btn" onclick="panelCount('beachAdults',1)">+</button>
+      </div>
+    </div>
+    <div class="ps-counter-row">
+      <div>
+        <div class="ps-counter-name">Children</div>
+        <div class="ps-counter-price">$${BEACH_CHILD_PRICE} per person</div>
+      </div>
+      <div class="ps-stepper">
+        <button class="ps-stepper-btn" id="psFWBeachChildMinus" onclick="panelCount('beachChildren',-1)" ${panel.beachChildren <= 0 ? 'disabled' : ''}>−</button>
+        <span class="ps-stepper-count" id="psFWBeachChildCount">${panel.beachChildren}</span>
+        <button class="ps-stepper-btn" onclick="panelCount('beachChildren',1)">+</button>
+      </div>
+    </div>
+    <span class="ps-section-label">Beach Access Package + Jet Ski Ride</span>
+    <div class="ps-counter-row" style="border-top:1px solid #e5e9ef">
+      <div>
+        <div class="ps-counter-name">Adults</div>
+        <div class="ps-counter-price">$${JETSKI_ADULT_PRICE} per person</div>
+      </div>
+      <div class="ps-stepper">
+        <button class="ps-stepper-btn" id="psFWJetSkiAdultMinus" onclick="panelCount('jetSkiAdults',-1)" ${panel.jetSkiAdults <= 0 ? 'disabled' : ''}>−</button>
+        <span class="ps-stepper-count" id="psFWJetSkiAdultCount">${panel.jetSkiAdults}</span>
+        <button class="ps-stepper-btn" onclick="panelCount('jetSkiAdults',1)">+</button>
+      </div>
+    </div>
+    <div class="ps-total-row">
+      <span class="ps-total-label">Total</span>
+      <span class="ps-total-amount" id="psPanelTotal">${formatMoney(panelTotal())}</span>
+    </div>
+    <button class="ps-book-btn" onclick="bookFromPanel()">Book This Package</button>
+    <p class="ps-note">You'll confirm guest details in the next step. Free cancellation 7 days before.</p>
+  `;
+}
+
+function panelSidebarJetSkiRental() {
+  const today  = todayInBahamas();
+  const count  = panel.jetSkiRentalSlots.length;
+  const slotsH = count > 0 ? panel.jetSkiRentalSlots.map((slot, i) => `
+    <div class="ps-rider-slot" id="psJSRSlot${i}">
+      <div class="ps-rider-slot__label">Rider ${i + 1}</div>
+      <div class="ps-rider-slot__options">
+        <button class="ps-rider-slot__opt ${slot.duration === 30 ? 'is-selected' : ''}" data-duration="30" onclick="setPanelRiderDuration(${i},30)">30 min<br>$105</button>
+        <button class="ps-rider-slot__opt ${slot.duration === 45 ? 'is-selected' : ''}" data-duration="45" onclick="setPanelRiderDuration(${i},45)">45 min<br>$125</button>
+        <button class="ps-rider-slot__opt ${slot.duration === 60 ? 'is-selected' : ''}" data-duration="60" onclick="setPanelRiderDuration(${i},60)">60 min<br>$190</button>
+      </div>
+    </div>`).join('') : '';
+  return `
+    <div class="ps-title">Jet Ski Rentals</div>
+    <div class="ps-subtitle">Select riders and duration</div>
+    <span class="ps-section-label">Number of Riders</span>
+    <div class="ps-counter-row" style="border-top:1px solid #e5e9ef">
+      <div>
+        <div class="ps-counter-name">Adults (16+)</div>
+        <div class="ps-counter-price">Price varies by duration</div>
+      </div>
+      <div class="ps-stepper">
+        <button class="ps-stepper-btn" id="psJSRAdultMinus" onclick="panelJSRCount(-1)" ${count <= 0 ? 'disabled' : ''}>−</button>
+        <span class="ps-stepper-count" id="psJSRAdultCount">${count}</span>
+        <button class="ps-stepper-btn" onclick="panelJSRCount(1)">+</button>
+      </div>
+    </div>
+    <div id="psJSRSlots" class="ps-rider-slots">${slotsH}</div>
+    <div class="ps-total-row">
+      <span class="ps-total-label">Total</span>
+      <span class="ps-total-amount" id="psPanelTotal">${formatMoney(panelTotal())}</span>
+    </div>
+    <button class="ps-book-btn" id="psPanelBookBtn" onclick="bookFromPanel()" ${count === 0 ? 'disabled' : ''}>
+      ${count === 0 ? 'Add riders to book' : 'Book This Package'}
+    </button>
+    <p class="ps-note">Each rider picks their duration independently. Total is the sum of all riders.</p>
+  `;
+}
+
+/* ── Panel counter functions ────────────────────────────── */
+function panelCount(field, delta) {
+  const newVal = Math.max(0, panel[field] + delta);
+  panel[field] = newVal;
+  const idMap  = { beachAdults: 'psFWBeachAdultCount', beachChildren: 'psFWBeachChildCount', jetSkiAdults: 'psFWJetSkiAdultCount' };
+  const minMap = { beachAdults: 'psFWBeachAdultMinus', beachChildren: 'psFWBeachChildMinus', jetSkiAdults: 'psFWJetSkiAdultMinus' };
+  const countEl = document.getElementById(idMap[field]);
+  const minBtn  = document.getElementById(minMap[field]);
+  if (countEl) countEl.textContent = newVal;
+  if (minBtn)  minBtn.disabled = newVal <= 0;
+  updatePanelSidebarTotal();
+}
+
+function panelJSRCount(delta) {
+  const newVal = Math.max(0, panel.jetSkiRentalAdults + delta);
+  if (delta > 0) {
+    panel.jetSkiRentalSlots.push({ duration: 30, price: JETSKI_RENTAL_PRICES[30] });
+  } else if (delta < 0 && panel.jetSkiRentalSlots.length > 0) {
+    panel.jetSkiRentalSlots.pop();
+  }
+  panel.jetSkiRentalAdults = panel.jetSkiRentalSlots.length;
+
+  const countEl = document.getElementById('psJSRAdultCount');
+  const minBtn  = document.getElementById('psJSRAdultMinus');
+  if (countEl) countEl.textContent = panel.jetSkiRentalAdults;
+  if (minBtn)  minBtn.disabled = panel.jetSkiRentalAdults <= 0;
+
+  renderPanelJSRSlots();
+  updatePanelSidebarTotal();
+
+  const bookBtn = document.getElementById('psPanelBookBtn');
+  if (bookBtn) {
+    bookBtn.disabled = panel.jetSkiRentalAdults === 0;
+    bookBtn.textContent = panel.jetSkiRentalAdults === 0 ? 'Add riders to book' : 'Book This Package';
   }
 }
+
+function setPanelRiderDuration(idx, dur) {
+  if (idx >= panel.jetSkiRentalSlots.length) return;
+  panel.jetSkiRentalSlots[idx] = { duration: dur, price: JETSKI_RENTAL_PRICES[dur] };
+  const slotEl = document.getElementById(`psJSRSlot${idx}`);
+  if (slotEl) {
+    slotEl.querySelectorAll('.ps-rider-slot__opt').forEach(btn => {
+      btn.classList.toggle('is-selected', parseInt(btn.dataset.duration) === dur);
+    });
+  }
+  updatePanelSidebarTotal();
+}
+
+function renderPanelJSRSlots() {
+  const container = document.getElementById('psJSRSlots');
+  if (!container) return;
+  container.innerHTML = panel.jetSkiRentalSlots.map((slot, i) => `
+    <div class="ps-rider-slot" id="psJSRSlot${i}">
+      <div class="ps-rider-slot__label">Rider ${i + 1}</div>
+      <div class="ps-rider-slot__options">
+        <button class="ps-rider-slot__opt ${slot.duration === 30 ? 'is-selected' : ''}" data-duration="30" onclick="setPanelRiderDuration(${i},30)">30 min<br>$105</button>
+        <button class="ps-rider-slot__opt ${slot.duration === 45 ? 'is-selected' : ''}" data-duration="45" onclick="setPanelRiderDuration(${i},45)">45 min<br>$125</button>
+        <button class="ps-rider-slot__opt ${slot.duration === 60 ? 'is-selected' : ''}" data-duration="60" onclick="setPanelRiderDuration(${i},60)">60 min<br>$190</button>
+      </div>
+    </div>`).join('');
+}
+
+function updatePanelSidebarTotal() {
+  const el = document.getElementById('psPanelTotal');
+  if (el) el.textContent = formatMoney(panelTotal());
+}
+
+/* ── Book from panel ────────────────────────────────────── */
+function bookFromPanel() {
+
+  if (panel.type === 'jetSkiRental') {
+    if (panel.jetSkiRentalAdults === 0) {
+      alert('Please add at least one rider.');
+      return;
+    }
+    state.selectedPackage   = 'jetSkiRental';
+    state.jetSkiRentalSlots = panel.jetSkiRentalSlots.map(s => ({ ...s }));
+    state.beachAdults       = 0;
+    state.beachChildren     = 0;
+    state.jetSkiAdults      = 0;
+    state.bigMableCount     = 0;
+  } else if (panel.type === 'bigMable') {
+    if (panel.bigMableCount < 2) {
+      alert('Big Mable requires a minimum of 2 riders.');
+      return;
+    }
+    state.selectedPackage   = 'bigMable';
+    state.bigMableCount     = panel.bigMableCount;
+    state.beachAdults       = 0;
+    state.beachChildren     = 0;
+    state.jetSkiAdults      = 0;
+    state.jetSkiRentalSlots = [];
+  } else {
+    if (panelTotal() === 0) {
+      alert('Please add at least one guest.');
+      return;
+    }
+    state.selectedPackage   = panel.type;
+    state.beachAdults       = panel.beachAdults;
+    state.beachChildren     = panel.beachChildren;
+    state.jetSkiAdults      = panel.jetSkiAdults;
+    state.bigMableCount     = 0;
+    state.jetSkiRentalSlots = [];
+  }
+
+  state.date = '';
+  closePanel();
+  openBookingAtStep2();
+}
+
+/* ── Open modal at step 2 (from panel) ───────────────────── */
+function openBookingAtStep2() {
+  _formOpenedAt    = Date.now();
+  previousFocus    = document.activeElement;
+  state.name           = '';
+  state.email          = '';
+  state.phone          = '';
+  state.addons         = [];
+  state.notes          = '';
+  state.policyAccepted = false;
+  state.paymentMethod  = '';
+  state.honeypot       = '';
+  state.reference      = '';
+  state.total          = 0;
+  state.currentStep    = 2;
+
+  updateModalProgress(2);
+  renderStep(2);
+  document.getElementById('bookingModal').classList.add('is-open');
+  document.body.style.overflow = 'hidden';
+  setTimeout(() => {
+    const first = document.querySelector('#modalPanel button, #modalPanel input');
+    if (first) first.focus();
+  }, 350);
+}
+
+/* ── Jet Ski Rental WhatsApp submission ──────────────────── */
+function submitJetSkiRentalViaWhatsApp() {
+  const loading = document.getElementById('loadingOverlay');
+  if (loading) loading.classList.add('is-visible');
+
+  const dateDisplay = state.date
+    ? new Date(state.date + 'T12:00:00').toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
+    : 'Date TBD';
+
+  const ridersText = state.jetSkiRentalSlots.map((slot, i) =>
+    `Rider ${i + 1}: ${slot.duration} min ($${slot.price})`
+  ).join(', ');
+
+  const total  = calcTotal();
+  const cfg    = window.SUMMAZ_CONFIG || {};
+  const waNum  = cfg.whatsapp || '12428175387';
+  const msg    = `Hi! I'd like to book a Jet Ski Rental.\n\nName: ${state.name}\nDate: ${dateDisplay}\nRiders: ${ridersText}\nTotal: $${total}\nPhone: ${state.phone}\nEmail: ${state.email}`;
+  const waUrl  = `https://wa.me/${waNum}?text=${encodeURIComponent(msg)}`;
+
+  setTimeout(() => {
+    if (loading) loading.classList.remove('is-visible');
+    window.open(waUrl, '_blank');
+    showJetSkiRentalConfirmation(dateDisplay, total, cfg);
+  }, 800);
+}
+
+function showJetSkiRentalConfirmation(dateDisplay, total, cfg) {
+  const body   = document.getElementById('modalBody');
+  const header = document.getElementById('modalHeader');
+  const footer = document.getElementById('modalFooter');
+  if (header) header.style.display = 'none';
+  if (footer) footer.style.display = 'none';
+
+  body.innerHTML = `
+    <div class="confirmation__wrap">
+      <div class="confirmation__icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#00C4A1" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="48" height="48"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      <h2 class="confirmation__title">WhatsApp Opened</h2>
+      <p class="confirmation__sub">Your details have been sent. Our team will confirm your jet ski slot within 24 hours.</p>
+      <div class="confirmation__meta">
+        ${dateDisplay && dateDisplay !== 'Date TBD' ? `<div class="confirmation__meta-item"><strong>Date</strong>${dateDisplay}</div>` : ''}
+        <div class="confirmation__meta-item"><strong>Riders</strong>${state.jetSkiRentalSlots.length} rider${state.jetSkiRentalSlots.length > 1 ? 's' : ''}</div>
+        <div class="confirmation__meta-item"><strong>Total</strong>${formatMoney(total)}</div>
+      </div>
+      <p style="font-size:13px;color:var(--text-muted);margin-top:16px;text-align:center">If WhatsApp didn't open, <a href="https://wa.me/${(cfg||{}).whatsapp || '12428175387'}" target="_blank" rel="noopener" style="color:var(--sea)">tap here to send your booking</a>.</p>
+      <button class="btn btn--primary" style="margin-top:24px;width:100%;justify-content:center" onclick="closeBooking()">Close</button>
+    </div>
+  `;
+}
+
+function panelContentBigMable() {
+  return `
+    <span class="panel__cat-badge panel__cat-badge--solo">Individuals</span>
+    <h2 class="panel__title">Big Mable Tube Ride</h2>
+    <div class="panel__desc">
+      <p>Up to 6 riders pile onto one giant inflatable tube and get towed through open water by a jet ski. It's loud, wet, and fast. A 10 to 12 minute ride that everyone remembers.</p>
+      <p>Great for families with kids, friend groups, or anyone who wants a break from the beach chairs. Ages 7 and up. Combined weight limit of 600 lb per ride.</p>
+    </div>
+    <span class="panel__section-label">What's Included</span>
+    <ul class="panel__included-list">
+      <li class="panel__included-item">10 to 12 minute tube ride</li>
+      <li class="panel__included-item">Up to 6 riders per tube</li>
+      <li class="panel__included-item">Life jackets provided</li>
+      <li class="panel__included-item">Jet ski tow crew on board</li>
+    </ul>
+    <span class="panel__section-label">Experience</span>
+    ${experienceHTML(PANEL_VIDEOS_MABLE)}
+    <span class="panel__section-label">Questions</span>
+    <div class="panel-faq">
+      <details class="panel-faq-item">
+        <summary>What is the minimum age?</summary>
+        <p>Ages 7 and up. Children under 7 are not permitted on the Big Mable for safety reasons.</p>
+      </details>
+      <details class="panel-faq-item">
+        <summary>How many people can ride at once?</summary>
+        <p>Minimum 2, maximum 6 riders per ride. The tube seats everyone together for a shared experience.</p>
+      </details>
+      <details class="panel-faq-item">
+        <summary>Is there a weight limit?</summary>
+        <p>Yes. The combined weight of all riders must not exceed 600 lb. Our team will confirm on arrival.</p>
+      </details>
+      <details class="panel-faq-item">
+        <summary>Do we need beach access to book this?</summary>
+        <p>No. The Big Mable Tube Ride is a standalone experience. You don't need to purchase a Beach Access Package to book it.</p>
+      </details>
+    </div>
+  `;
+}
+
+function panelSidebarBigMable() {
+  const today = todayInBahamas();
+  const count = panel.bigMableCount;
+  return `
+    <div class="ps-title">Big Mable Tube Ride</div>
+    <div class="ps-subtitle">2 to 6 riders per ride · Ages 7+</div>
+    <span class="ps-section-label">Riders</span>
+    <div class="ps-counter-row" style="border-top:1px solid #e5e9ef">
+      <div>
+        <div class="ps-counter-name">Riders (Ages 7+)</div>
+        <div class="ps-counter-price">$${BIG_MABLE_PRICE} per person · max 6</div>
+      </div>
+      <div class="ps-stepper">
+        <button class="ps-stepper-btn" id="psBigMableMinus" onclick="panelBigMableCount(-1)" ${count <= 0 ? 'disabled' : ''}>−</button>
+        <span class="ps-stepper-count" id="psBigMableCount">${count}</span>
+        <button class="ps-stepper-btn" id="psBigMablePlus" onclick="panelBigMableCount(1)" ${count >= 6 ? 'disabled' : ''}>+</button>
+      </div>
+    </div>
+    ${count === 1 ? '<p style="font-size:12px;color:#c05621;padding:8px 0 0;margin:0">Minimum 2 riders required.</p>' : ''}
+    <div class="ps-total-row">
+      <span class="ps-total-label">Total</span>
+      <span class="ps-total-amount" id="psPanelTotal">${formatMoney(panelTotal())}</span>
+    </div>
+    <button class="ps-book-btn" id="psPanelBookBtn" onclick="bookFromPanel()" ${count < 2 ? 'disabled' : ''}>
+      ${count < 2 ? 'Add at least 2 riders' : 'Book This Package'}
+    </button>
+    <p class="ps-note">600 lb combined weight limit. Payment handled on arrival. Confirmed via WhatsApp.</p>
+  `;
+}
+
+function panelBigMableCount(delta) {
+  const newVal = Math.max(0, Math.min(6, panel.bigMableCount + delta));
+  panel.bigMableCount = newVal;
+
+  const countEl = document.getElementById('psBigMableCount');
+  const minBtn  = document.getElementById('psBigMableMinus');
+  const plusBtn = document.getElementById('psBigMablePlus');
+  if (countEl) countEl.textContent = newVal;
+  if (minBtn)  minBtn.disabled = newVal <= 0;
+  if (plusBtn) plusBtn.disabled = newVal >= 6;
+
+  updatePanelSidebarTotal();
+
+  const bookBtn = document.getElementById('psPanelBookBtn');
+  if (bookBtn) {
+    bookBtn.disabled = newVal < 2;
+    bookBtn.textContent = newVal < 2 ? 'Add at least 2 riders' : 'Book This Package';
+  }
+}
+
+/* ── Photo lightbox ──────────────────────────────────────── */
+function openImgLightbox(src) {
+  const lb  = document.getElementById('imgLightbox');
+  const img = document.getElementById('imgLightboxImg');
+  if (!lb || !img) return;
+  img.src = src;
+  lb.classList.add('is-open');
+}
+
+function closeImgLightbox() {
+  const lb = document.getElementById('imgLightbox');
+  if (!lb) return;
+  lb.classList.remove('is-open');
+}
+
+/* ── Sidebar package selector ──────────────────────────── */
+function sidebarPackageChange(value) {
+  state.selectedPackage = value;
+}
+
+/* ── Big Mable WhatsApp submission ───────────────────────── */
+function submitBigMableViaWhatsApp() {
+  const loading = document.getElementById('loadingOverlay');
+  if (loading) loading.classList.add('is-visible');
+
+  const dateDisplay = state.date
+    ? new Date(state.date + 'T12:00:00').toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
+    : 'Date TBD';
+
+  const total  = calcTotal();
+  const cfg    = window.SUMMAZ_CONFIG || {};
+  const waNum  = cfg.whatsapp || '12428175387';
+  const msg    = `Hi! I'd like to book a Big Mable Tube Ride.\n\nName: ${state.name}\nDate: ${dateDisplay}\nRiders: ${state.bigMableCount}\nTotal: $${total}\nPhone: ${state.phone}\nEmail: ${state.email}`;
+  const waUrl  = `https://wa.me/${waNum}?text=${encodeURIComponent(msg)}`;
+
+  setTimeout(() => {
+    if (loading) loading.classList.remove('is-visible');
+    window.open(waUrl, '_blank');
+    showBigMableConfirmation(dateDisplay, total, cfg);
+  }, 800);
+}
+
+function showBigMableConfirmation(dateDisplay, total, cfg) {
+  const body   = document.getElementById('modalBody');
+  const header = document.getElementById('modalHeader');
+  const footer = document.getElementById('modalFooter');
+  if (header) header.style.display = 'none';
+  if (footer) footer.style.display = 'none';
+
+  body.innerHTML = `
+    <div class="confirmation__wrap">
+      <div class="confirmation__icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#00C4A1" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="48" height="48"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      <h2 class="confirmation__title">WhatsApp Opened</h2>
+      <p class="confirmation__sub">Your Big Mable booking request has been sent. Our team will confirm your slot within 24 hours.</p>
+      <div class="confirmation__meta">
+        ${dateDisplay && dateDisplay !== 'Date TBD' ? `<div class="confirmation__meta-item"><strong>Date</strong>${dateDisplay}</div>` : ''}
+        <div class="confirmation__meta-item"><strong>Riders</strong>${state.bigMableCount}</div>
+        <div class="confirmation__meta-item"><strong>Total</strong>${formatMoney(total)}</div>
+      </div>
+      <p style="font-size:13px;color:var(--text-muted);margin-top:16px;text-align:center">If WhatsApp didn't open, <a href="https://wa.me/${(cfg||{}).whatsapp || '12428175387'}" target="_blank" rel="noopener" style="color:var(--sea)">tap here to send your booking</a>.</p>
+      <button class="btn btn--primary" style="margin-top:24px;width:100%;justify-content:center" onclick="closeBooking()">Close</button>
+    </div>
+  `;
+}
+
+/* ── Mobile nav menu ──────────────────────────────────── */
+function toggleMobileMenu() {
+  const menu = document.getElementById('navMobileMenu');
+  const btn  = document.getElementById('navHamburger');
+  const isOpen = menu.classList.toggle('is-open');
+  btn.classList.toggle('is-open', isOpen);
+  btn.setAttribute('aria-expanded', isOpen);
+  menu.setAttribute('aria-hidden', !isOpen);
+}
+
+function closeMobileMenu() {
+  const menu = document.getElementById('navMobileMenu');
+  const btn  = document.getElementById('navHamburger');
+  menu.classList.remove('is-open');
+  btn.classList.remove('is-open');
+  btn.setAttribute('aria-expanded', 'false');
+  menu.setAttribute('aria-hidden', 'true');
+}
+
 
