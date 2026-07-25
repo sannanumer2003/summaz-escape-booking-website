@@ -1682,15 +1682,18 @@ ul { list-style: none; }
 .vcard__brand-cover {
   position: absolute;
   inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(150deg, #e6f4f8 0%, #f5fbfd 60%, #eaf6f9 100%);
+  overflow: hidden;
 }
-.vcard__brand-logo {
-  width: 52%;
-  max-width: 260px;
-  height: auto;
+.vcard__brand-cover::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.22);
+}
+.vcard__thumb-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
   pointer-events: none;
 }
 

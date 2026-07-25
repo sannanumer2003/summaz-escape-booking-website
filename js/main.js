@@ -1244,14 +1244,6 @@ function showConfirmation(data) {
           <div class="confirmation__meta-value">${dateDisplay}</div>
         </div>
         <div class="confirmation__meta-item">
-          <div class="confirmation__meta-label">Guests</div>
-          <div class="confirmation__meta-value">${[
-            state.beachAdults  > 0 ? `${state.beachAdults} beach adult${state.beachAdults !== 1 ? 's' : ''}`    : '',
-            state.beachChildren > 0 ? `${state.beachChildren} beach child${state.beachChildren !== 1 ? 'ren' : ''}` : '',
-            state.jetSkiAdults  > 0 ? `${state.jetSkiAdults} jet ski adult${state.jetSkiAdults !== 1 ? 's' : ''}`  : ''
-          ].filter(Boolean).join(' · ')}</div>
-        </div>
-        <div class="confirmation__meta-item">
           <div class="confirmation__meta-label">Total</div>
           <div class="confirmation__meta-value">${total}</div>
         </div>
@@ -1606,7 +1598,7 @@ const PANEL_VIDEOS_BEACH = [
   { src: 'https://res.cloudinary.com/dko76z0df/video/upload/v1782304506/summaz/clip1.mp4',        poster: 'https://res.cloudinary.com/dko76z0df/image/upload/c_fill,w_640,h_480,g_auto/v1782304497/summaz/clip1-poster.jpg' },
   { src: 'https://res.cloudinary.com/dko76z0df/video/upload/v1782304545/summaz/clip2.mp4',        poster: 'https://res.cloudinary.com/dko76z0df/image/upload/c_fill,w_640,h_480,g_auto/v1782304540/summaz/clip2-poster.jpg' },
   { src: 'https://res.cloudinary.com/dko76z0df/video/upload/v1782304624/summaz/clip5.mp4',        poster: 'https://res.cloudinary.com/dko76z0df/image/upload/c_fill,w_640,h_480,g_auto/v1782304622/summaz/clip5-poster.jpg' },
-  { src: 'https://res.cloudinary.com/dko76z0df/video/upload/v1784948520/summaz/beach-pkg-clip1.mov', poster: 'https://res.cloudinary.com/dko76z0df/video/upload/c_fill,w_640,h_480,g_auto/v1784948520/summaz/beach-pkg-clip1.jpg' },
+  { src: 'https://res.cloudinary.com/dko76z0df/video/upload/v1784948520/summaz/beach-pkg-clip1.mp4', poster: 'https://res.cloudinary.com/dko76z0df/video/upload/c_fill,w_640,h_480,g_auto/v1784948520/summaz/beach-pkg-clip1.jpg' },
   { src: 'https://res.cloudinary.com/dko76z0df/video/upload/v1784950714/summaz/beach-pkg-clip2.mp4', poster: 'https://res.cloudinary.com/dko76z0df/video/upload/c_fill,w_640,h_480,g_auto/v1784950714/summaz/beach-pkg-clip2.jpg' }
 ];
 
