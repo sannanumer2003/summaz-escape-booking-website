@@ -1640,6 +1640,7 @@ function panelContentBeachAccess() {
     <div class="panel__desc">
       <p>A full day at Arawak Cay. Beach chairs, water gear, and clear Caribbean water. Arrive any time between 10am and 6pm. No timed slots.</p>
       <p>Great for families, couples, and groups. Kids can play with floaties and water scooters while adults take out the kayaks or paddleboards. Bottled water is included and restrooms are on-site.</p>
+      <p>Note: jet ski rides are not included in this package. If some of your group wants to get on the water, book those people on the Beach Access + Jet Ski Ride option instead.</p>
     </div>
     <span class="panel__section-label">What's Included</span>
     <ul class="panel__included-list">
@@ -1732,7 +1733,8 @@ function panelContentJetSkiRental() {
     <span class="panel__cat-badge panel__cat-badge--solo">Individuals</span>
     <h2 class="panel__title">Jet Ski Rentals</h2>
     <div class="panel__desc">
-      <p>A standalone jet ski session at Arawak Cay. No beach day required. Pick your duration, ride, and go. Perfect if you're in Nassau for a short stop or just want to get out on the water.</p>
+      <p>A standalone jet ski session right off Arawak Cay. No beach day needed, just pick your duration and get on the water.</p>
+      <p>This package is for adults. You need to be 16 or older to take the wheel. Bringing younger family or friends? That's totally fine. Each jet ski has two seats, so they can ride along with you tandem at no extra charge. Just book for the adult rider and bring whoever you want on the back.</p>
     </div>
     <span class="panel__section-label">Pricing</span>
     <div class="panel-tiers">
@@ -1754,7 +1756,7 @@ function panelContentJetSkiRental() {
     </div>
     <span class="panel__section-label">What's Included</span>
     <ul class="panel__included-list">
-      <li class="panel__included-item">Solo jet ski session</li>
+      <li class="panel__included-item">Jet ski session (solo or tandem, no extra charge)</li>
       <li class="panel__included-item">Life jacket provided</li>
       <li class="panel__included-item">Crew guidance on the water</li>
       <li class="panel__included-item">No beach access required</li>
@@ -1774,8 +1776,8 @@ function panelContentJetSkiRental() {
         <p>Booking ahead is strongly recommended, especially on weekends. Walk-ins depend on availability.</p>
       </details>
       <details class="panel-faq-item">
-        <summary>Can multiple people ride on one jet ski?</summary>
-        <p>Most of our jet skis seat two people. If you want a passenger, select the same duration for both riders. Each slot covers one session.</p>
+        <summary>Can someone ride with me on the same jet ski?</summary>
+        <p>Yes. Each jet ski seats two, so tandem riding is completely fine and there's no extra charge for a passenger. You only book and pay for the rider who's driving. Perfect if you're bringing along a younger family member or someone who just wants to come along for the ride.</p>
       </details>
       <details class="panel-faq-item">
         <summary>What if the weather is bad on my date?</summary>
