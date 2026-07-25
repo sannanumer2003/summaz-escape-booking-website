@@ -665,7 +665,7 @@ function renderStep4(body) {
       <p class="step-segment__title">Add to your booking</p>
       <p class="step-segment__sub">Charged now and included in your total.</p>
       <div class="addon-bundle-card ${isChecked ? 'is-checked' : ''}" onclick="toggleBigMableAddon(this)">
-        <img class="addon-bundle-card__photo" src="https://res.cloudinary.com/dko76z0df/image/upload/c_fill,w_160,h_160,g_auto/v1782304920/summaz/hero2.jpg" alt="Big Mable Tube Ride">
+        <img class="addon-bundle-card__photo" src="https://res.cloudinary.com/dko76z0df/image/upload/c_fill,w_160,h_160,g_auto/v1782304570/summaz/clip4-poster.jpg" alt="Big Mable Tube Ride">
         <div class="addon-bundle-card__body">
           <p class="addon-bundle-card__name">Big Mable Tube Ride</p>
           <p class="addon-bundle-card__desc">Up to 6 riders on one giant inflatable tube, towed by a jet ski. About 10 to 12 minutes. Ages 7 and up.</p>
