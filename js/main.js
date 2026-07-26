@@ -2277,7 +2277,7 @@ window.addEventListener('popstate', function(e) {
   }
 });
 
-document.addEventListener('DOMContentLoaded', function() {
+setTimeout(function() {
   const path = window.location.pathname;
   const match = path.match(/^\/book\/([^/]+)/);
   if (match) {
@@ -2287,6 +2287,6 @@ document.addEventListener('DOMContentLoaded', function() {
   if (path === '/book') {
     openBooking();
   }
-});
+}, 0);
 
 
