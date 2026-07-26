@@ -8,6 +8,14 @@ const BEACH_CHILD_PRICE  = 60;
 const JETSKI_ADULT_PRICE = 150;
 const BIG_MABLE_PRICE    = 45;
 
+const PANEL_SLUGS = {
+  beachAccess:       'beach-access-package',
+  beachAccessJetSki: 'beach-access-package-with-jetski',
+  jetSkiRental:      'jet-ski-rentals',
+  bigMable:          'big-mable-tube-ride'
+};
+const SLUG_TO_PANEL = Object.fromEntries(Object.entries(PANEL_SLUGS).map(([k,v]) => [v,k]));
+
 /* Booking state */
 let state = {
   beachAdults:        0,
@@ -134,6 +142,7 @@ function openBooking(pkg) {
   renderStep(1);
   document.getElementById('bookingModal').classList.add('is-open');
   document.body.style.overflow = 'hidden';
+  history.pushState({ booking: true }, '', '/book');
   setTimeout(() => {
     const first = document.querySelector('#modalPanel button, #modalPanel input');
     if (first) first.focus();
@@ -144,6 +153,9 @@ function closeBooking() {
   document.getElementById('bookingModal').classList.remove('is-open');
   document.body.style.overflow = '';
   if (previousFocus) previousFocus.focus();
+  if (window.location.pathname === '/book') {
+    history.pushState({}, '', '/');
+  }
 }
 
 /* Close on overlay click */
@@ -1545,12 +1557,16 @@ function openPanel(type) {
   const overlay = document.getElementById('pkgPanelOverlay');
   overlay.classList.add('is-open');
   document.body.style.overflow = 'hidden';
+  history.pushState({ panel: type }, '', '/book/' + (PANEL_SLUGS[type] || type));
 }
 
 function closePanel() {
   closePanelSheet();
   document.getElementById('pkgPanelOverlay').classList.remove('is-open');
   document.body.style.overflow = '';
+  if (window.location.pathname.startsWith('/book/')) {
+    history.pushState({}, '', '/');
+  }
 }
 
 function panelOverlayClick(e) {
@@ -2245,5 +2261,32 @@ function closeMobileMenu() {
   btn.setAttribute('aria-expanded', 'false');
   menu.setAttribute('aria-hidden', 'true');
 }
+
+/* ── Panel + booking URL routing ─────────────────────── */
+window.addEventListener('popstate', function(e) {
+  const overlay = document.getElementById('pkgPanelOverlay');
+  const modal   = document.getElementById('bookingModal');
+  if (e.state && e.state.panel) {
+    openPanel(e.state.panel);
+  } else if (e.state && e.state.booking) {
+    openBooking();
+  } else {
+    if (overlay) { closePanelSheet(); overlay.classList.remove('is-open'); }
+    if (modal)   modal.classList.remove('is-open');
+    document.body.style.overflow = '';
+  }
+});
+
+(function() {
+  const path = window.location.pathname;
+  const match = path.match(/^\/book\/([^/]+)/);
+  if (match) {
+    const type = SLUG_TO_PANEL[match[1]];
+    if (type) { openPanel(type); return; }
+  }
+  if (path === '/book') {
+    openBooking();
+  }
+})();
 
 

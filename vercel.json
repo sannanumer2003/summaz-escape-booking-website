@@ -3,5 +3,9 @@
     "api/register.js": {
       "maxDuration": 15
     }
-  }
+  },
+  "rewrites": [
+    { "source": "/book", "destination": "/index.html" },
+    { "source": "/book/:path*", "destination": "/index.html" }
+  ]
 }
