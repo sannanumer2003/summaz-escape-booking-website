@@ -293,7 +293,7 @@ function guestEmail(b) {
   const itemRows = isSummaz
     ? `<tr>
       <td style="padding:6px 0;font-size:14px;color:#6B7280;width:38%;">The Summaz Experience</td>
-      <td style="padding:6px 0;font-size:14px;color:#111827;">${smCount} rider${smCount > 1 ? 's' : ''} &mdash; $${total}</td>
+      <td style="padding:6px 0;font-size:14px;color:#111827;">${smCount} rider${smCount > 1 ? 's' : ''} · $${total}</td>
     </tr>`
     : isJSR
     ? slots.map((s, i) => `<tr>
@@ -578,7 +578,7 @@ function teamEmail(b) {
           ${isSummaz
             ? `<tr>
             <td style="padding:5px 0;font-size:14px;color:#6B7280;">The Summaz Experience</td>
-            <td style="padding:5px 0;font-size:14px;color:#111827;">${smCount} rider${smCount > 1 ? 's' : ''} &mdash; $${total}</td>
+            <td style="padding:5px 0;font-size:14px;color:#111827;">${smCount} rider${smCount > 1 ? 's' : ''} · $${total}</td>
           </tr>`
             : isJSR
             ? slots.map((s, i) => `<tr>
