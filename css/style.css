@@ -394,6 +394,29 @@ ul { list-style: none; }
 .pkg-card:hover { border-color: #c5d0dc; }
 .pkg-card--featured { border: 1.5px solid var(--sea); }
 .pkg-card--featured:hover { border-color: var(--sea); }
+.pkg-card--experience { border: 2px solid var(--gold); position: relative; }
+.pkg-card--experience:hover { border-color: var(--gold); }
+.pkg-card__experience-badge {
+  position: absolute;
+  top: 12px; left: 12px;
+  background: var(--gold);
+  color: var(--ocean);
+  font-size: 11px; font-weight: 700;
+  letter-spacing: .06em; text-transform: uppercase;
+  padding: 4px 10px; border-radius: 4px;
+  z-index: 1;
+}
+.pkg-card--popular { position: relative; }
+.pkg-card__popular-badge {
+  position: absolute;
+  top: 12px; left: 12px;
+  background: var(--teal);
+  color: #fff;
+  font-size: 11px; font-weight: 700;
+  letter-spacing: .06em; text-transform: uppercase;
+  padding: 4px 10px; border-radius: 4px;
+  z-index: 1;
+}
 .pkg-card__photo {
   position: relative;
   width: 100%;

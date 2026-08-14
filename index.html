@@ -111,7 +111,47 @@
       </div>
       <div class="pkg-browse__grid">
 
-        <!-- Card 1: Beach Access Package -->
+        <!-- Card 0: The Summaz Experience (featured) -->
+        <div class="pkg-card pkg-card--featured pkg-card--experience">
+          <div class="pkg-card__experience-badge">Signature Experience</div>
+          <div class="pkg-card__photo">
+            <img src="https://res.cloudinary.com/dko76z0df/image/upload/c_fill,w_640,h_400,g_auto/v1782304519/summaz/clip11-poster.jpg" alt="The Summaz Experience" loading="lazy">
+          </div>
+          <div class="pkg-card__body">
+            <span class="pkg-card__cat pkg-card__cat--solo">Individuals</span>
+            <h3 class="pkg-card__name">The Summaz Experience</h3>
+            <p class="pkg-card__desc">Summaz is a professional jet ski racer. This is your ride with him. He takes you out on the open water and does things that make your heart race and your camera roll explode. Up to 2 riders. The most talked-about booking in Nassau.</p>
+            <div class="pkg-card__price-row">
+              <span class="pkg-card__price">From $200 <em>/ per booking</em></span>
+            </div>
+            <div class="pkg-card__actions">
+              <button class="pkg-card__details-btn" onclick="openPanel('summaz')">Read Details</button>
+              <button class="pkg-card__cta" onclick="openBooking('summaz')">Book Now</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 1: Beach Access Package + Jet Ski Ride (most popular) -->
+        <div class="pkg-card pkg-card--featured pkg-card--popular">
+          <div class="pkg-card__popular-badge">Most Popular</div>
+          <div class="pkg-card__photo">
+            <img src="https://res.cloudinary.com/dko76z0df/image/upload/c_fill,w_640,h_400,g_auto/v1784948510/summaz/beach-pkg-photo2.jpg" alt="Beach Access Package + Jet Ski Ride" loading="lazy">
+          </div>
+          <div class="pkg-card__body">
+            <span class="pkg-card__cat pkg-card__cat--family">Family Wave Package</span>
+            <h3 class="pkg-card__name">Beach Access Package + Jet Ski Ride</h3>
+            <p class="pkg-card__desc">Everything in the Beach Access Package plus a solo 25-minute jet ski session on the open water.</p>
+            <div class="pkg-card__price-row">
+              <span class="pkg-card__price">$150 <em>/ per person</em></span>
+            </div>
+            <div class="pkg-card__actions">
+              <button class="pkg-card__details-btn" onclick="openPanel('beachAccessJetSki')">Read Details</button>
+              <button class="pkg-card__cta" onclick="openBooking('beachAccessJetSki')">Book Now</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 2: Beach Access Package -->
         <div class="pkg-card">
           <div class="pkg-card__photo">
             <img src="https://res.cloudinary.com/dko76z0df/image/upload/c_fill,w_640,h_400,g_auto/v1784948514/summaz/beach-pkg-photo3.jpg" alt="Beach Access Package at Arawak Cay" loading="lazy">
@@ -126,25 +166,6 @@
             <div class="pkg-card__actions">
               <button class="pkg-card__details-btn" onclick="openPanel('beachAccess')">Read Details</button>
               <button class="pkg-card__cta" onclick="openBooking('beachAccess')">Book Now</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Card 2: Beach Access Package + Jet Ski Ride -->
-        <div class="pkg-card pkg-card--featured">
-          <div class="pkg-card__photo">
-            <img src="https://res.cloudinary.com/dko76z0df/image/upload/c_fill,w_640,h_400,g_auto/v1784948510/summaz/beach-pkg-photo2.jpg" alt="Beach Access Package + Jet Ski Ride" loading="lazy">
-          </div>
-          <div class="pkg-card__body">
-            <span class="pkg-card__cat pkg-card__cat--family">Family Wave Package</span>
-            <h3 class="pkg-card__name">Beach Access Package + Jet Ski Ride</h3>
-            <p class="pkg-card__desc">Everything in the Beach Access Package plus a solo 25-minute jet ski session on the open water.</p>
-            <div class="pkg-card__price-row">
-              <span class="pkg-card__price">$150 <em>/ per person</em></span>
-            </div>
-            <div class="pkg-card__actions">
-              <button class="pkg-card__details-btn" onclick="openPanel('beachAccessJetSki')">Read Details</button>
-              <button class="pkg-card__cta" onclick="openBooking('beachAccessJetSki')">Book Now</button>
             </div>
           </div>
         </div>
@@ -511,6 +532,13 @@
                 </div>
                 <div class="bw-pkg-group">
                   <div class="bw-pkg-group-label">Individuals</div>
+                  <label class="bw-pkg-option">
+                    <input type="radio" name="selectedPkg" value="summaz" onchange="sidebarPackageChange(this.value)">
+                    <div class="bw-pkg-option-content">
+                      <span class="bw-pkg-option-name">The Summaz Experience</span>
+                      <span class="bw-pkg-option-price">$200 for 1 rider &middot; $275 for 2 riders</span>
+                    </div>
+                  </label>
                   <label class="bw-pkg-option">
                     <input type="radio" name="selectedPkg" value="jetSkiRental" onchange="sidebarPackageChange(this.value)">
                     <div class="bw-pkg-option-content">

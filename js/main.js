@@ -7,12 +7,15 @@ const BEACH_ADULT_PRICE  = 75;
 const BEACH_CHILD_PRICE  = 60;
 const JETSKI_ADULT_PRICE = 150;
 const BIG_MABLE_PRICE    = 45;
+const SUMMAZ_PRICE_1     = 200;
+const SUMMAZ_PRICE_2     = 275;
 
 const PANEL_SLUGS = {
   beachAccess:       'beach-access-package',
   beachAccessJetSki: 'beach-access-package-with-jetski',
   jetSkiRental:      'jet-ski-rentals',
-  bigMable:          'big-mable-tube-ride'
+  bigMable:          'big-mable-tube-ride',
+  summaz:            'the-summaz-experience'
 };
 const SLUG_TO_PANEL = Object.fromEntries(Object.entries(PANEL_SLUGS).map(([k,v]) => [v,k]));
 
@@ -23,6 +26,7 @@ let state = {
   jetSkiAdults:       0,
   bigMableCount:      0,
   bigMableAddon:      0,
+  summazCount:        0,
   selectedPackage:    '',
   jetSkiRentalSlots:  [],
   date:               '',
@@ -43,6 +47,9 @@ let state = {
 const JETSKI_RENTAL_PRICES = { 30: 105, 45: 125, 60: 190 };
 
 function calcTotal() {
+  if (state.selectedPackage === 'summaz') {
+    return state.summazCount === 2 ? SUMMAZ_PRICE_2 : state.summazCount === 1 ? SUMMAZ_PRICE_1 : 0;
+  }
   if (state.selectedPackage === 'bigMable') {
     return state.bigMableCount * BIG_MABLE_PRICE;
   }
@@ -176,6 +183,7 @@ function resetState() {
   state.jetSkiAdults       = 0;
   state.bigMableCount      = 0;
   state.bigMableAddon      = 0;
+  state.summazCount        = 0;
   state.selectedPackage    = '';
   state.jetSkiRentalSlots  = [];
   state.date               = '';
@@ -249,6 +257,9 @@ function renderStep1(body) {
     renderStep1JetSkiRental(body);
   } else if (state.selectedPackage === 'bigMable') {
     renderStep1BigMable(body);
+  } else if (state.selectedPackage === 'summaz') {
+    renderStep1Summaz(body);
+    return;
   } else {
     renderStep1AllFamilyWave(body);
   }
@@ -286,6 +297,63 @@ function renderStep1BigMable(body) {
       </div>
     </div>
   `;
+}
+
+function renderStep1Summaz(body) {
+  if (state.summazCount === 0) state.summazCount = 1;
+  const price = state.summazCount === 2 ? SUMMAZ_PRICE_2 : SUMMAZ_PRICE_1;
+  body.innerHTML = `
+    <p class="step-sub">A private jet ski stunt ride with Summaz. 1 or 2 riders. Total price is fixed per booking, not per person.</p>
+    <div class="stepper-group">
+      <div class="stepper-group__label stepper-group__label--parent">The Summaz Experience</div>
+      <div class="stepper-row">
+        <div class="stepper-row__info">
+          <p class="stepper-row__label">Riders <span class="stepper-row__label-price">1 rider $200 &middot; 2 riders $275</span></p>
+        </div>
+        <div class="stepper">
+          <button class="stepper__btn" id="summazMinus" onclick="changeSummazCount(-1)" ${state.summazCount <= 1 ? 'disabled' : ''}>−</button>
+          <span class="stepper__count" id="summazCountEl">${state.summazCount}</span>
+          <button class="stepper__btn" id="summazPlus" onclick="changeSummazCount(1)" ${state.summazCount >= 2 ? 'disabled' : ''}>+</button>
+        </div>
+      </div>
+    </div>
+    <div class="price-summary">
+      <div class="price-summary__rows">
+        <div class="price-summary__row" id="summazSummaryRow">
+          <span>The Summaz Experience &middot; <span id="summazSummaryCount">${state.summazCount}</span> rider${state.summazCount > 1 ? 's' : ''}</span>
+          <strong id="summazSummaryAmt">${formatMoney(price)}</strong>
+        </div>
+      </div>
+      <div class="price-summary__total">
+        <span class="price-summary__total-label">Total</span>
+        <span class="price-summary__total-amount" id="priceSummaryTotal">${formatMoney(price)}</span>
+      </div>
+    </div>
+  `;
+}
+
+function changeSummazCount(delta) {
+  const newVal = Math.max(1, Math.min(2, state.summazCount + delta));
+  state.summazCount = newVal;
+  const price = newVal === 2 ? SUMMAZ_PRICE_2 : SUMMAZ_PRICE_1;
+
+  const countEl = document.getElementById('summazCountEl');
+  if (countEl) countEl.textContent = newVal;
+
+  const minBtn = document.getElementById('summazMinus');
+  const plusBtn = document.getElementById('summazPlus');
+  if (minBtn)  minBtn.disabled  = newVal <= 1;
+  if (plusBtn) plusBtn.disabled = newVal >= 2;
+
+  const row = document.getElementById('summazSummaryRow');
+  if (row) {
+    row.querySelector('span').innerHTML = `The Summaz Experience &middot; <span id="summazSummaryCount">${newVal}</span> rider${newVal > 1 ? 's' : ''}`;
+    const amt = document.getElementById('summazSummaryAmt');
+    if (amt) amt.textContent = formatMoney(price);
+  }
+  const totalEl = document.getElementById('priceSummaryTotal');
+  if (totalEl) totalEl.textContent = formatMoney(price);
+  updateFooterTotal();
 }
 
 function renderStep1PackagePicker(body) {
@@ -326,6 +394,14 @@ function renderStep1PackagePicker(body) {
             <div class="step-pkg-card__name">Big Mable Tube Ride</div>
             <div class="step-pkg-card__desc">Up to 6 riders on one giant inflatable tube, towed by a jet ski. A 10 to 12 minute group ride. Ages 7 and up.</div>
             <div class="step-pkg-card__price">$45 per person · 2 to 6 riders</div>
+          </div>
+          <svg class="step-pkg-card__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+        <button class="step-pkg-card" onclick="selectPackageFromPicker('summaz')">
+          <div class="step-pkg-card__left">
+            <div class="step-pkg-card__name">The Summaz Experience</div>
+            <div class="step-pkg-card__desc">A private stunt ride with Summaz, professional jet ski racer. Up to 2 riders. The most talked-about booking in Nassau.</div>
+            <div class="step-pkg-card__price">$200 for 1 rider &middot; $275 for 2 riders</div>
           </div>
           <svg class="step-pkg-card__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><polyline points="9 18 15 12 9 6"/></svg>
         </button>
@@ -669,7 +745,7 @@ const ADDON_LIST = [
   { id: 'transfer', label: 'Airport / Hotel Pickup or Drop-Off',note: 'Arranged via WhatsApp',        tag: 'WhatsApp' }
 ];
 
-const showBigMableBundle = () => state.selectedPackage !== 'bigMable';
+const showBigMableBundle = () => state.selectedPackage !== 'bigMable' && state.selectedPackage !== 'summaz';
 
 function renderStep4(body) {
   const isChecked = state.bigMableAddon > 0;
@@ -878,15 +954,21 @@ function renderStep7(body) {
   });
   const paymentLabel = { zelle: 'Zelle', venmo: 'Venmo', arrival: 'Pay on Arrival' };
   const dateDisplay = state.date ? new Date(state.date + 'T12:00:00').toLocaleDateString('en-US', { weekday:'long', year:'numeric', month:'long', day:'numeric' }) : 'Not set';
-  const isJSR   = state.selectedPackage === 'jetSkiRental';
-  const isMable = state.selectedPackage === 'bigMable';
+  const isJSR    = state.selectedPackage === 'jetSkiRental';
+  const isMable  = state.selectedPackage === 'bigMable';
+  const isSummaz = state.selectedPackage === 'summaz';
 
   const mableAddonRow = state.bigMableAddon > 0 ? `<div class="review-row">
           <span class="review-row__label">Big Mable Tube Ride (add-on)</span>
           <span class="review-row__value">${state.bigMableAddon} x $${BIG_MABLE_PRICE} = ${formatMoney(state.bigMableAddon * BIG_MABLE_PRICE)}</span>
         </div>` : '';
 
-  const guestRows = isJSR
+  const guestRows = isSummaz
+    ? `<div class="review-row">
+          <span class="review-row__label">The Summaz Experience</span>
+          <span class="review-row__value">${state.summazCount} rider${state.summazCount > 1 ? 's' : ''} &middot; ${formatMoney(total)}</span>
+        </div>`
+    : isJSR
     ? state.jetSkiRentalSlots.map((slot, i) => `
         <div class="review-row">
           <span class="review-row__label">Jet Ski Rental - Rider ${i + 1} (${slot.duration} min)</span>
@@ -991,6 +1073,13 @@ async function validateStep(step) {
       if (state.selectedPackage === 'bigMable') {
         if (state.bigMableCount < 2) {
           alert('Big Mable requires a minimum of 2 riders. Please add at least 2.');
+          return false;
+        }
+        return true;
+      }
+      if (state.selectedPackage === 'summaz') {
+        if (state.summazCount < 1) {
+          alert('Please add at least 1 rider.');
           return false;
         }
         return true;
@@ -1112,6 +1201,7 @@ function submitBooking() {
     jetSkiAdults:       state.jetSkiAdults,
     bigMableAddon:      state.bigMableAddon,
     bigMableCount:      state.bigMableCount,
+    summazCount:        state.summazCount,
     jetSkiRentalSlots:  state.selectedPackage === 'jetSkiRental' ? state.jetSkiRentalSlots : [],
     date:               state.date,
     name:           state.name.trim(),
@@ -1511,10 +1601,14 @@ let panel = {
   jetSkiRentalAdults: 0,
   jetSkiRentalSlots: [],
   bigMableCount: 0,
+  summazCount: 1,
   date: ''
 };
 
 function panelTotal() {
+  if (panel.type === 'summaz') {
+    return panel.summazCount === 2 ? SUMMAZ_PRICE_2 : panel.summazCount >= 1 ? SUMMAZ_PRICE_1 : 0;
+  }
   if (panel.type === 'jetSkiRental') {
     return panel.jetSkiRentalSlots.reduce((s, slot) => s + slot.price, 0);
   }
@@ -1534,13 +1628,15 @@ function openPanel(type) {
   panel.jetSkiRentalAdults = 0;
   panel.jetSkiRentalSlots  = [];
   panel.bigMableCount      = 0;
+  panel.summazCount        = 1;
   panel.date               = '';
 
   const breadcrumbMap = {
     beachAccess:       'Beach Access Package',
     beachAccessJetSki: 'Beach Access Package + Jet Ski Ride',
     jetSkiRental:      'Jet Ski Rentals',
-    bigMable:          'Big Mable Tube Ride'
+    bigMable:          'Big Mable Tube Ride',
+    summaz:            'The Summaz Experience'
   };
   const bc = document.getElementById('pkgPanelBreadcrumb');
   if (bc) bc.textContent = breadcrumbMap[type] || '';
@@ -1595,11 +1691,13 @@ function buildPanelContent(type) {
     case 'beachAccessJetSki': return panelContentBeachAccessJetSki();
     case 'jetSkiRental':      return panelContentJetSkiRental();
     case 'bigMable':          return panelContentBigMable();
+    case 'summaz':            return panelContentSummaz();
     default: return '';
   }
 }
 
 function buildPanelSidebar(type) {
+  if (type === 'summaz')       return panelSidebarSummaz();
   if (type === 'jetSkiRental') return panelSidebarJetSkiRental();
   if (type === 'bigMable')     return panelSidebarBigMable();
   return panelSidebarFamilyWave();
@@ -1634,6 +1732,10 @@ const PANEL_GALLERY_JETSKI = [
 const PANEL_VIDEOS_MABLE = [
   { src: 'https://res.cloudinary.com/dko76z0df/video/upload/v1784952633/summaz/mable-clip1.mp4', poster: 'https://res.cloudinary.com/dko76z0df/video/upload/c_fill,w_640,h_480,g_auto/v1784952633/summaz/mable-clip1.jpg' },
   { src: 'https://res.cloudinary.com/dko76z0df/video/upload/v1784952652/summaz/mable-clip2.mp4', poster: 'https://res.cloudinary.com/dko76z0df/video/upload/c_fill,w_640,h_480,g_auto/v1784952652/summaz/mable-clip2.jpg' }
+];
+
+const PANEL_VIDEOS_SUMMAZ = [
+  { src: 'https://res.cloudinary.com/dko76z0df/video/upload/v1782304538/summaz/clip11.mp4', poster: 'https://res.cloudinary.com/dko76z0df/image/upload/c_fill,w_640,h_480,g_auto/v1782304519/summaz/clip11-poster.jpg' }
 ];
 
 function galleryHTML(photos) {
@@ -1804,6 +1906,67 @@ function panelContentJetSkiRental() {
       <details class="panel-faq-item">
         <summary>What if the weather is bad on my date?</summary>
         <p>If we need to cancel due to weather, you'll be offered a full reschedule or refund. We'll contact you in advance.</p>
+      </details>
+    </div>
+  `;
+}
+
+function panelContentSummaz() {
+  return `
+    <span class="panel__cat-badge panel__cat-badge--solo">Individuals</span>
+    <h2 class="panel__title">The Summaz Experience</h2>
+    <div class="panel__desc">
+      <p>Summaz is a professional jet ski racer. This is not a guided tour or a casual ride. You sit on the back, he takes you out on the open water, and he does things that will make your heart stop. Flips, sharp turns, full speed runs. Every minute of it is content.</p>
+      <p>1 or 2 riders per session. The price is fixed per booking. If you bring someone along, you split one of the best experiences Nassau has to offer. If you go solo, it is entirely yours.</p>
+    </div>
+    <span class="panel__section-label">Pricing</span>
+    <div class="panel-tiers">
+      <div class="panel-tier">
+        <div class="panel-tier__dur">1 Rider</div>
+        <div class="panel-tier__price">$200</div>
+        <div class="panel-tier__price-sub">per booking</div>
+      </div>
+      <div class="panel-tier">
+        <div class="panel-tier__dur">2 Riders</div>
+        <div class="panel-tier__price">$275</div>
+        <div class="panel-tier__price-sub">per booking</div>
+      </div>
+    </div>
+    <span class="panel__section-label">What's Included</span>
+    <ul class="panel__included-list">
+      <li class="panel__included-item">Private jet ski session with Summaz</li>
+      <li class="panel__included-item">Stunts and open water maneuvers</li>
+      <li class="panel__included-item">1 or 2 riders per session</li>
+      <li class="panel__included-item">Life jacket provided</li>
+    </ul>
+    <span class="panel__section-label">Photos</span>
+    ${galleryHTML([
+      'https://res.cloudinary.com/dko76z0df/image/upload/c_fill,w_640,h_480,g_auto/v1786733750/summaz/summaz-exp-card.jpg',
+      'https://res.cloudinary.com/dko76z0df/image/upload/c_fill,w_640,h_480,g_auto/v1782304519/summaz/clip11-poster.jpg'
+    ])}
+    <span class="panel__section-label">Experience</span>
+    ${experienceHTML(PANEL_VIDEOS_SUMMAZ)}
+    <span class="panel__section-label">Questions</span>
+    <div class="panel-faq">
+      <details class="panel-faq-item">
+        <summary>How long is the session?</summary>
+        <p>Sessions run around 15 to 20 minutes. The exact time depends on conditions and what Summaz decides to do out there. It feels shorter than it sounds.</p>
+      </details>
+      <details class="panel-faq-item">
+        <summary>Can 2 people ride at the same time?</summary>
+        <p>Yes. The jet ski fits 2 riders. You book for 2 at $275 and both ride together for the full session. You do not get separate sessions at the 2-rider price.</p>
+      </details>
+      <details class="panel-faq-item">
+        <summary>Is it safe?</summary>
+        <p>Summaz is a professional. He knows exactly how far to take it while keeping riders secure on the ski. Life jackets are worn for the full session.</p>
+      </details>
+      <details class="panel-faq-item">
+        <summary>Can I bring my phone or camera?</summary>
+        <p>You can try, but the best shots come from someone filming from the shore or dock. Things happen fast on the water and phones do not survive every ride.</p>
+      </details>
+      <details class="panel-faq-item">
+        <summary>Is there a minimum age?</summary>
+        <p>Riders should be adults. If you are bringing a younger passenger, reach out to us at booking@summazescape.com before booking so we can confirm suitability.</p>
       </details>
     </div>
   `;
@@ -1992,6 +2155,14 @@ function bookFromPanel() {
     state.beachChildren     = 0;
     state.jetSkiAdults      = 0;
     state.jetSkiRentalSlots = [];
+  } else if (panel.type === 'summaz') {
+    state.selectedPackage   = 'summaz';
+    state.summazCount       = panel.summazCount;
+    state.beachAdults       = 0;
+    state.beachChildren     = 0;
+    state.jetSkiAdults      = 0;
+    state.bigMableCount     = 0;
+    state.jetSkiRentalSlots = [];
   } else {
     if (panelTotal() === 0) {
       alert('Please add at least one guest.');
@@ -2154,6 +2325,47 @@ function panelSidebarBigMable() {
     </button>
     <p class="ps-note">600 lb combined weight limit. Payment handled on arrival. Confirmed via WhatsApp.</p>
   `;
+}
+
+function panelSidebarSummaz() {
+  const count = panel.summazCount;
+  const price = count === 2 ? SUMMAZ_PRICE_2 : SUMMAZ_PRICE_1;
+  return `
+    <div class="ps-title">The Summaz Experience</div>
+    <div class="ps-subtitle">1 or 2 riders per session</div>
+    <span class="ps-section-label">Riders</span>
+    <div class="ps-counter-row" style="border-top:1px solid #e5e9ef">
+      <div>
+        <div class="ps-counter-name">Riders</div>
+        <div class="ps-counter-price">1 rider $200 &middot; 2 riders $275</div>
+      </div>
+      <div class="ps-stepper">
+        <button class="ps-stepper-btn" id="psSummazMinus" onclick="panelSummazCount(-1)" ${count <= 1 ? 'disabled' : ''}>−</button>
+        <span class="ps-stepper-count" id="psSummazCount">${count}</span>
+        <button class="ps-stepper-btn" id="psSummazPlus" onclick="panelSummazCount(1)" ${count >= 2 ? 'disabled' : ''}>+</button>
+      </div>
+    </div>
+    <div class="ps-total-row">
+      <span class="ps-total-label">Total</span>
+      <span class="ps-total-amount" id="psPanelTotal">${formatMoney(price)}</span>
+    </div>
+    <button class="ps-book-btn" onclick="bookFromPanel()">Book This Package</button>
+    <p class="ps-note">Payment handled after booking. Free cancellation 7 days before.</p>
+  `;
+}
+
+function panelSummazCount(delta) {
+  const newVal = Math.max(1, Math.min(2, panel.summazCount + delta));
+  panel.summazCount = newVal;
+
+  const countEl = document.getElementById('psSummazCount');
+  const minBtn  = document.getElementById('psSummazMinus');
+  const plusBtn = document.getElementById('psSummazPlus');
+  if (countEl) countEl.textContent = newVal;
+  if (minBtn)  minBtn.disabled  = newVal <= 1;
+  if (plusBtn) plusBtn.disabled = newVal >= 2;
+
+  updatePanelSidebarTotal();
 }
 
 function panelBigMableCount(delta) {

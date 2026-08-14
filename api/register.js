@@ -29,6 +29,8 @@ const BEACH_ADULT_PRICE  = 75;
 const BEACH_CHILD_PRICE  = 60;
 const JETSKI_ADULT_PRICE = 150;
 const BIG_MABLE_PRICE    = 45;
+const SUMMAZ_PRICE_1     = 200;
+const SUMMAZ_PRICE_2     = 275;
 
 /* ── Disposable email domain blocklist ───────────────────── */
 const BLOCKED_DOMAINS = new Set([
@@ -69,6 +71,7 @@ module.exports = async function handler(req, res) {
     jetSkiAdults       = 0,
     bigMableAddon      = 0,
     bigMableCount      = 0,
+    summazCount        = 0,
     jetSkiRentalSlots  = [],
     date               = '',
     name               = '',
@@ -79,10 +82,12 @@ module.exports = async function handler(req, res) {
     paymentMethod      = 'card',
   } = body;
 
-  const isJSR     = selectedPackage === 'jetSkiRental';
+  const isJSR      = selectedPackage === 'jetSkiRental';
   const isBigMable = selectedPackage === 'bigMable';
+  const isSummaz   = selectedPackage === 'summaz';
   const slots      = Array.isArray(jetSkiRentalSlots) ? jetSkiRentalSlots : [];
   const bmCount    = Number(bigMableCount);
+  const smCount    = Number(summazCount);
 
   /* 3. Required fields */
   const emailClean = String(email).trim().toLowerCase();
@@ -91,7 +96,8 @@ module.exports = async function handler(req, res) {
   if (!name.trim() || !emailClean || !date || !paymentMethod) return spamOk(res);
   if (isJSR      && slots.length < 1) return spamOk(res);
   if (isBigMable && bmCount < 2)      return spamOk(res);
-  if (!isJSR && !isBigMable && guestCount < 1) return spamOk(res);
+  if (isSummaz   && smCount < 1)      return spamOk(res);
+  if (!isJSR && !isBigMable && !isSummaz && guestCount < 1) return spamOk(res);
 
   /* 4. Phone sanity */
   if (phoneDigs.length < 7) return spamOk(res);
@@ -119,11 +125,13 @@ module.exports = async function handler(req, res) {
     ? slots.reduce((sum, s) => sum + Number(s.price || 0), 0) + (Number(bigMableAddon) * BIG_MABLE_PRICE)
     : isBigMable
     ? bmCount * BIG_MABLE_PRICE
+    : isSummaz
+    ? (smCount === 2 ? SUMMAZ_PRICE_2 : SUMMAZ_PRICE_1)
     : (Number(beachAdults)   * BEACH_ADULT_PRICE)
     + (Number(beachChildren) * BEACH_CHILD_PRICE)
     + (Number(jetSkiAdults)  * JETSKI_ADULT_PRICE)
     + (Number(bigMableAddon) * BIG_MABLE_PRICE);
-  const booking   = { selectedPackage, beachAdults, beachChildren, jetSkiAdults, bigMableAddon, bigMableCount: bmCount, slots, date, name, email: emailClean, phone, addons, notes, paymentMethod, reference, total, spamFlag };
+  const booking   = { selectedPackage, beachAdults, beachChildren, jetSkiAdults, bigMableAddon, bigMableCount: bmCount, summazCount: smCount, slots, date, name, email: emailClean, phone, addons, notes, paymentMethod, reference, total, spamFlag };
 
   const [emailResult, gasResult] = await Promise.allSettled([
     sendBookingEmails(booking),
@@ -266,7 +274,9 @@ function guestEmail(b) {
   const slots      = Array.isArray(b.slots) ? b.slots : [];
   const isJSR      = selectedPackage === 'jetSkiRental';
   const isBigMable = selectedPackage === 'bigMable';
+  const isSummaz   = selectedPackage === 'summaz';
   const bmStandalone = Number(b.bigMableCount);
+  const smCount    = Number(b.summazCount) || 0;
 
   const firstName     = h(name).split(' ')[0];
   const dateDisplay   = fmtDate(date);
@@ -280,7 +290,12 @@ function guestEmail(b) {
       <td style="padding:6px 0;font-size:14px;color:#111827;">${n} &times; $${BIG_MABLE_PRICE} = $${n * BIG_MABLE_PRICE}</td>
     </tr>` : '';
 
-  const itemRows = isJSR
+  const itemRows = isSummaz
+    ? `<tr>
+      <td style="padding:6px 0;font-size:14px;color:#6B7280;width:38%;">The Summaz Experience</td>
+      <td style="padding:6px 0;font-size:14px;color:#111827;">${smCount} rider${smCount > 1 ? 's' : ''} &mdash; $${total}</td>
+    </tr>`
+    : isJSR
     ? slots.map((s, i) => `<tr>
       <td style="padding:6px 0;font-size:14px;color:#6B7280;width:38%;">Jet Ski Rental - Rider ${i + 1} (${s.duration} min)</td>
       <td style="padding:6px 0;font-size:14px;color:#111827;">$${s.price}</td>
@@ -487,7 +502,9 @@ function teamEmail(b) {
   const slots       = Array.isArray(b.slots) ? b.slots : [];
   const isJSR       = selectedPackage === 'jetSkiRental';
   const isBigMable  = selectedPackage === 'bigMable';
+  const isSummaz    = selectedPackage === 'summaz';
   const bmStandalone = Number(b.bigMableCount);
+  const smCount     = Number(b.summazCount) || 0;
 
   const dateDisplay   = fmtDate(date);
   const label         = methodName(paymentMethod);
@@ -558,7 +575,12 @@ function teamEmail(b) {
             <td style="padding:5px 0;font-size:14px;color:#6B7280;">Date</td>
             <td style="padding:5px 0;font-size:14px;color:#111827;">${dateDisplay}</td>
           </tr>
-          ${isJSR
+          ${isSummaz
+            ? `<tr>
+            <td style="padding:5px 0;font-size:14px;color:#6B7280;">The Summaz Experience</td>
+            <td style="padding:5px 0;font-size:14px;color:#111827;">${smCount} rider${smCount > 1 ? 's' : ''} &mdash; $${total}</td>
+          </tr>`
+            : isJSR
             ? slots.map((s, i) => `<tr>
             <td style="padding:5px 0;font-size:14px;color:#6B7280;">Jet Ski Rental - Rider ${i + 1} (${s.duration} min)</td>
             <td style="padding:5px 0;font-size:14px;color:#111827;">$${s.price}</td>
