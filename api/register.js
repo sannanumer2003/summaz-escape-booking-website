@@ -57,8 +57,9 @@ module.exports = async function handler(req, res) {
 
   const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
 
-  /* 1. Honeypot */
-  if (body.honeypot) return spamOk(res);
+  /* 1. Honeypot — flag, don't discard: phone autofill can fill it for real guests */
+  const flags = [];
+  if (body.honeypot) flags.push('SUSPECTED SPAM');
 
   /* 2. Timing — under 8s likely a bot or direct API hit */
   const elapsed = Number(body.elapsed) || 0;
@@ -106,7 +107,6 @@ module.exports = async function handler(req, res) {
   const domain = emailClean.split('@')[1] || '';
   if (BLOCKED_DOMAINS.has(domain)) return spamOk(res);
 
-  let spamFlag = '';
   try {
     const ctrl = new AbortController();
     setTimeout(() => ctrl.abort(), 4000);
@@ -116,8 +116,9 @@ module.exports = async function handler(req, res) {
       if (mcData.disposable) return spamOk(res);
     }
   } catch (_) {
-    spamFlag = 'API_FAIL';
+    flags.push('API_FAIL');
   }
+  const spamFlag = flags.join(', ');
 
   /* ── Passed all checks — process real booking ─────────── */
   const reference = 'SE-' + Math.floor(100000 + Math.random() * 900000);
@@ -174,19 +175,21 @@ async function resend(payload) {
 }
 
 async function sendBookingEmails(b) {
-  const { name, email, paymentMethod, reference } = b;
+  const { name, email, paymentMethod, reference, spamFlag } = b;
   const firstName   = h(name).split(' ')[0];
   const label       = methodName(paymentMethod);
+  const suspected   = spamFlag.includes('SUSPECTED SPAM');
 
   const guestSubject = paymentMethod === 'arrival'
     ? `Booking received, ${firstName}. Your spot is held. | ${reference}`
     : `Booking received, ${firstName}. Send your ${label} payment to lock in your spot. | ${reference}`;
 
-  const teamSubject = `New Booking (${label}) | ${reference} | ${name}`;
+  const teamSubject = `${suspected ? '[SUSPECTED SPAM] ' : ''}New Booking (${label}) | ${reference} | ${name}`;
 
+  /* Suspected spam: team gets a flagged notice, guest email is skipped so bots can't use us to send mail */
   await Promise.all([
-    resend({ from: FROM,      to: [email],     reply_to: REPLY_TO, subject: guestSubject, html: guestEmail(b) }),
-    resend({ from: TEAM_FROM, to: [TEAM_INBOX],                    subject: teamSubject,  html: teamEmail(b)  }),
+    suspected ? Promise.resolve() : resend({ from: FROM, to: [email], reply_to: REPLY_TO, subject: guestSubject, html: guestEmail(b) }),
+    resend({ from: TEAM_FROM, to: [TEAM_INBOX], subject: teamSubject, html: teamEmail(b) }),
   ]);
 }
 

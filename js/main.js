@@ -1106,13 +1106,21 @@ async function validateStep(step) {
       ['nameErr','emailErr','phoneErr'].forEach(id => clearFieldErr(id));
       let valid = true;
 
-      /* Name: letters, spaces, hyphens, apostrophes only, min 2 chars */
+      /* Read straight from the inputs: some autofill sets values without firing input events */
+      const nameEl  = document.getElementById('guestName');
+      const emailEl = document.getElementById('guestEmail');
+      const phoneEl = document.getElementById('guestPhone');
+      if (nameEl)  state.name  = nameEl.value;
+      if (emailEl) state.email = emailEl.value;
+      if (phoneEl) state.phone = phoneEl.value;
+
+      /* Name: any letters, spaces, hyphens, periods, straight or curly apostrophes, min 2 chars */
       const nameTrimmed = state.name.trim();
       if (nameTrimmed.length < 2) {
         showFieldErr('nameErr', 'Please enter your full name.');
         valid = false;
-      } else if (!/^[a-zA-ZÀ-ÿ\s'\-]+$/.test(nameTrimmed)) {
-        showFieldErr('nameErr', 'Name should contain letters only, no numbers.');
+      } else if (!/^[\p{L}\p{M}\s'’.\-]+$/u.test(nameTrimmed)) {
+        showFieldErr('nameErr', 'Name should contain letters only, no numbers or symbols.');
         valid = false;
       }
 
@@ -1164,8 +1172,6 @@ async function validateStep(step) {
 
 /* ── Navigation ─────────────────────────────────────────── */
 async function nextStep() {
-  if (state.honeypot) return;
-
   if (!await validateStep(state.currentStep)) return;
 
   if (state.currentStep === 7) {
@@ -1185,8 +1191,6 @@ function prevStep() {
 
 /* ── Form submission ─────────────────────────────────────── */
 function submitBooking() {
-  if (state.honeypot) return;
-
   const loading = document.getElementById('loadingOverlay');
   loading.classList.add('is-visible');
 

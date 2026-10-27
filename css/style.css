@@ -1294,14 +1294,7 @@ ul { list-style: none; }
 .form-input:focus { outline: none; border-color: var(--border-focus); box-shadow: 0 0 0 3px rgba(0,119,182,.08); }
 .form-error { font-size: 12.5px; color: #E53E3E; margin-top: 5px; display: none; }
 .form-error.is-visible { display: block; }
-.form-honeypot {
-  position: absolute;
-  left: -9999px;
-  opacity: 0;
-  pointer-events: none;
-  height: 0;
-  overflow: hidden;
-}
+.form-honeypot { display: none; } /* fully unrendered so browser autofill skips it */
 
 /* Add-on checkboxes */
 .addon-check-list { display: flex; flex-direction: column; gap: 6px; margin-bottom: 20px; }
